@@ -1,0 +1,204 @@
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const asyncHandler = require('express-async-handler');
+const { OAuth2Client } = require('google-auth-library');
+const User = require('../models/User');
+
+// @desc    Register new user
+// @route   POST /api/auth/register
+// @access  Public (or Admin only later)
+const registerUser = asyncHandler(async (req, res) => {
+    const { name, email, password, role, adminKey } = req.body;
+
+    if (!name || !email || !password) {
+        res.status(400);
+        throw new Error('Please add all fields');
+    }
+
+    // Check if user exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+        res.status(400);
+        throw new Error('User already exists');
+    }
+
+    // Admin registration requires valid admin key
+    if (role === 'admin') {
+        if (!adminKey || adminKey !== process.env.ADMIN_SECRET_KEY) {
+            res.status(401);
+            throw new Error('Invalid admin key');
+        }
+    }
+
+    // Create user
+    const user = await User.create({
+        name,
+        email,
+        password,
+        role: role || 'student', // Default to student
+    });
+
+    if (user) {
+        // Set user for Activity Logger
+        res.locals.user = user;
+
+        res.status(201).json({
+            _id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            token: generateToken(user._id),
+        });
+    } else {
+        res.status(400);
+        throw new Error('Invalid user data');
+    }
+});
+
+// @desc    Authenticate a user
+// @route   POST /api/auth/login
+// @access  Public
+const loginUser = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+
+    // Check for user email
+    const user = await User.findOne({ email });
+
+    if (user && user.isBlocked) {
+        res.status(403);
+        throw new Error(user.blockReason || 'Your account has been blocked. Please contact support.');
+    }
+
+    if (user && (await user.matchPassword(password))) {
+        res.locals.user = user; // For Activity Logger
+        res.json({
+            _id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            warnings: user.warnings || [],
+            maxWarnings: user.maxWarnings || 2,
+            token: generateToken(user._id),
+        });
+    } else {
+        res.status(400);
+        throw new Error('Invalid credentials');
+    }
+});
+
+// @desc    Get user data
+// @route   GET /api/auth/me
+// @access  Private
+const getMe = asyncHandler(async (req, res) => {
+    res.status(200).json(req.user);
+});
+
+// Generate JWT
+const generateToken = (id) => {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {
+        expiresIn: '30d',
+    });
+};
+
+// @desc    Update user password
+// @route   PUT /api/auth/updatepassword
+// @access  Private
+const updatePassword = asyncHandler(async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+
+    const user = await User.findById(req.user.id);
+
+    if (user && (await user.matchPassword(currentPassword))) {
+        user.password = newPassword;
+        await user.save();
+        res.json({ message: 'Password updated successfully' });
+    } else {
+        res.status(400);
+        throw new Error('Invalid current password');
+    }
+});
+
+// @desc    Google OAuth login/register
+// @route   POST /api/auth/google
+// @access  Public
+const googleAuth = asyncHandler(async (req, res) => {
+    const { credential } = req.body;
+
+    if (!credential) {
+        res.status(400);
+        throw new Error('Google credential is required');
+    }
+
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+    let ticket;
+    try {
+        ticket = await client.verifyIdToken({
+            idToken: credential,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+    } catch (error) {
+        res.status(401);
+        throw new Error('Invalid Google token');
+    }
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name, picture } = payload;
+
+    if (!email) {
+        res.status(400);
+        throw new Error('Google account must have an email');
+    }
+
+    // Check if user exists by googleId or email
+    let user = await User.findOne({ $or: [{ googleId }, { email }] });
+    let isNewUser = false;
+
+    if (user) {
+        // Existing user — check if blocked
+        if (user.isBlocked) {
+            res.status(403);
+            throw new Error(user.blockReason || 'Your account has been blocked. Please contact support.');
+        }
+
+        // Link Google ID if user exists by email but hasn't linked Google yet
+        if (!user.googleId) {
+            user.googleId = googleId;
+            if (picture && !user.profileImage) {
+                user.profileImage = picture;
+            }
+            await user.save();
+        }
+    } else {
+        // New user — create account with Google info
+        isNewUser = true;
+        user = await User.create({
+            name,
+            email,
+            googleId,
+            profileImage: picture || '',
+            role: 'student', // Default role for Google signups
+        });
+    }
+
+    res.locals.user = user; // For Activity Logger
+    res.json({
+        _id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profileImage: user.profileImage,
+        warnings: user.warnings || [],
+        maxWarnings: user.maxWarnings || 2,
+        isNewUser,
+        token: generateToken(user._id),
+    });
+});
+
+module.exports = {
+    registerUser,
+    loginUser,
+    getMe,
+    updatePassword,
+    googleAuth,
+};
