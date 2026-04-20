@@ -59,10 +59,10 @@ const AnswerChecker = lazy(() => import('./pages/AnswerChecker'));
 
 // Loading spinner component for Suspense fallback
 const PageLoader = () => (
-  <div className="flex h-screen items-center justify-center dark:bg-slate-950">
+  <div className="flex h-screen items-center justify-center bg-ios-gray6 dark:bg-ios-dark-bg">
     <div className="flex flex-col items-center gap-3">
-      <div className="w-10 h-10 border-3 border-slate-200 dark:border-slate-700 border-t-slate-600 dark:border-t-slate-400 rounded-full animate-spin"></div>
-      <p className="text-slate-500 dark:text-slate-400 font-medium">Loading...</p>
+      <div className="w-10 h-10 border-[3px] border-ios-gray4 dark:border-ios-dark-bg3 border-t-ios-blue rounded-full animate-spin"></div>
+      <p className="text-[15px] text-ios-gray dark:text-ios-gray2 font-medium">Loading...</p>
     </div>
   </div>
 );
@@ -153,26 +153,36 @@ function App() {
       <AuthProvider>
         <ThemeProvider>
           <Router>
-          <div className="min-h-screen bg-gray-50 dark:bg-slate-950 text-slate-900 dark:text-white transition-colors duration-300 flex flex-col">
+          <div className="min-h-screen bg-ios-gray6 dark:bg-ios-dark-bg text-slate-900 dark:text-white transition-colors duration-300 flex flex-col">
             <Navbar />
             <div className="flex-1">
-              <Toaster position="top-right" toastOptions={{
+              <Toaster position="top-center" toastOptions={{
                 duration: 3000,
                 style: {
-                  background: '#333',
+                  background: 'rgba(44, 44, 46, 0.95)',
                   color: '#fff',
+                  borderRadius: '14px',
+                  fontSize: '15px',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, SF Pro Display, sans-serif',
+                  padding: '12px 16px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.24)',
+                  backdropFilter: 'blur(20px)',
                 },
                 success: {
                   style: {
-                    background: '#10B981', // green-500
+                    background: 'rgba(52, 199, 89, 0.95)',
                     color: '#fff',
+                    borderRadius: '14px',
                   },
+                  iconTheme: { primary: '#fff', secondary: '#34C759' },
                 },
                 error: {
                   style: {
-                    background: '#EF4444', // red-500
+                    background: 'rgba(255, 59, 48, 0.95)',
                     color: '#fff',
+                    borderRadius: '14px',
                   },
+                  iconTheme: { primary: '#fff', secondary: '#FF3B30' },
                 },
               }} />
               <Suspense fallback={<PageLoader />}>

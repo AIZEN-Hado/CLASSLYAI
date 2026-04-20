@@ -4,13 +4,17 @@
 
 @layer base {
     body {
-        @apply bg-background text-textPrimary;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        @apply bg-ios-gray6 text-textPrimary dark:bg-ios-dark-bg dark:text-white;
     }
 }
 
-/* Custom scrollbar for sidebar */
+/* iOS-style thin scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 4px;
+    height: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -18,11 +22,11 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 rounded-full;
+    @apply bg-ios-gray3 dark:bg-ios-dark-bg4 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400;
+    @apply bg-ios-gray2 dark:bg-ios-gray;
 }
 
 /* Glass sidebar - collapsed icons, expands on hover */

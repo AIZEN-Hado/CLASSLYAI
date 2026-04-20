@@ -19,24 +19,29 @@ const Modal = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity" onClick={onClose}>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
             <div
-                className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-lg border border-gray-100 dark:border-slate-800 transform transition-all scale-100 opacity-100"
+                className="bg-white dark:bg-ios-dark-bg2 rounded-t-ios-2xl sm:rounded-ios-2xl shadow-2xl w-full sm:max-w-lg border-t border-black/5 dark:border-white/5 sm:border transform transition-all"
                 onClick={(e) => e.stopPropagation()}
             >
+                {/* Handle bar (mobile) */}
+                <div className="flex justify-center pt-3 pb-1 sm:hidden">
+                    <div className="w-9 h-1 rounded-full bg-ios-gray3 dark:bg-ios-dark-bg4" />
+                </div>
+
                 {/* Header */}
-                <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-slate-800">
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
+                <div className="flex items-center justify-between px-5 py-4 border-b border-black/5 dark:border-white/5">
+                    <h3 className="text-[17px] font-semibold text-slate-900 dark:text-white">{title}</h3>
                     <button
                         onClick={onClose}
-                        className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-400 hover:text-red-500 transition-colors"
+                        className="w-7 h-7 rounded-full bg-ios-gray5 dark:bg-ios-dark-bg3 flex items-center justify-center text-ios-gray hover:text-ios-red active:scale-90 transition-all"
                     >
-                        <FaTimes />
+                        <FaTimes size={12} />
                     </button>
                 </div>
 
                 {/* Body */}
-                <div className="p-6">
+                <div className="p-5">
                     {children}
                 </div>
             </div>

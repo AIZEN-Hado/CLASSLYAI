@@ -97,14 +97,14 @@ const Pagination = ({
     }
 
     return (
-        <div className={`flex items-center justify-between gap-4 ${compact ? 'py-2' : 'px-6 py-4 border-t border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-950/50'}`}>
+        <div className={`flex items-center justify-between gap-4 ${compact ? 'py-2' : 'px-6 py-4 border-t border-black/5 dark:border-white/5 bg-ios-gray6/50 dark:bg-ios-dark-bg/50'}`}>
             {/* Left side: Limit selector + Record info */}
             <div className="flex items-center gap-3">
                 {showLimitSelector && (
                     <select
                         value={itemsPerPage}
                         onChange={handleLimitChange}
-                        className="px-2 py-1.5 text-xs rounded-md border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 cursor-pointer"
+                        className="px-2 py-1.5 text-[13px] rounded-[8px] border border-black/10 dark:border-white/10 bg-white dark:bg-ios-dark-bg3 text-slate-700 dark:text-ios-gray2 focus:outline-none focus:ring-2 focus:ring-ios-blue cursor-pointer"
                     >
                         {limitOptions.map((limit) => (
                             <option key={limit} value={limit}>
@@ -113,7 +113,7 @@ const Pagination = ({
                         ))}
                     </select>
                 )}
-                <span className="text-xs text-slate-500 dark:text-slate-400">
+                <span className="text-[13px] text-ios-gray dark:text-ios-gray2">
                     Showing {startItem} - {endItem} of {totalItems} Records
                 </span>
             </div>
@@ -124,10 +124,11 @@ const Pagination = ({
                 <button
                     onClick={handlePrevPage}
                     disabled={currentPage <= 1}
-                    className={`p-1.5 rounded-md border transition-colors ${currentPage <= 1
-                            ? 'border-gray-200 dark:border-slate-700 text-slate-300 dark:text-slate-600 cursor-not-allowed'
-                            : 'border-gray-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
-                        }`}
+                    className={`p-1.5 rounded-[8px] border transition-all ${
+                        currentPage <= 1
+                            ? 'border-black/5 dark:border-white/5 text-ios-gray3 dark:text-ios-dark-bg4 cursor-not-allowed'
+                            : 'border-black/10 dark:border-white/10 text-ios-gray dark:text-ios-gray2 hover:bg-ios-gray6 dark:hover:bg-ios-dark-bg3 active:scale-90'
+                    }`}
                     aria-label="Previous page"
                 >
                     <FaChevronLeft size={12} />
@@ -140,12 +141,12 @@ const Pagination = ({
                     onChange={handlePageInputChange}
                     onBlur={handlePageInputSubmit}
                     onKeyDown={handlePageInputKeyDown}
-                    className="w-12 px-2 py-1.5 text-xs text-center rounded-md border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400"
+                    className="w-12 px-2 py-1.5 text-[13px] text-center rounded-[8px] border border-black/10 dark:border-white/10 bg-white dark:bg-ios-dark-bg3 text-slate-700 dark:text-ios-gray2 focus:outline-none focus:ring-2 focus:ring-ios-blue"
                     aria-label="Page number"
                 />
 
                 {/* Page info */}
-                <span className="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                <span className="text-[13px] text-ios-gray dark:text-ios-gray2 whitespace-nowrap">
                     of {totalPages}
                 </span>
 
@@ -153,10 +154,11 @@ const Pagination = ({
                 <button
                     onClick={handleNextPage}
                     disabled={currentPage >= totalPages}
-                    className={`p-1.5 rounded-md border transition-colors ${currentPage >= totalPages
-                            ? 'border-gray-200 dark:border-slate-700 text-slate-300 dark:text-slate-600 cursor-not-allowed'
-                            : 'border-gray-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
-                        }`}
+                    className={`p-1.5 rounded-[8px] border transition-all ${
+                        currentPage >= totalPages
+                            ? 'border-black/5 dark:border-white/5 text-ios-gray3 dark:text-ios-dark-bg4 cursor-not-allowed'
+                            : 'border-black/10 dark:border-white/10 text-ios-gray dark:text-ios-gray2 hover:bg-ios-gray6 dark:hover:bg-ios-dark-bg3 active:scale-90'
+                    }`}
                     aria-label="Next page"
                 >
                     <FaChevronRight size={12} />

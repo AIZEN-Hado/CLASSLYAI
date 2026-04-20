@@ -33,10 +33,10 @@ const CourseCard = ({ course }) => {
     return (
         <Link
             to={`/marketplace/course/${_id}`}
-            className="group bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-slate-700 flex flex-col"
+            className="group bg-white dark:bg-ios-dark-bg2 rounded-ios-xl shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-200 overflow-hidden border border-black/5 dark:border-white/5 flex flex-col"
         >
             {/* Thumbnail */}
-            <div className="relative aspect-video overflow-hidden bg-slate-200 dark:bg-slate-700">
+            <div className="relative aspect-video overflow-hidden bg-ios-gray5 dark:bg-ios-dark-bg3">
                 {thumbnail ? (
                     <img
                         src={thumbnail}
@@ -45,16 +45,16 @@ const CourseCard = ({ course }) => {
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                        <FaPlayCircle className="text-4xl text-slate-400" />
+                        <FaPlayCircle className="text-4xl text-ios-gray3" />
                     </div>
                 )}
                 {category && (
-                    <span className="absolute top-2 left-2 bg-indigo-500/90 text-white text-xs font-medium px-2 py-1 rounded">
+                    <span className="absolute top-2 left-2 bg-ios-blue/90 text-white text-[11px] font-semibold px-2 py-0.5 rounded-full">
                         {category}
                     </span>
                 )}
                 {level && (
-                    <span className="absolute top-2 right-2 bg-slate-900/70 text-white text-xs font-medium px-2 py-1 rounded">
+                    <span className="absolute top-2 right-2 bg-black/50 text-white text-[11px] font-medium px-2 py-0.5 rounded-full">
                         {level}
                     </span>
                 )}
@@ -62,27 +62,27 @@ const CourseCard = ({ course }) => {
 
             {/* Content */}
             <div className="p-4 flex flex-col flex-1">
-                <h3 className="font-semibold text-slate-900 dark:text-white line-clamp-2 mb-1 group-hover:text-indigo-500 transition-colors">
+                <h3 className="font-semibold text-[15px] text-slate-900 dark:text-white line-clamp-2 mb-1">
                     {title}
                 </h3>
 
                 {instructor && (
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">
+                    <p className="text-[13px] text-ios-gray dark:text-ios-gray2 mb-2">
                         {instructor.name}
                     </p>
                 )}
 
                 {/* Rating */}
                 <div className="flex items-center gap-2 mb-2">
-                    <span className="font-bold text-amber-500">{rating?.average?.toFixed(1) || '0.0'}</span>
+                    <span className="font-bold text-[13px] text-ios-orange">{rating?.average?.toFixed(1) || '0.0'}</span>
                     <StarRating rating={rating?.average || 0} size="sm" />
-                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                    <span className="text-[12px] text-ios-gray dark:text-ios-gray2">
                         ({rating?.count || 0})
                     </span>
                 </div>
 
                 {/* Stats */}
-                <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mb-3">
+                <div className="flex items-center gap-3 text-[12px] text-ios-gray dark:text-ios-gray2 mb-3">
                     <span className="flex items-center gap-1">
                         <FaUsers />
                         {enrollmentCount || 0} students
@@ -96,7 +96,7 @@ const CourseCard = ({ course }) => {
                 </div>
 
                 {/* Price - pushed to bottom */}
-                <div className="mt-auto pt-2 border-t border-slate-100 dark:border-slate-700">
+                <div className="mt-auto pt-2 border-t border-black/5 dark:border-white/5">
                     <PriceDisplay
                         price={price}
                         originalPrice={originalPrice}
