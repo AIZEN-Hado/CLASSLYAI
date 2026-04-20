@@ -1,6 +1,6 @@
 <div align="center">
 
-# ClasslyAI
+# 💻ClasslyAI
 
 ### AI-Powered LMS and Course Marketplace
 
@@ -315,6 +315,6 @@ This project is licensed under the MIT License.
 
 **Your Name**
 
-- GitHub: https://github.com/your-username
-- LinkedIn: https://linkedin.com/in/your-profile
-- Email: your-email@example.com
+- GitHub: https://github.com/AIZEN-Haso
+- LinkedIn: https://linkedin.com/in/yashsinghchauhan29
+- Email: yashchauhan2905@gmail.com
