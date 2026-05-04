@@ -85,25 +85,6 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(port, () => {
-    console.log(`Server started on port ${port}`);
-
-    // Keep-alive: self-ping at random intervals (30s - 120s) to prevent Render cold starts
-    const RENDER_URL = process.env.RENDER_EXTERNAL_URL;
-    if (RENDER_URL) {
-        const pingServer = () => {
-            const delay = Math.floor(Math.random() * (120000 - 30000 + 1)) + 30000;
-            setTimeout(() => {
-                const url = `${RENDER_URL}/api/health`;
-                const client = url.startsWith('https') ? https : http;
-                client.get(url, (res) => {
-                    console.log(`[Keep-Alive] Pinged ${url} — Status: ${res.statusCode} (next in ${Math.round(delay / 1000)}s)`);
-                }).on('error', (err) => {
-                    console.error(`[Keep-Alive] Ping failed:`, err.message);
-                });
-                pingServer();
-            }, delay);
-        };
-        pingServer();
-        console.log('[Keep-Alive] Self-ping enabled for Render');
+        console.log(`Server started on port ${port}`);
     }
 });
