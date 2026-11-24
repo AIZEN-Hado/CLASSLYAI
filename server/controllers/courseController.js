@@ -8,6 +8,8 @@ const QuizAttempt = require('../models/QuizAttempt');
 const Quiz = require('../models/Quiz');
 const CourseTeacher = require('../models/CourseTeacher');
 const { canManage, getTeacherPermissions } = require('../middleware/ownershipMiddleware');
+const jwt = require('jsonwebtoken');
+const { parseTelegramLink } = require('../services/telegramStream');
 
 // @desc    Create new course
 // @route   POST /api/courses
@@ -442,6 +444,27 @@ const getLecture = asyncHandler(async (req, res) => {
         throw new Error('Lecture not found');
     }
 
+    await assertLectureAccess(req, res, lecture);
+    res.status(200).json(lecture);
+});
+
+// @desc    Short-lived token to stream a Telegram-hosted lecture video
+// @route   GET /api/courses/lectures/:id/stream-token
+// @access  Private
+const getLectureStreamToken = asyncHandler(async (req, res) => {
+    const lecture = await Lecture.findById(req.params.id);
+    if (!lecture || !parseTelegramLink(lecture.resourceUrl)) {
+        res.status(404);
+        throw new Error('No streamable video for this lecture');
+    }
+
+    await assertLectureAccess(req, res, lecture);
+    const token = jwt.sign({ purpose: 'stream', lecture: lecture._id.toString() }, process.env.JWT_SECRET, { expiresIn: '6h' });
+    res.status(200).json({ url: `/stream/${lecture._id}?t=${token}` });
+});
+
+// Throws 403/404 unless the user may view this lecture
+const assertLectureAccess = async (req, res, lecture) => {
     const userId = req.user?.id || req.user?._id;
     const course = await Course.findById(lecture.course);
     if (!course) {
@@ -478,9 +501,7 @@ const getLecture = asyncHandler(async (req, res) => {
             }
         }
     }
-
-    res.status(200).json(lecture);
-});
+};
 
 // @desc    Update lecture progress
 // @route   PUT /api/courses/lectures/:id/progress
@@ -1798,6 +1819,7 @@ module.exports = {
     updateLecture,
     deleteLecture,
     getLecture,
+    getLectureStreamToken,
     getUserStats,
     removeStudent,
     getMyProgress,

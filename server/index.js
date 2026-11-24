@@ -40,6 +40,9 @@ app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'ok', timestamp: Date.now() });
 });
 
+// Video streaming (many Range requests per video, so it sits before the rate limiter)
+app.get('/api/stream/:id', require('./controllers/streamController').streamLecture);
+
 // Apply rate limiting to all API routes
 app.use('/api', apiLimiter);
 

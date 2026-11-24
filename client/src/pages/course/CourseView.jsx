@@ -6,6 +6,7 @@ import AuthContext from '../../context/AuthContext';
 import { FaPlayCircle, FaChevronDown, FaChevronUp, FaArrowLeft, FaClock, FaBars, FaTimes, FaStepBackward, FaStepForward, FaStickyNote, FaSave, FaLock, FaUserGraduate, FaCheckCircle, FaSearch, FaBookmark, FaRegBookmark, FaFolderOpen, FaDownload, FaFilePdf, FaImage, FaFileAlt, FaLink as FaLinkIcon, FaEye, FaBookOpen } from 'react-icons/fa';
 import StatusSelector from '../../components/ui/StatusSelector';
 import LectureSidebarItem from '../../components/course/LectureSidebarItem';
+import TelegramVideo, { isTelegramVideo } from '../../components/course/TelegramVideo';
 import Pagination from '../../components/ui/Pagination';
 import { showSuccess, showError, showWarning } from '../../utils/toast';
 
@@ -873,7 +874,9 @@ const CourseView = () => {
                                 <div className="w-full h-full relative">
                                     {hasAccess ? (
                                         selectedLecture.resourceUrl ? (
-                                            selectedLecture.resourceUrl.includes('youtube') || selectedLecture.resourceUrl.includes('youtu.be') ? (
+                                            isTelegramVideo(selectedLecture.resourceUrl) ? (
+                                                <TelegramVideo lectureId={selectedLecture._id} />
+                                            ) : selectedLecture.resourceUrl.includes('youtube') || selectedLecture.resourceUrl.includes('youtu.be') ? (
                                                 <iframe
                                                     src={getYouTubeEmbedUrl(selectedLecture.resourceUrl)}
                                                     className="w-full h-full"
