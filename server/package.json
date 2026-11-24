@@ -13,7 +13,6 @@
   "type": "commonjs",
   "dependencies": {
     "bcryptjs": "^3.0.3",
-    "big-integer": "^1.6.52",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
@@ -25,8 +24,7 @@
     "multer": "^2.0.2",
     "pdf-parse": "^2.4.5",
     "pdfkit": "^0.17.2",
-    "stripe": "^20.2.0",
-    "telegram": "^2.26.22"
+    "stripe": "^20.2.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"

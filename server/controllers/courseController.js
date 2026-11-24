@@ -8,8 +8,6 @@ const QuizAttempt = require('../models/QuizAttempt');
 const Quiz = require('../models/Quiz');
 const CourseTeacher = require('../models/CourseTeacher');
 const { canManage, getTeacherPermissions } = require('../middleware/ownershipMiddleware');
-const jwt = require('jsonwebtoken');
-const { parseTelegramLink } = require('../services/telegramStream');
 
 // @desc    Create new course
 // @route   POST /api/courses
@@ -448,19 +446,32 @@ const getLecture = asyncHandler(async (req, res) => {
     res.status(200).json(lecture);
 });
 
-// @desc    Short-lived token to stream a Telegram-hosted lecture video
-// @route   GET /api/courses/lectures/:id/stream-token
-// @access  Private
-const getLectureStreamToken = asyncHandler(async (req, res) => {
+// @desc    What the browser needs to play a lecture from the private Telegram channel itself
+// @route   GET /api/courses/lectures/:id/telegram
+// @access  Private (anyone who can view the lecture receives the bot session)
+const getLectureTelegram = asyncHandler(async (req, res) => {
     const lecture = await Lecture.findById(req.params.id);
-    if (!lecture || !parseTelegramLink(lecture.resourceUrl)) {
+    const link = /t\.me\/c\/(\d+)\/(\d+)/.exec(lecture?.resourceUrl || '');
+    if (!link) {
         res.status(404);
-        throw new Error('No streamable video for this lecture');
+        throw new Error('No Telegram video for this lecture');
     }
-
     await assertLectureAccess(req, res, lecture);
-    const token = jwt.sign({ purpose: 'stream', lecture: lecture._id.toString() }, process.env.JWT_SECRET, { expiresIn: '6h' });
-    res.status(200).json({ url: `/stream/${lecture._id}?t=${token}` });
+
+    // TG_CHANNEL_HASHES="<channelId>:<bot's access hash>,..."
+    const pair = (process.env.TG_CHANNEL_HASHES || '').split(',').find((p) => p.startsWith(`${link[1]}:`));
+    if (!pair || !process.env.TG_BOT_SESSION) {
+        res.status(503);
+        throw new Error('Telegram playback is not configured');
+    }
+    res.status(200).json({
+        apiId: Number(process.env.TG_API_ID),
+        apiHash: process.env.TG_API_HASH,
+        session: process.env.TG_BOT_SESSION,
+        channelId: link[1],
+        accessHash: pair.split(':')[1],
+        messageId: Number(link[2]),
+    });
 });
 
 // Throws 403/404 unless the user may view this lecture
@@ -1819,7 +1830,7 @@ module.exports = {
     updateLecture,
     deleteLecture,
     getLecture,
-    getLectureStreamToken,
+    getLectureTelegram,
     getUserStats,
     removeStudent,
     getMyProgress,

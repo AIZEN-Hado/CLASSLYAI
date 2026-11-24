@@ -875,7 +875,7 @@ const CourseView = () => {
                                     {hasAccess ? (
                                         selectedLecture.resourceUrl ? (
                                             isTelegramVideo(selectedLecture.resourceUrl) ? (
-                                                <TelegramVideo lectureId={selectedLecture._id} />
+                                                <TelegramVideo lectureId={selectedLecture._id} url={selectedLecture.resourceUrl} />
                                             ) : selectedLecture.resourceUrl.includes('youtube') || selectedLecture.resourceUrl.includes('youtu.be') ? (
                                                 <iframe
                                                     src={getYouTubeEmbedUrl(selectedLecture.resourceUrl)}

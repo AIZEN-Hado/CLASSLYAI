@@ -3,8 +3,8 @@ import api from '../../api/axios';
 
 export const isTelegramVideo = (url) => /t\.me\/c\/\d+\/\d+/.test(url || '');
 
-// Plays a video from the private Telegram channel through the backend stream
-const TelegramVideo = ({ lectureId }) => {
+// Plays a lecture from the private Telegram channel straight in the browser
+const TelegramVideo = ({ lectureId, url }) => {
     const [src, setSrc] = useState('');
     const [error, setError] = useState('');
 
@@ -12,19 +12,26 @@ const TelegramVideo = ({ lectureId }) => {
         let cancelled = false;
         setSrc('');
         setError('');
-        api.get(`/courses/lectures/${lectureId}/stream-token`)
-            .then(({ data }) => !cancelled && setSrc(api.defaults.baseURL + data.url))
-            .catch(() => !cancelled && setError('Could not load this video'));
-
-        // Keep the free-tier server awake while the lecture is open (also while paused)
-        const ping = setInterval(() => api.get('/health').catch(() => {}), 5 * 60 * 1000);
-        return () => { cancelled = true; clearInterval(ping); };
+        (async () => {
+            const [{ data }, { prepareTelegramVideo }] = await Promise.all([
+                api.get(`/courses/lectures/${lectureId}/telegram`),
+                import('../../lib/telegramPlayer'), // GramJS is large, load it only here
+            ]);
+            const videoSrc = await prepareTelegramVideo(data);
+            if (!cancelled) setSrc(videoSrc);
+        })().catch(() => !cancelled && setError('Could not load this video'));
+        return () => { cancelled = true; };
     }, [lectureId]);
 
     if (error || !src) {
         return (
-            <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 text-zinc-400 text-sm">
-                {error || 'Loading video...'}
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-900 text-zinc-400 text-sm">
+                <span>{error || 'Connecting to Telegram...'}</span>
+                {error && (
+                    <a href={url} target="_blank" rel="noreferrer" className="text-blue-400 hover:text-blue-300 font-medium">
+                        Open in Telegram
+                    </a>
+                )}
             </div>
         );
     }

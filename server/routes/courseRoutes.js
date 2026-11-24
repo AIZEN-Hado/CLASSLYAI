@@ -22,7 +22,7 @@ const {
     updateLecture,
     deleteLecture,
     getLecture,
-    getLectureStreamToken,
+    getLectureTelegram,
     getUserStats,
     removeStudent,
     getMyProgress,
@@ -68,7 +68,7 @@ router.put('/lectures/:id/progress', protect, updateLectureProgress);
 router.put('/lectures/:id/toggle-revision', protect, toggleLectureRevision);
 router.post('/lectures/:id/comments', protect, addComment);
 router.get('/lectures/:id/comments', protect, getLectureComments);
-router.get('/lectures/:id/stream-token', protect, getLectureStreamToken);
+router.get('/lectures/:id/telegram', protect, getLectureTelegram);
 router.get('/lectures/:id', protect, getLecture);
 router.put('/lectures/:id', protect, verifyLectureOwnership, updateLecture);
 router.delete('/lectures/:id', protect, verifyLectureOwnership, deleteLecture);
