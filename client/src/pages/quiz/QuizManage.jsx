@@ -285,33 +285,33 @@ const QuizManage = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-center justify-center">
+            <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center">
                 <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-slate-950 pb-12 transition-colors">
+        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 pb-12 transition-colors">
             {/* Header */}
-            <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-10">
+            <div className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-10">
                 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-4 min-w-0">
                         <button
                             onClick={() => navigate(`/admin/course/${courseId}`)}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-slate-500"
+                            className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors text-zinc-500"
                         >
                             <FaArrowLeft />
                         </button>
                         <div className="min-w-0">
-                            <h1 className="text-lg font-bold text-slate-900 dark:text-white truncate">Quizzes</h1>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{course?.title}</p>
+                            <h1 className="text-lg font-semibold text-zinc-900 dark:text-white truncate">Quizzes</h1>
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400 truncate">{course?.title}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => setShowAIModal(true)}
-                            className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
                         >
                             <FaRobot className="text-xs" /> AI Generate
                         </button>
@@ -319,7 +319,7 @@ const QuizManage = () => {
                             onClick={handleOpenCreate}
                             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
                         >
-                            <FaPlus className="text-xs" /> Create Quiz
+                            <FaPlus className="text-xs" /> Create quiz
                         </button>
                     </div>
                 </div>
@@ -329,34 +329,34 @@ const QuizManage = () => {
                 {quizzes.length > 0 ? (
                     <div className="space-y-4">
                         {quizzes.map(quiz => (
-                            <div key={quiz._id} className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 p-5 transition-colors">
+                            <div key={quiz._id} className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-5 transition-colors">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <h3 className="font-semibold text-slate-900 dark:text-white truncate">{quiz.title}</h3>
-                                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                                            <h3 className="font-medium text-zinc-900 dark:text-white truncate">{quiz.title}</h3>
+                                            <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${
                                                 quiz.isActive
                                                     ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-                                                    : 'bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400'
+                                                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400'
                                             }`}>
                                                 {quiz.isActive ? 'Active' : 'Inactive'}
                                             </span>
                                         </div>
                                         {quiz.description && (
-                                            <p className="text-sm text-slate-500 dark:text-slate-400 mb-3 line-clamp-2">{quiz.description}</p>
+                                            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3 line-clamp-2">{quiz.description}</p>
                                         )}
-                                        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+                                        <div className="flex flex-wrap items-center gap-3 text-xs text-zinc-500 dark:text-zinc-400">
                                             <span className="flex items-center gap-1">
-                                                <FaQuestionCircle className="text-slate-400" />
+                                                <FaQuestionCircle className="text-zinc-400" />
                                                 {quiz.questions?.length || 0} questions
                                             </span>
                                             <span className="flex items-center gap-1">
-                                                <FaCheckCircle className="text-slate-400" />
+                                                <FaCheckCircle className="text-zinc-400" />
                                                 Pass: {quiz.passingScore}%
                                             </span>
                                             {quiz.timeLimit > 0 && (
                                                 <span className="flex items-center gap-1">
-                                                    <FaClock className="text-slate-400" />
+                                                    <FaClock className="text-zinc-400" />
                                                     {quiz.timeLimit} min
                                                 </span>
                                             )}
@@ -368,14 +368,14 @@ const QuizManage = () => {
                                     <div className="flex items-center gap-2">
                                         <button
                                             onClick={() => navigate(`/admin/course/${courseId}/quiz/${quiz._id}/analytics`)}
-                                            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                                            title="View Analytics"
+                                            className="p-2 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                                            title="View analytics"
                                         >
                                             <FaChartBar />
                                         </button>
                                         <button
                                             onClick={() => handleOpenEdit(quiz)}
-                                            className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                                            className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
                                             title="Edit"
                                         >
                                             <FaEdit />
@@ -385,7 +385,7 @@ const QuizManage = () => {
                                             className={`p-2 rounded-lg transition-colors ${
                                                 quiz.isActive
                                                     ? 'text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20'
-                                                    : 'text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800'
+                                                    : 'text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
                                             }`}
                                             title={quiz.isActive ? 'Deactivate' : 'Activate'}
                                         >
@@ -393,7 +393,7 @@ const QuizManage = () => {
                                         </button>
                                         <button
                                             onClick={() => handleDeleteQuiz(quiz._id)}
-                                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                            className="p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                                             title="Delete"
                                         >
                                             <FaTrash />
@@ -404,19 +404,19 @@ const QuizManage = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border-2 border-dashed border-gray-200 dark:border-slate-800">
+                    <div className="text-center py-16 bg-white dark:bg-zinc-900 rounded-2xl border-2 border-dashed border-zinc-200 dark:border-zinc-800">
                         <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <FaQuestionCircle className="text-blue-400 text-2xl" />
+                            <FaQuestionCircle className="text-zinc-400 text-2xl" />
                         </div>
-                        <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">No quizzes yet</h2>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-6">
+                        <h2 className="text-lg font-medium text-zinc-900 dark:text-white mb-2">No quizzes yet</h2>
+                        <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto mb-6">
                             Create quizzes to test student understanding and track their progress.
                         </p>
                         <button
                             onClick={handleOpenCreate}
                             className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium inline-flex items-center gap-2 transition-colors"
                         >
-                            <FaPlus className="text-xs" /> Create Your First Quiz
+                            <FaPlus className="text-xs" /> Create your first quiz
                         </button>
                     </div>
                 )}
@@ -425,45 +425,45 @@ const QuizManage = () => {
             {/* Quiz Modal */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start justify-center z-50 p-4 overflow-y-auto">
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl my-8 border border-gray-200 dark:border-slate-800">
-                        <div className="p-6 border-b border-gray-100 dark:border-slate-800">
-                            <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
-                                {editingQuiz ? 'Edit Quiz' : 'Create Quiz'}
+                    <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-2xl my-8 border border-zinc-200 dark:border-zinc-800">
+                        <div className="p-6 border-b border-zinc-100 dark:border-zinc-800">
+                            <h2 className="text-xl font-medium text-zinc-900 dark:text-white">
+                                {editingQuiz ? 'Edit Quiz' : 'Create quiz'}
                             </h2>
                         </div>
 
                         <div className="p-6 space-y-5 max-h-[60vh] overflow-y-auto">
                             {/* Title */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Title *</label>
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Title *</label>
                                 <input
                                     type="text"
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition"
                                     placeholder="Quiz title"
                                 />
                             </div>
 
                             {/* Description */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Description</label>
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Description</label>
                                 <textarea
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     rows={2}
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none resize-none transition-all"
+                                    className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none resize-none transition"
                                     placeholder="Optional description"
                                 />
                             </div>
 
                             {/* Section */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Section (optional)</label>
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Section (optional)</label>
                                 <select
                                     value={formData.sectionId}
                                     onChange={(e) => setFormData({ ...formData, sectionId: e.target.value })}
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition"
                                 >
                                     <option value="">No section (course-wide)</option>
                                     {course?.sections?.map(section => (
@@ -475,35 +475,35 @@ const QuizManage = () => {
                             {/* Settings Row */}
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                 <div>
-                                    <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Pass Score %</label>
+                                    <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">Pass Score %</label>
                                     <input
                                         type="number"
                                         min="0"
                                         max="100"
                                         value={formData.passingScore}
                                         onChange={(e) => setFormData({ ...formData, passingScore: parseInt(e.target.value) || 0 })}
-                                        className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                        className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Time (min)</label>
+                                    <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">Time (min)</label>
                                     <input
                                         type="number"
                                         min="0"
                                         value={formData.timeLimit}
                                         onChange={(e) => setFormData({ ...formData, timeLimit: parseInt(e.target.value) || 0 })}
-                                        className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                        className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                                         placeholder="0 = no limit"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Max Attempts</label>
+                                    <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">Max attempts</label>
                                     <input
                                         type="number"
                                         min="-1"
                                         value={formData.attemptsAllowed}
                                         onChange={(e) => setFormData({ ...formData, attemptsAllowed: parseInt(e.target.value) })}
-                                        className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                        className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                                         placeholder="-1 = unlimited"
                                     />
                                 </div>
@@ -513,9 +513,9 @@ const QuizManage = () => {
                                             type="checkbox"
                                             checked={formData.isRequired}
                                             onChange={(e) => setFormData({ ...formData, isRequired: e.target.checked })}
-                                            className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                            className="w-4 h-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
                                         />
-                                        <span className="text-sm text-slate-700 dark:text-slate-300">Required</span>
+                                        <span className="text-sm text-zinc-700 dark:text-zinc-300">Required</span>
                                     </label>
                                 </div>
                             </div>
@@ -523,28 +523,28 @@ const QuizManage = () => {
                             {/* Questions */}
                             <div>
                                 <div className="flex items-center justify-between mb-3">
-                                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
                                         Questions ({formData.questions.length})
                                     </label>
                                     <button
                                         onClick={handleAddQuestion}
                                         className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
                                     >
-                                        <FaPlus className="text-xs" /> Add Question
+                                        <FaPlus className="text-xs" /> Add question
                                     </button>
                                 </div>
 
                                 {formData.questions.length > 0 ? (
                                     <div className="space-y-2 max-h-48 overflow-y-auto">
                                         {formData.questions.map((q, idx) => (
-                                            <div key={idx} className="flex items-center justify-between gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                                            <div key={idx} className="flex items-center justify-between gap-3 p-3 bg-zinc-50 dark:bg-zinc-800 rounded-lg">
                                                 <div className="flex items-center gap-3 min-w-0">
-                                                    <span className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold flex items-center justify-center shrink-0">
+                                                    <span className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-semibold flex items-center justify-center shrink-0">
                                                         {idx + 1}
                                                     </span>
                                                     <div className="min-w-0">
-                                                        <p className="text-sm text-slate-900 dark:text-white truncate">{q.questionText}</p>
-                                                        <p className="text-xs text-slate-500">
+                                                        <p className="text-sm text-zinc-900 dark:text-white truncate">{q.questionText}</p>
+                                                        <p className="text-xs text-zinc-500">
                                                             {q.questionType.toUpperCase()} • {q.points} pt{q.points !== 1 ? 's' : ''}
                                                         </p>
                                                     </div>
@@ -552,13 +552,13 @@ const QuizManage = () => {
                                                 <div className="flex items-center gap-1 shrink-0">
                                                     <button
                                                         onClick={() => handleEditQuestion(idx)}
-                                                        className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+                                                        className="p-1.5 text-zinc-400 hover:text-zinc-700 dark:hover:text-white transition-colors"
                                                     >
                                                         <FaEdit size={12} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleDeleteQuestion(idx)}
-                                                        className="p-1.5 text-slate-400 hover:text-red-600 transition-colors"
+                                                        className="p-1.5 text-zinc-400 hover:text-red-600 transition-colors"
                                                     >
                                                         <FaTrash size={12} />
                                                     </button>
@@ -567,17 +567,17 @@ const QuizManage = () => {
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="text-center py-8 bg-slate-50 dark:bg-slate-800 rounded-lg border-2 border-dashed border-gray-200 dark:border-slate-700">
-                                        <p className="text-sm text-slate-500 dark:text-slate-400">No questions yet. Add at least one question.</p>
+                                    <div className="text-center py-8 bg-zinc-50 dark:bg-zinc-800 rounded-lg border-2 border-dashed border-zinc-200 dark:border-zinc-700">
+                                        <p className="text-sm text-zinc-500 dark:text-zinc-400">No questions yet. Add at least one question.</p>
                                     </div>
                                 )}
                             </div>
                         </div>
 
-                        <div className="p-6 border-t border-gray-100 dark:border-slate-800 flex gap-3">
+                        <div className="p-6 border-t border-zinc-100 dark:border-zinc-800 flex gap-3">
                             <button
                                 onClick={() => { setShowModal(false); resetForm(); }}
-                                className="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium py-2.5 rounded-lg text-sm transition-colors"
+                                className="flex-1 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-medium py-2.5 rounded-lg text-sm transition-colors"
                             >
                                 Cancel
                             </button>
@@ -585,7 +585,7 @@ const QuizManage = () => {
                                 onClick={handleSaveQuiz}
                                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition-colors"
                             >
-                                {editingQuiz ? 'Save Changes' : 'Create Quiz'}
+                                {editingQuiz ? 'Save changes' : 'Create quiz'}
                             </button>
                         </div>
                     </div>
@@ -595,12 +595,12 @@ const QuizManage = () => {
             {/* AI Generate Modal */}
             {showAIModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-slate-800">
-                        <div className="p-6 border-b border-gray-100 dark:border-slate-800">
-                            <h2 className="text-xl font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-                                <FaRobot className="text-purple-500" /> Generate Quiz with AI
+                    <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-md border border-zinc-200 dark:border-zinc-800">
+                        <div className="p-6 border-b border-zinc-100 dark:border-zinc-800">
+                            <h2 className="text-xl font-medium text-zinc-900 dark:text-white flex items-center gap-2">
+                                <FaRobot className="text-zinc-400" /> Generate Quiz with AI
                             </h2>
-                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
                                 AI will create questions that you can review and edit before saving.
                             </p>
                         </div>
@@ -608,20 +608,20 @@ const QuizManage = () => {
                         <div className="p-6 space-y-5">
                             {/* Topic */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Topic *</label>
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Topic *</label>
                                 <input
                                     type="text"
                                     value={aiForm.topic}
                                     onChange={(e) => setAiForm({ ...aiForm, topic: e.target.value })}
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none transition-all"
-                                    placeholder="e.g. React Hooks, Python OOP, Cell Biology..."
+                                    className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+                                    placeholder="e.g. React Hooks, Python OOP, Cell Biology"
                                 />
                             </div>
 
                             {/* Number of Questions */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                                    Number of Questions: <span className="text-purple-600 font-bold">{aiForm.numQuestions}</span>
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                                    Number of Questions: <span className="text-blue-600 font-semibold">{aiForm.numQuestions}</span>
                                 </label>
                                 <input
                                     type="range"
@@ -629,25 +629,25 @@ const QuizManage = () => {
                                     max="20"
                                     value={aiForm.numQuestions}
                                     onChange={(e) => setAiForm({ ...aiForm, numQuestions: parseInt(e.target.value) })}
-                                    className="w-full accent-purple-600"
+                                    className="w-full accent-blue-600"
                                 />
-                                <div className="flex justify-between text-xs text-slate-400 mt-1">
+                                <div className="flex justify-between text-xs text-zinc-400 mt-1">
                                     <span>3</span><span>20</span>
                                 </div>
                             </div>
 
                             {/* Difficulty */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Difficulty</label>
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Difficulty</label>
                                 <div className="grid grid-cols-3 gap-2">
                                     {['easy', 'intermediate', 'hard'].map(d => (
                                         <button
                                             key={d}
                                             onClick={() => setAiForm({ ...aiForm, difficulty: d })}
-                                            className={`py-2 rounded-lg text-sm font-medium border-2 transition-all capitalize ${
+                                            className={`py-2 rounded-lg text-sm font-medium border-2 transition capitalize ${
                                                 aiForm.difficulty === d
-                                                    ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'
-                                                    : 'border-gray-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-gray-300'
+                                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+                                                    : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300'
                                             }`}
                                         >
                                             {d}
@@ -658,7 +658,7 @@ const QuizManage = () => {
 
                             {/* Question Types */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Question Types</label>
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Question types</label>
                                 <div className="flex flex-wrap gap-2">
                                     {[
                                         { value: 'mcq', label: 'Multiple Choice' },
@@ -668,10 +668,10 @@ const QuizManage = () => {
                                         <button
                                             key={type.value}
                                             onClick={() => toggleQuestionType(type.value)}
-                                            className={`px-3 py-1.5 rounded-lg text-xs font-medium border-2 transition-all ${
+                                            className={`px-3 py-1.5 rounded-lg text-xs font-medium border-2 transition ${
                                                 aiForm.questionTypes.includes(type.value)
-                                                    ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'
-                                                    : 'border-gray-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'
+                                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+                                                    : 'border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400'
                                             }`}
                                         >
                                             {type.label}
@@ -681,18 +681,18 @@ const QuizManage = () => {
                             </div>
                         </div>
 
-                        <div className="p-6 border-t border-gray-100 dark:border-slate-800 flex gap-3">
+                        <div className="p-6 border-t border-zinc-100 dark:border-zinc-800 flex gap-3">
                             <button
                                 onClick={() => setShowAIModal(false)}
                                 disabled={aiGenerating}
-                                className="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium py-2.5 rounded-lg text-sm transition-colors disabled:opacity-50"
+                                className="flex-1 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-medium py-2.5 rounded-lg text-sm transition-colors disabled:opacity-50"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleAIGenerate}
                                 disabled={aiGenerating || !aiForm.topic.trim()}
-                                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 rounded-lg text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                             >
                                 {aiGenerating ? (
                                     <>
@@ -700,7 +700,7 @@ const QuizManage = () => {
                                     </>
                                 ) : (
                                     <>
-                                        <FaRobot /> Generate Questions
+                                        <FaRobot /> Generate questions
                                     </>
                                 )}
                             </button>
@@ -712,22 +712,22 @@ const QuizManage = () => {
             {/* Question Modal */}
             {showQuestionModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg border border-gray-200 dark:border-slate-800">
-                        <div className="p-5 border-b border-gray-100 dark:border-slate-800">
-                            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-                                {editingQuestionIndex !== null ? 'Edit Question' : 'Add Question'}
+                    <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-lg border border-zinc-200 dark:border-zinc-800">
+                        <div className="p-5 border-b border-zinc-100 dark:border-zinc-800">
+                            <h3 className="text-lg font-medium text-zinc-900 dark:text-white">
+                                {editingQuestionIndex !== null ? 'Edit Question' : 'Add question'}
                             </h3>
                         </div>
 
                         <div className="p-5 space-y-4">
                             {/* Question Text */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Question *</label>
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Question *</label>
                                 <textarea
                                     value={questionForm.questionText}
                                     onChange={(e) => setQuestionForm({ ...questionForm, questionText: e.target.value })}
                                     rows={2}
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                                    className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none resize-none"
                                     placeholder="Enter your question"
                                 />
                             </div>
@@ -735,11 +735,11 @@ const QuizManage = () => {
                             {/* Question Type */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Type</label>
+                                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Type</label>
                                     <select
                                         value={questionForm.questionType}
                                         onChange={(e) => setQuestionForm({ ...questionForm, questionType: e.target.value, correctAnswer: e.target.value === 'true-false' ? true : 0 })}
-                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                        className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
                                     >
                                         <option value="mcq">Multiple Choice</option>
                                         <option value="true-false">True/False</option>
@@ -747,13 +747,13 @@ const QuizManage = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Points</label>
+                                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Points</label>
                                     <input
                                         type="number"
                                         min="1"
                                         value={questionForm.points}
                                         onChange={(e) => setQuestionForm({ ...questionForm, points: parseInt(e.target.value) || 1 })}
-                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                        className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
                                     />
                                 </div>
                             </div>
@@ -761,7 +761,7 @@ const QuizManage = () => {
                             {/* MCQ Options */}
                             {questionForm.questionType === 'mcq' && (
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Options</label>
+                                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Options</label>
                                     <div className="space-y-2">
                                         {questionForm.options.map((opt, idx) => (
                                             <div key={idx} className="flex items-center gap-2">
@@ -780,20 +780,20 @@ const QuizManage = () => {
                                                         newOpts[idx] = e.target.value;
                                                         setQuestionForm({ ...questionForm, options: newOpts });
                                                     }}
-                                                    className="flex-1 px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                                    className="flex-1 px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                                                     placeholder={`Option ${idx + 1}`}
                                                 />
                                             </div>
                                         ))}
                                     </div>
-                                    <p className="text-xs text-slate-500 mt-2">Select the correct answer</p>
+                                    <p className="text-xs text-zinc-500 mt-2">Select the correct answer</p>
                                 </div>
                             )}
 
                             {/* True/False */}
                             {questionForm.questionType === 'true-false' && (
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Correct Answer</label>
+                                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Correct answer</label>
                                     <div className="flex gap-4">
                                         <label className="flex items-center gap-2 cursor-pointer">
                                             <input
@@ -803,7 +803,7 @@ const QuizManage = () => {
                                                 onChange={() => setQuestionForm({ ...questionForm, correctAnswer: true })}
                                                 className="w-4 h-4 text-blue-600"
                                             />
-                                            <span className="text-sm text-slate-700 dark:text-slate-300">True</span>
+                                            <span className="text-sm text-zinc-700 dark:text-zinc-300">True</span>
                                         </label>
                                         <label className="flex items-center gap-2 cursor-pointer">
                                             <input
@@ -813,7 +813,7 @@ const QuizManage = () => {
                                                 onChange={() => setQuestionForm({ ...questionForm, correctAnswer: false })}
                                                 className="w-4 h-4 text-blue-600"
                                             />
-                                            <span className="text-sm text-slate-700 dark:text-slate-300">False</span>
+                                            <span className="text-sm text-zinc-700 dark:text-zinc-300">False</span>
                                         </label>
                                     </div>
                                 </div>
@@ -822,22 +822,22 @@ const QuizManage = () => {
                             {/* Short Answer */}
                             {questionForm.questionType === 'short-answer' && (
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Correct Answer</label>
+                                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Correct answer</label>
                                     <input
                                         type="text"
                                         value={questionForm.correctAnswer}
                                         onChange={(e) => setQuestionForm({ ...questionForm, correctAnswer: e.target.value })}
-                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                        className="w-full px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
                                         placeholder="Expected answer (case-insensitive)"
                                     />
                                 </div>
                             )}
                         </div>
 
-                        <div className="p-5 border-t border-gray-100 dark:border-slate-800 flex gap-3">
+                        <div className="p-5 border-t border-zinc-100 dark:border-zinc-800 flex gap-3">
                             <button
                                 onClick={() => { setShowQuestionModal(false); resetQuestionForm(); }}
-                                className="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium py-2.5 rounded-lg text-sm transition-colors"
+                                className="flex-1 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-medium py-2.5 rounded-lg text-sm transition-colors"
                             >
                                 Cancel
                             </button>
@@ -845,7 +845,7 @@ const QuizManage = () => {
                                 onClick={handleSaveQuestion}
                                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition-colors"
                             >
-                                {editingQuestionIndex !== null ? 'Update' : 'Add Question'}
+                                {editingQuestionIndex !== null ? 'Update' : 'Add question'}
                             </button>
                         </div>
                     </div>

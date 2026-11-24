@@ -11,11 +11,29 @@ export default {
         'xs': '480px', // Extra small breakpoint for mobile
       },
       colors: {
-        primary: '#2563EB', // Soft Blue
-        background: '#F8FAFC', // Off White
-        textPrimary: '#0F172A', // Dark Navy
-        textSecondary: '#475569', // Gray
-        accent: '#22C55E', // Soft Green
+        primary: '#2563EB',
+        background: '#FAFAFA',
+        textPrimary: '#171717',
+        textSecondary: '#525252',
+        accent: '#22C55E',
+      },
+      fontFamily: {
+        sans: ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
+      transitionTimingFunction: {
+        DEFAULT: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      },
+      transitionDuration: {
+        DEFAULT: '150ms',
+      },
+      keyframes: {
+        'fade-in': {
+          from: { opacity: '0', transform: 'translateY(4px)' },
+          to: { opacity: '1', transform: 'none' },
+        },
+      },
+      animation: {
+        'fade-in': 'fade-in 200ms cubic-bezier(0.22, 1, 0.36, 1)',
       }
     },
   },

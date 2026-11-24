@@ -1,8 +1,9 @@
 import { useState, useEffect, useContext, useRef } from 'react';
+import TabLabel from '../../components/ui/TabLabel';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
 import AuthContext from '../../context/AuthContext';
-import { FaPlayCircle, FaChevronDown, FaChevronUp, FaArrowLeft, FaClock, FaBars, FaTimes, FaStepBackward, FaStepForward, FaStickyNote, FaSave, FaLock, FaUserGraduate, FaCheckCircle, FaSearch, FaBookmark, FaRegBookmark, FaFolderOpen, FaDownload, FaFilePdf, FaImage, FaFileAlt, FaLink as FaLinkIcon, FaEye } from 'react-icons/fa';
+import { FaPlayCircle, FaChevronDown, FaChevronUp, FaArrowLeft, FaClock, FaBars, FaTimes, FaStepBackward, FaStepForward, FaStickyNote, FaSave, FaLock, FaUserGraduate, FaCheckCircle, FaSearch, FaBookmark, FaRegBookmark, FaFolderOpen, FaDownload, FaFilePdf, FaImage, FaFileAlt, FaLink as FaLinkIcon, FaEye, FaBookOpen } from 'react-icons/fa';
 import StatusSelector from '../../components/ui/StatusSelector';
 import LectureSidebarItem from '../../components/course/LectureSidebarItem';
 import Pagination from '../../components/ui/Pagination';
@@ -277,7 +278,7 @@ const CourseView = () => {
     };
 
     const FILE_TYPE_ICONS = { pdf: FaFilePdf, image: FaImage, document: FaFileAlt, link: FaLinkIcon };
-    const FILE_TYPE_COLORS = { pdf: 'text-red-500', image: 'text-blue-500', document: 'text-amber-500', link: 'text-indigo-500' };
+    const FILE_TYPE_COLORS = { pdf: 'text-red-500', image: 'text-blue-500', document: 'text-amber-500', link: 'text-blue-500' };
     const formatFileSize = (bytes) => {
         if (!bytes) return '';
         if (bytes < 1024) return bytes + ' B';
@@ -348,7 +349,7 @@ const CourseView = () => {
                     notes: notes
                 }
             }));
-            showSuccess('Notes saved!');
+            showSuccess('Notes saved');
         } catch (error) {
             showError('Failed to save notes');
         } finally {
@@ -372,7 +373,7 @@ const CourseView = () => {
                 ...prev,
                 [lecId]: { status: newStatus, notes: existingNotes }
             }));
-            showSuccess('Progress saved!');
+            showSuccess('Progress saved');
         } catch (err) {
             console.error("Failed to update progress", err);
             showError('Failed to save progress');
@@ -395,7 +396,7 @@ const CourseView = () => {
                     markedForRevision
                 }
             }));
-            showSuccess(markedForRevision ? 'Marked for revision!' : 'Removed from revision list');
+            showSuccess(markedForRevision ? 'Marked for revision' : 'Removed from revision list');
         } catch (err) {
             showError('Failed to update revision mark');
         }
@@ -413,7 +414,7 @@ const CourseView = () => {
 
             setNewComment('');
             fetchComments(selectedLecture._id);
-            showSuccess('Comment posted!');
+            showSuccess('Comment posted');
         } catch (error) {
             showError('Error posting comment');
         }
@@ -472,7 +473,7 @@ const CourseView = () => {
         });
     }
 
-    if (!course) return <div className="flex justify-center items-center h-screen text-slate-500 font-medium bg-gray-50 dark:bg-slate-950 dark:text-slate-400">Loading Experience...</div>;
+    if (!course) return <div className="flex justify-center items-center h-screen text-zinc-500 font-medium bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-400">Loading Experience...</div>;
 
 
     // Check access
@@ -480,32 +481,32 @@ const CourseView = () => {
 
 
     return (
-        <div className="bg-gray-50 dark:bg-slate-950 text-slate-900 dark:text-gray-100 font-sans transition-colors duration-300 min-h-screen animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-300 min-h-screen animate-in fade-in slide-in-from-bottom-4 duration-500">
 
             {/* Resource Viewer Modal */}
             {viewingResource && viewUrl && (
                 <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={closeViewer}>
-                    <div className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
-                        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/60">
+                    <div className="relative bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between px-5 py-3 border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/60">
                             <div className="flex-1 min-w-0">
-                                <h3 className="text-sm font-bold text-slate-800 dark:text-white truncate">{viewingResource.title}</h3>
+                                <h3 className="text-sm font-semibold text-zinc-800 dark:text-white truncate">{viewingResource.title}</h3>
                                 {viewingResource.description && (
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">{viewingResource.description}</p>
+                                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 line-clamp-1">{viewingResource.description}</p>
                                 )}
                             </div>
                             <div className="flex items-center gap-2 ml-3">
                                 <button
                                     onClick={() => handleResourceDownload(viewingResource)}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg text-xs font-bold hover:opacity-90 transition-all"
+                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium transition"
                                 >
                                     <FaDownload size={10} /> Download
                                 </button>
-                                <button onClick={closeViewer} className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                                <button onClick={closeViewer} className="p-1.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors">
                                     <FaTimes size={14} />
                                 </button>
                             </div>
                         </div>
-                        <div className="flex-1 overflow-auto p-1 bg-slate-100 dark:bg-slate-950" style={{ minHeight: '400px' }}>
+                        <div className="flex-1 overflow-auto p-1 bg-zinc-100 dark:bg-zinc-950" style={{ minHeight: '400px' }}>
                             {viewingResource.fileType === 'pdf' ? (
                                 <iframe src={viewUrl} className="w-full h-full min-h-[70vh] rounded-lg" title={viewingResource.title} />
                             ) : viewingResource.fileType === 'image' ? (
@@ -513,22 +514,22 @@ const CourseView = () => {
                                     <img src={viewUrl} alt={viewingResource.title} className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-lg" />
                                 </div>
                             ) : viewingResource.mimeType?.includes('csv') && viewTextContent ? (
-                                <div className="w-full h-full bg-white dark:bg-slate-900 rounded-lg overflow-x-auto shadow-inner min-h-[70vh]">
+                                <div className="w-full h-full bg-white dark:bg-zinc-900 rounded-lg overflow-x-auto shadow-inner min-h-[70vh]">
                                     <table className="w-full text-left border-collapse min-w-max text-xs md:text-sm">
-                                        <thead className="bg-slate-50 dark:bg-slate-800/80 sticky top-0 shadow-sm">
+                                        <thead className="bg-zinc-50 dark:bg-zinc-800/80 sticky top-0 shadow-sm">
                                             <tr>
                                                 {viewTextContent.split('\n')[0]?.split(',').map((header, i) => (
-                                                    <th key={i} className="border-b dark:border-slate-700 px-4 py-3 font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                                                    <th key={i} className="border-b dark:border-zinc-700 px-4 py-3 font-medium text-zinc-700 dark:text-zinc-300 whitespace-nowrap">
                                                         {header.replace(/^"|"$/g, '')}
                                                     </th>
                                                 ))}
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-gray-100 dark:divide-slate-800/80">
+                                        <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/80">
                                             {viewTextContent.split('\n').slice(1).map((line, i) => line.trim() ? (
-                                                <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                                                <tr key={i} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-colors">
                                                     {line.split(',').map((cell, j) => (
-                                                        <td key={j} className="px-4 py-2.5 text-slate-600 dark:text-slate-400">
+                                                        <td key={j} className="px-4 py-2.5 text-zinc-600 dark:text-zinc-400">
                                                             {cell.replace(/^"|"$/g, '')}
                                                         </td>
                                                     ))}
@@ -538,20 +539,20 @@ const CourseView = () => {
                                     </table>
                                 </div>
                             ) : viewingResource.mimeType?.includes('text') && viewTextContent ? (
-                                <div className="w-full h-full bg-white dark:bg-slate-900 p-6 rounded-lg overflow-auto shadow-inner min-h-[70vh]">
-                                    <pre className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap font-mono leading-relaxed">
+                                <div className="w-full h-full bg-white dark:bg-zinc-900 p-6 rounded-lg overflow-auto shadow-inner min-h-[70vh]">
+                                    <pre className="text-sm text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap font-mono leading-relaxed">
                                         {viewTextContent}
                                     </pre>
                                 </div>
                             ) : (
                                 <div className="flex flex-col items-center justify-center h-full py-20 gap-4 min-h-[70vh]">
-                                    <FaFileAlt className="text-slate-300 dark:text-slate-700" size={56} />
-                                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Preview not available for this format.</p>
+                                    <FaFileAlt className="text-zinc-300 dark:text-zinc-700" size={56} />
+                                    <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">Preview not available for this format.</p>
                                     <button
                                         onClick={() => handleResourceDownload(viewingResource)}
-                                        className="flex items-center gap-2 px-6 py-2.5 mt-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-lg text-sm font-bold shadow-md shadow-indigo-500/20 hover:shadow-lg transition-all"
+                                        className="flex items-center gap-2 px-6 py-2.5 mt-2 bg-blue-600 text-white rounded-lg text-sm font-semibold shadow-md transition"
                                     >
-                                        <FaDownload size={12} /> Download to View
+                                        <FaDownload size={12} /> Download to view
                                     </button>
                                 </div>
                             )}
@@ -561,16 +562,16 @@ const CourseView = () => {
             )}
 
             {/* Mobile Header */}
-            <div className="lg:hidden bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 p-3 flex items-center justify-between z-50 sticky top-0">
+            <div className="lg:hidden bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 p-3 flex items-center justify-between z-50 sticky top-0">
                 <div className="flex items-center gap-3">
-                    <button onClick={() => navigate(`/course/${id}`)} className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
+                    <button onClick={() => navigate(`/course/${id}`)} className="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
                         <FaArrowLeft size={16} />
                     </button>
-                    <h1 className="font-bold text-slate-900 dark:text-white truncate max-w-[200px] text-sm">{course?.title}</h1>
+                    <h1 className="font-semibold text-zinc-900 dark:text-white truncate max-w-[200px] text-sm">{course?.title}</h1>
                 </div>
                 <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className="p-2 text-slate-500 hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                    className="p-2 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800 rounded-lg transition-colors"
                 >
                     {isSidebarOpen ? <FaTimes size={18} /> : <FaBars size={18} />}
                 </button>
@@ -579,31 +580,31 @@ const CourseView = () => {
             <div className="flex relative">
                 {/* Mobile Sidebar Overlay (Backdrop) */}
                 <div
-                    className={`fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-30 lg:hidden transition-opacity duration-300 ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                    className={`fixed inset-0 bg-zinc-900/50 backdrop-blur-sm z-30 lg:hidden transition-opacity duration-300 ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                     onClick={() => setIsSidebarOpen(false)}
                 />
 
                 {/* Sidebar (Sheet-like) */}
                 <div className={`
                         fixed lg:sticky top-0 inset-y-0 left-0 h-screen z-40 lg:z-10 shrink-0
-                        bg-white dark:bg-slate-900 lg:border-r border-gray-100 dark:border-slate-800 shadow-2xl lg:shadow-none
-                        flex flex-col transform transition-all duration-300
+                        bg-white dark:bg-zinc-900 lg:border-r border-zinc-100 dark:border-zinc-800 shadow-2xl lg:shadow-none
+                        flex flex-col transform transition duration-300
                         ${isSidebarOpen ? 'translate-x-0 w-[280px]' : '-translate-x-full lg:translate-x-0 w-[280px]'}
                         ${!isSidebarVisible ? 'lg:w-16' : 'lg:w-80'}
 
                     `}>
-                    <div className={`p-3 bg-white dark:bg-slate-900 sticky top-0 z-10 hidden lg:flex items-center border-b border-gray-100 dark:border-slate-800 ${!isSidebarVisible ? 'justify-center' : 'justify-between'}`}>
+                    <div className={`p-3 bg-white dark:bg-zinc-900 sticky top-0 z-10 hidden lg:flex items-center border-b border-zinc-100 dark:border-zinc-800 ${!isSidebarVisible ? 'justify-center' : 'justify-between'}`}>
                         {isSidebarVisible ? (
                             <>
                                 <div className="flex items-center gap-3">
-                                    <button onClick={() => navigate(`/course/${id}`)} className="text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
+                                    <button onClick={() => navigate(`/course/${id}`)} className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors">
                                         <FaArrowLeft />
                                     </button>
-                                    <h2 className="font-semibold text-slate-900 dark:text-white truncate text-sm" title={course.title}>{course.title}</h2>
+                                    <h2 className="font-medium text-zinc-900 dark:text-white truncate text-sm" title={course.title}>{course.title}</h2>
                                 </div>
                                 <button
                                     onClick={() => setIsSidebarVisible(false)}
-                                    className="text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors p-1"
+                                    className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors p-1"
                                     title="Minimize sidebar"
                                 >
                                     <FaBars size={18} />
@@ -612,7 +613,7 @@ const CourseView = () => {
                         ) : (
                             <button
                                 onClick={() => setIsSidebarVisible(true)}
-                                className="text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors p-1"
+                                className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors p-1"
                                 title="Expand sidebar"
                             >
                                 <FaBars size={18} />
@@ -621,9 +622,9 @@ const CourseView = () => {
                     </div>
 
                     {/* Mobile Sidebar Header (Close button) */}
-                    <div className="lg:hidden p-3 flex items-center justify-between border-b border-gray-100 dark:border-slate-800">
-                        <h2 className="font-bold text-slate-900 dark:text-white text-lg">Course Content</h2>
-                        <button onClick={() => setIsSidebarOpen(false)} className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
+                    <div className="lg:hidden p-3 flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800">
+                        <h2 className="text-base sm:text-lg font-semibold text-zinc-900 dark:text-white">Course content</h2>
+                        <button onClick={() => setIsSidebarOpen(false)} className="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
                             <FaTimes size={20} />
                         </button>
                     </div>
@@ -636,23 +637,23 @@ const CourseView = () => {
                                     <div className="relative">
                                         <button
                                             onClick={() => { setShowPeerSelector(!showPeerSelector); setPeerKeyword(''); }}
-                                            className="flex items-center gap-2 w-full bg-slate-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors"
+                                            className="flex items-center gap-2 w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors"
                                         >
-                                            <FaUserGraduate size={10} className="text-slate-400" />
-                                            <span>View Peer Progress</span>
-                                            <FaChevronDown className={`text-slate-400 text-[8px] ml-auto transition-transform ${showPeerSelector ? 'rotate-180' : ''}`} />
+                                            <FaUserGraduate size={10} className="text-zinc-400" />
+                                            <span>View peer progress</span>
+                                            <FaChevronDown className={`text-zinc-400 text-[11px] ml-auto transition-transform ${showPeerSelector ? 'rotate-180' : ''}`} />
                                         </button>
                                         {showPeerSelector && (
-                                            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg z-30 overflow-hidden">
-                                                <div className="p-1.5 border-b border-gray-100 dark:border-slate-700">
+                                            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg z-30 overflow-hidden">
+                                                <div className="p-1.5 border-b border-zinc-100 dark:border-zinc-700">
                                                     <div className="relative">
-                                                        <FaSearch className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400" size={9} />
+                                                        <FaSearch className="absolute left-2 top-1/2 -translate-y-1/2 text-zinc-400" size={9} />
                                                         <input
                                                             type="text"
-                                                            placeholder="Search..."
+                                                            placeholder="Search"
                                                             value={peerKeyword}
                                                             onChange={(e) => setPeerKeyword(e.target.value)}
-                                                            className="w-full pl-6 pr-2 py-1 text-[11px] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-800 dark:text-slate-200"
+                                                            className="w-full pl-6 pr-2 py-1 text-[11px] bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-zinc-800 dark:text-zinc-200"
                                                             autoFocus
                                                         />
                                                     </div>
@@ -662,17 +663,17 @@ const CourseView = () => {
                                                         <button
                                                             key={s._id}
                                                             onClick={() => { setSelectedPeerId(s._id); setSelectedPeerName(s.name); setShowPeerSelector(false); }}
-                                                            className="w-full px-2.5 py-1.5 text-left hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
+                                                            className="w-full px-2.5 py-1.5 text-left hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors flex items-center gap-2"
                                                         >
-                                                            <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-[8px] font-bold shrink-0">
+                                                            <div className="w-5 h-5 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-200 text-[11px] font-semibold shrink-0">
                                                                 {s.name?.charAt(0)?.toUpperCase() || '?'}
                                                             </div>
                                                             <div className="min-w-0">
-                                                                <p className="text-[11px] font-medium text-slate-800 dark:text-slate-200 truncate">{s.name}</p>
+                                                                <p className="text-[11px] font-medium text-zinc-800 dark:text-zinc-200 truncate">{s.name}</p>
                                                             </div>
                                                         </button>
                                                     )) : (
-                                                        <div className="px-2.5 py-3 text-[11px] text-slate-400 text-center italic">No students found</div>
+                                                        <div className="px-2.5 py-3 text-[11px] text-zinc-400 text-center italic">No students found</div>
                                                     )}
                                                 </div>
                                             </div>
@@ -680,16 +681,16 @@ const CourseView = () => {
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-2.5 py-1.5">
-                                        <FaUserGraduate className="text-blue-500 shrink-0" size={10} />
+                                        <FaUserGraduate className="text-zinc-400 shrink-0" size={10} />
                                         <div className="flex-1 min-w-0">
-                                            <span className="text-[10px] font-medium text-blue-700 dark:text-blue-300 truncate block">{selectedPeerName}</span>
+                                            <span className="text-[11px] font-medium text-blue-700 dark:text-blue-300 truncate block">{selectedPeerName}</span>
                                             {peerProgressData && (
-                                                <span className="text-[9px] text-blue-500 dark:text-blue-400">
+                                                <span className="text-[11px] text-blue-500 dark:text-blue-400">
                                                     {peerProgressData.progress.progressPercent}% complete
                                                 </span>
                                             )}
                                         </div>
-                                        {peerProgressLoading && <span className="text-[9px] text-blue-400 animate-pulse">...</span>}
+                                        {peerProgressLoading && <span className="text-[11px] text-blue-400">...</span>}
                                         <button onClick={() => { setSelectedPeerId(null); setSelectedPeerName(''); }} className="p-0.5 hover:bg-blue-100 dark:hover:bg-blue-800/50 rounded text-blue-500"><FaTimes size={10} /></button>
                                     </div>
                                 )}
@@ -709,43 +710,43 @@ const CourseView = () => {
                                     <div className="px-2 pt-1 pb-0.5">
                                         <button
                                             onClick={() => toggleSection(section._id)}
-                                            className="w-full flex justify-between items-center group mb-1 hover:bg-gray-50 dark:hover:bg-slate-800/50 rounded-md p-1 -mx-1 transition-colors"
+                                            className="w-full flex justify-between items-center group mb-1 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded-md p-1 -mx-1 transition-colors"
                                         >
-                                            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors flex items-center gap-1.5">{section.title}
+                                            <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-800 dark:group-hover:text-zinc-200 transition-colors flex items-center gap-1.5">{section.title}
                                                 {section.importance && (
-                                                    <span className={`text-[8px] font-bold px-1 py-0.5 rounded uppercase tracking-wide normal-case ${
+                                                    <span className={`text-[11px] font-semibold px-1 py-0.5 rounded uppercase normal-case ${
                                                         section.importance === 'Very Important' ? 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300' :
                                                         section.importance === 'Important' ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300' :
                                                         section.importance === 'Normal' ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300' :
-                                                        'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                                                        'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400'
                                                     }`}>
                                                         {section.importance}
                                                     </span>
                                                 )}
                                             </span>
                                             {expandedSections[section._id] ?
-                                                <FaChevronUp className="text-[10px] text-slate-400 dark:text-slate-500" /> :
-                                                <FaChevronDown className="text-[10px] text-slate-400 dark:text-slate-500" />
+                                                <FaChevronUp className="text-[11px] text-zinc-400 dark:text-zinc-500" /> :
+                                                <FaChevronDown className="text-[11px] text-zinc-400 dark:text-zinc-500" />
                                             }
                                         </button>
-                                        <div className="h-0.5 bg-gray-100 dark:bg-slate-800 rounded-full overflow-hidden w-full mb-1">
+                                        <div className="h-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden w-full mb-1">
                                             <div
-                                                className="h-full bg-slate-900 dark:bg-blue-600 transition-all duration-500"
+                                                className="h-full bg-zinc-900 dark:bg-blue-600 transition duration-500"
                                                 style={{ width: `${secPercent}%` }}
                                             ></div>
                                         </div>
                                         {selectedPeerId && peerSectionMap[section._id] && (
                                             <div className="flex items-center gap-1.5 mb-1">
-                                                <div className="h-0.5 bg-gray-100 dark:bg-slate-800 rounded-full overflow-hidden flex-1">
-                                                    <div className="h-full bg-purple-500 transition-all duration-500" style={{ width: `${peerSectionMap[section._id].progressPercent}%` }} />
+                                                <div className="h-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden flex-1">
+                                                    <div className="h-full bg-blue-500 transition duration-500" style={{ width: `${peerSectionMap[section._id].progressPercent}%` }} />
                                                 </div>
-                                                <span className="text-[8px] text-purple-500 font-medium">{peerSectionMap[section._id].completedCount}/{peerSectionMap[section._id].totalCount}</span>
+                                                <span className="text-[11px] text-blue-500 font-medium">{peerSectionMap[section._id].completedCount}/{peerSectionMap[section._id].totalCount}</span>
                                             </div>
                                         )}
                                     </div>
 
                                     {expandedSections[section._id] && (
-                                        <div className="space-y-0.5 mt-0 mb-3 ml-2 border-l border-gray-100 dark:border-slate-800 pl-2">
+                                        <div className="space-y-0.5 mt-0 mb-3 ml-2 border-l border-zinc-100 dark:border-zinc-800 pl-2">
                                             {[...section.lectures].filter(l => l.isPublic !== false).sort((a, b) => a.number - b.number).map((lec) => {
                                                 const status = progressMap[lec._id]?.status || 'Not Started';
                                                 const isSelected = selectedLecture && selectedLecture._id === lec._id;
@@ -788,14 +789,14 @@ const CourseView = () => {
                                     <div key={section._id} className="w-full flex flex-col items-center">
                                         {/* Horizontal separator between sections */}
                                         {sectionIndex > 0 && (
-                                            <div className="w-full h-px bg-slate-300 dark:bg-slate-700 mb-2"></div>
+                                            <div className="w-full h-px bg-zinc-300 dark:bg-zinc-700 mb-2"></div>
                                         )}
 
                                         {/* Bordered Container for Section with Lectures */}
                                         <div
                                             className={`w-12 border-2 rounded-lg p-1 flex flex-col items-center gap-1 ${isEvenSection
-                                                ? 'border-slate-900 dark:border-white'
-                                                : 'border-slate-300 dark:border-slate-700'
+                                                ? 'border-zinc-900 dark:border-white'
+                                                : 'border-zinc-300 dark:border-zinc-700'
                                                 }`}
                                             title={section.title}
                                         >
@@ -810,11 +811,11 @@ const CourseView = () => {
                                                     <button
                                                         key={lec._id}
                                                         onClick={() => handleSelectLecture(lec)}
-                                                        className={`w-9 h-9 rounded-md flex items-center justify-center text-xs font-bold transition-all ${isSelected
-                                                            ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-md'
+                                                        className={`w-9 h-9 rounded-md flex items-center justify-center text-xs font-semibold transition ${isSelected
+                                                            ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md'
                                                             : isCompleted
                                                                 ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50'
-                                                                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                                                : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'
                                                             }`}
                                                         title={`${lec.title} (${status})`}
                                                     >
@@ -831,21 +832,21 @@ const CourseView = () => {
                 </div>
 
                 {/* Main Content */}
-                <div className="flex-1 min-w-0 bg-white dark:bg-slate-950 transition-colors duration-300">
+                <div className="flex-1 min-w-0 bg-white dark:bg-zinc-950 transition-colors duration-300">
                     {lectureNotAvailable ? (
                         <div className="flex items-center justify-center h-full min-h-[60vh]">
                             <div className="text-center px-6">
-                                <div className="w-16 h-16 mx-auto rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
-                                    <svg className="w-7 h-7 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+                                <div className="w-16 h-16 mx-auto rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mb-4">
+                                    <svg className="w-7 h-7 text-zinc-400 dark:text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
                                 </div>
-                                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">Lecture not available</h3>
-                                <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">This lecture is hidden or doesn't exist.</p>
+                                <h3 className="text-lg font-medium text-zinc-900 dark:text-white mb-1">Lecture not available</h3>
+                                <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">This lecture is hidden or doesn't exist.</p>
                                 <div className="flex items-center justify-center gap-3">
                                     <button
                                         onClick={() => navigate(-1)}
-                                        className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                        className="px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
                                     >
-                                        Go Back
+                                        Go back
                                     </button>
                                     {course?.sections?.[0]?.lectures?.[0] && (
                                         <button
@@ -856,9 +857,9 @@ const CourseView = () => {
                                                 fetchComments(firstLec._id);
                                                 navigate(`/course/${id}/lecture/${firstLec._id}`, { replace: true });
                                             }}
-                                            className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
                                         >
-                                            Go to First Lecture
+                                            Go to first lecture
                                         </button>
                                     )}
                                 </div>
@@ -881,35 +882,35 @@ const CourseView = () => {
                                                     title="Video"
                                                 ></iframe>
                                             ) : (
-                                                <div className="absolute inset-0 flex items-center justify-center bg-slate-900">
+                                                <div className="absolute inset-0 flex items-center justify-center bg-zinc-900">
                                                     <a href={selectedLecture.resourceUrl} target="_blank" rel="noreferrer" className="text-white hover:text-blue-400 flex flex-col items-center gap-3 transition-colors p-4">
                                                         <FaPlayCircle className="text-5xl" />
-                                                        <span className="text-base font-medium text-center">Open External Resource</span>
+                                                        <span className="text-base font-medium text-center">Open external resource</span>
                                                     </a>
                                                 </div>
                                             )
                                         ) : (
-                                            <div className="absolute inset-0 flex items-center justify-center bg-slate-900 text-slate-500 flex-col p-4">
-                                                <span className="text-5xl mb-3">📚</span>
-                                                <span className="font-medium text-base">No Video Resource</span>
+                                            <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 text-zinc-500 flex-col p-4">
+                                                <FaBookOpen className="text-3xl mb-3 text-zinc-600" />
+                                                <span className="font-medium text-base">No video resource</span>
                                             </div>
                                         )
                                     ) : (
-                                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-xl z-10 p-6 text-center">
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900/60 backdrop-blur-xl z-10 p-6 text-center">
                                             <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mb-6 text-white/80 shadow-2xl backdrop-blur-md border border-white/20">
                                                 <FaLock size={32} />
                                             </div>
-                                            <h3 className="text-2xl font-bold text-white mb-3 tracking-wide">Premium Content Locked</h3>
-                                            <p className="text-slate-300 mb-8 max-w-md text-sm leading-relaxed">
+                                            <h3 className="text-2xl font-semibold text-white mb-3 ">Premium content locked</h3>
+                                            <p className="text-zinc-300 mb-8 max-w-md text-sm leading-relaxed">
                                                 This lecture is part of the full course experience. Enroll now to unlock all high-quality modules.
                                             </p>
                                             {!user ? (
-                                                <button onClick={() => navigate('/login')} className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white px-8 py-3 rounded-full font-bold transition-all shadow-lg shadow-indigo-500/30 text-sm hover:-translate-y-0.5">
-                                                    Login to Enroll
+                                                <button onClick={() => navigate('/login')} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition shadow-lg text-sm ">
+                                                    Login to enroll
                                                 </button>
                                             ) : (
-                                                <button onClick={() => navigate(`/marketplace/course/${id}`)} className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white px-8 py-3 rounded-full font-bold transition-all shadow-lg shadow-indigo-500/30 text-sm hover:-translate-y-0.5">
-                                                    Unlock Full Course
+                                                <button onClick={() => navigate(`/marketplace/course/${id}`)} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition shadow-lg text-sm ">
+                                                    Unlock full course
                                                 </button>
                                             )}
                                         </div>
@@ -918,22 +919,22 @@ const CourseView = () => {
                             </div>
 
                             {/* Lecture Info Bar */}
-                            <div className="px-4 sm:px-6 lg:px-4 py-3 sm:py-4 border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-950">
+                            <div className="px-4 sm:px-6 lg:px-4 py-3 sm:py-4 border-b border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950">
                                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                                     {/* Title and meta */}
                                     <div className="flex-1 min-w-0">
-                                        <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-1">{selectedLecture.title}</h1>
+                                        <h1 className="text-lg sm:text-xl font-semibold text-zinc-900 dark:text-white mb-1">{selectedLecture.title}</h1>
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Lecture {selectedLecture.number}</span>
+                                            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Lecture {selectedLecture.number}</span>
                                             {(() => {
                                                 const parentSection = course?.sections?.find(s => s.lectures?.some(l => l._id === selectedLecture._id));
                                                 const imp = selectedLecture.importance === 'None' ? '' : (selectedLecture.importance || parentSection?.importance || '');
                                                 return imp && imp !== 'None' ? (
-                                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${
+                                                    <span className={`px-2 py-0.5 rounded text-[11px] font-semibold uppercase ${
                                                         imp === 'Very Important' ? 'bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400' :
                                                         imp === 'Important' ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400' :
                                                         imp === 'Normal' ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' :
-                                                        'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                                                        'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400'
                                                     }`}>
                                                         {imp}
                                                     </span>
@@ -941,7 +942,7 @@ const CourseView = () => {
                                             })()}
                                             {selectedLecture.resourceUrl && (
                                                 <a href={selectedLecture.resourceUrl} target="_blank" rel="noreferrer"
-                                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-xs font-bold transition-all border border-blue-100 dark:border-blue-800/50">
+                                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-xs font-semibold transition border border-blue-100 dark:border-blue-800/50">
                                                     <FaPlayCircle className="text-xs" /> Open URL
                                                 </a>
                                             )}
@@ -967,10 +968,10 @@ const CourseView = () => {
                                             <button
                                                 onClick={handleToggleRevision}
                                                 title={progressMap[selectedLecture._id]?.markedForRevision ? 'Remove from revision list' : 'Mark for revision'}
-                                                className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold border transition-all ${
+                                                className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border transition ${
                                                     progressMap[selectedLecture._id]?.markedForRevision
                                                         ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-300 dark:border-amber-700 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/40'
-                                                        : 'bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-amber-300 dark:hover:border-amber-700 hover:text-amber-600 dark:hover:text-amber-400'
+                                                        : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:border-amber-300 dark:hover:border-amber-700 hover:text-amber-600 dark:hover:text-amber-400'
                                                 }`}
                                             >
                                                 {progressMap[selectedLecture._id]?.markedForRevision
@@ -984,18 +985,18 @@ const CourseView = () => {
                                             <button
                                                 onClick={handlePrevLecture}
                                                 disabled={getFlattenedLectures().findIndex(l => l._id === selectedLecture._id) === 0}
-                                                className="group flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-600 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+                                                className="group flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-600 disabled:opacity-20 disabled:cursor-not-allowed transition"
                                             >
-                                                <FaStepBackward className="group-hover:-translate-x-0.5 transition-transform text-xs" />
+                                                <FaStepBackward className="transition-transform text-xs" />
                                                 <span className="hidden sm:inline">Previous</span>
                                             </button>
                                             <button
                                                 onClick={handleNextLecture}
                                                 disabled={getFlattenedLectures().findIndex(l => l._id === selectedLecture._id) === getFlattenedLectures().length - 1}
-                                                className="group flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-bold bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-20 disabled:scale-100 disabled:cursor-not-allowed transition-all"
+                                                className="group flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white active:scale-[0.98] disabled:opacity-20 disabled:scale-100 disabled:cursor-not-allowed transition"
                                             >
                                                 <span>Next</span>
-                                                <FaStepForward className="group-hover:translate-x-0.5 transition-transform text-xs" />
+                                                <FaStepForward className="transition-transform text-xs" />
                                             </button>
                                         </div>
                                     </div>
@@ -1003,25 +1004,25 @@ const CourseView = () => {
                             </div>
 
                             {/* Tab Strip */}
-                            <div className="flex border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-950 px-4">
+                            <div className="flex border-b border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4">
                                 {[
                                     { id: 'overview', label: 'Overview' },
-                                    { id: 'resources', label: 'Resources', icon: <FaFolderOpen className="text-emerald-400 text-[10px]" />, badge: resourceCounts[selectedLecture?._id] > 0 ? resourceCounts[selectedLecture._id] : null },
-                                    { id: 'notes', label: 'Notes', icon: <FaStickyNote className="text-amber-400 text-[10px]" /> },
+                                    { id: 'resources', label: 'Resources', icon: <FaFolderOpen className="text-emerald-400 text-[11px]" />, badge: resourceCounts[selectedLecture?._id] > 0 ? resourceCounts[selectedLecture._id] : null },
+                                    { id: 'notes', label: 'Notes', icon: <FaStickyNote className="text-amber-400 text-[11px]" /> },
                                     { id: 'discussion', label: `Discussion${comments.length > 0 ? ` (${comments.length})` : ''}` },
                                 ].map(tab => (
                                     <button
                                         key={tab.id}
                                         onClick={() => setActiveTab(tab.id)}
-                                        className={`flex items-center gap-1.5 py-3 px-4 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id
-                                            ? 'border-slate-900 dark:border-white text-slate-900 dark:text-white'
-                                            : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                                        className={`flex items-center py-3 px-4 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id
+                                            ? 'border-zinc-900 dark:border-white text-zinc-900 dark:text-white'
+                                            : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200'
                                             }`}
                                     >
                                         {tab.icon}
-                                        <span>{tab.label}</span>
+                                        <TabLabel active={activeTab === tab.id}>{tab.label}</TabLabel>
                                         {tab.badge && (
-                                            <span className="ml-0.5 flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full text-[9px] font-bold bg-red-500 text-white shadow-sm">
+                                            <span className="ml-1.5 flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full text-[11px] font-semibold bg-red-500 text-white shadow-sm">
                                                 {tab.badge}
                                             </span>
                                         )}
@@ -1036,9 +1037,9 @@ const CourseView = () => {
                                 {activeTab === 'overview' && (
                                     <div>
                                         {selectedLecture.description ? (
-                                            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{selectedLecture.description}</p>
+                                            <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">{selectedLecture.description}</p>
                                         ) : (
-                                            <p className="text-sm text-slate-400 dark:text-slate-500">No description for this lecture.</p>
+                                            <p className="text-sm text-zinc-400 dark:text-zinc-500">No description for this lecture.</p>
                                         )}
                                     </div>
                                 )}
@@ -1049,33 +1050,33 @@ const CourseView = () => {
                                         {lectureResourcesLoading ? (
                                             <div className="py-12 flex flex-col items-center justify-center space-y-3">
                                                 <div className="w-10 h-10 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                                                <p className="text-xs text-slate-500 animate-pulse">Loading resources...</p>
+                                                <p className="text-xs text-zinc-500">Loading resources...</p>
                                             </div>
                                         ) : lectureResources.length === 0 ? (
                                             <div className="text-center py-12">
                                                 <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
                                                     <FaFolderOpen className="text-emerald-400" size={24} />
                                                 </div>
-                                                <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">No Resources</h3>
-                                                <p className="text-xs text-slate-400">No resources have been linked to this lecture yet.</p>
+                                                <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 mb-1">No resources</h3>
+                                                <p className="text-xs text-zinc-400">No resources have been linked to this lecture yet.</p>
                                             </div>
                                         ) : (
                                             <div className="space-y-2">
                                                 {lectureResources.map(resource => {
                                                     const Icon = FILE_TYPE_ICONS[resource.fileType] || FaFileAlt;
-                                                    const iconColor = FILE_TYPE_COLORS[resource.fileType] || 'text-slate-500';
+                                                    const iconColor = FILE_TYPE_COLORS[resource.fileType] || 'text-zinc-500';
                                                     const canView = resource.fileType === 'pdf' || resource.fileType === 'image' || resource.mimeType?.includes('csv') || resource.mimeType?.includes('text') || resource.mimeType?.includes('txt');
                                                     return (
-                                                        <div key={resource._id} className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-4 flex items-start gap-3 group hover:shadow-sm transition-all">
-                                                            <div className={`w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center shrink-0 ${iconColor}`}>
+                                                        <div key={resource._id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 flex items-start gap-3 group transition">
+                                                            <div className={`w-10 h-10 rounded-lg bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center shrink-0 ${iconColor}`}>
                                                                 <Icon size={18} />
                                                             </div>
                                                             <div className="flex-1 min-w-0">
-                                                                <h4 className="text-sm font-semibold text-slate-800 dark:text-white truncate">{resource.title}</h4>
+                                                                <h4 className="text-sm font-medium text-zinc-800 dark:text-white truncate">{resource.title}</h4>
                                                                 {resource.description && (
-                                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">{resource.description}</p>
+                                                                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 line-clamp-2">{resource.description}</p>
                                                                 )}
-                                                                <div className="flex items-center gap-3 mt-1.5 text-[10px] text-slate-400">
+                                                                <div className="flex items-center gap-3 mt-1.5 text-[11px] text-zinc-400">
                                                                     <span>{resource.uploadedBy?.name || 'Unknown'}</span>
                                                                     <span>{new Date(resource.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                                                                     {resource.fileSize && <span>{formatFileSize(resource.fileSize)}</span>}
@@ -1085,7 +1086,7 @@ const CourseView = () => {
                                                                 {canView && (
                                                                     <button
                                                                         onClick={() => handleResourceView(resource)}
-                                                                        className="p-2 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                                                                        className="p-2 text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
                                                                         title="View"
                                                                     >
                                                                         <FaEye size={13} />
@@ -1093,8 +1094,8 @@ const CourseView = () => {
                                                                 )}
                                                                 <button
                                                                     onClick={() => handleResourceDownload(resource)}
-                                                                    className="p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-                                                                    title={resource.fileType === 'link' ? 'Open Link' : 'Download'}
+                                                                    className="p-2 text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+                                                                    title={resource.fileType === 'link' ? 'Open link' : 'Download'}
                                                                 >
                                                                     {resource.fileType === 'link' ? <FaLinkIcon size={12} /> : <FaDownload size={12} />}
                                                                 </button>
@@ -1110,22 +1111,22 @@ const CourseView = () => {
                                 {/* Notes Tab */}
                                 {activeTab === 'notes' && (
                                     <div>
-                                        <div className="rounded-2xl border border-gray-200 dark:border-slate-700 overflow-hidden shadow-sm">
+                                        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-700 overflow-hidden shadow-sm">
                                             {/* Notes card header */}
                                             <div className="flex items-center justify-between px-4 py-2.5 bg-amber-50 dark:bg-amber-900/10 border-b border-amber-100 dark:border-amber-900/20">
                                                 <div className="flex items-center gap-2">
                                                     <FaStickyNote className="text-amber-500 text-sm" />
-                                                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">My Notes</span>
-                                                    <span className="text-[10px] text-slate-400 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 px-2 py-0.5 rounded-full">Private</span>
+                                                    <span className="text-sm font-medium text-zinc-700 dark:text-zinc-200">My notes</span>
+                                                    <span className="text-[11px] text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-2 py-0.5 rounded-md">Private</span>
                                                 </div>
                                                 <div className="flex items-center gap-3">
                                                     {notes.length > 0 && (
-                                                        <span className="text-[10px] text-slate-400 hidden sm:block">{notes.length.toLocaleString()} chars</span>
+                                                        <span className="text-[11px] text-zinc-400 hidden sm:block">{notes.length.toLocaleString()} chars</span>
                                                     )}
                                                     <button
                                                         onClick={handleSaveNotes}
                                                         disabled={isSavingNotes}
-                                                        className="flex items-center gap-1.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-3 py-1.5 rounded-lg text-xs font-bold hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all"
+                                                        className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium active:scale-[0.98] disabled:opacity-50 transition"
                                                     >
                                                         {isSavingNotes ? (
                                                             <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
@@ -1138,7 +1139,7 @@ const CourseView = () => {
                                             </div>
                                             {/* Textarea */}
                                             <textarea
-                                                className="w-full min-h-[300px] bg-white dark:bg-slate-900/50 p-5 text-sm text-slate-700 dark:text-slate-300 focus:outline-none resize-y placeholder:text-slate-300 dark:placeholder:text-slate-600 leading-7"
+                                                className="w-full min-h-[300px] bg-white dark:bg-zinc-900/50 p-5 text-sm text-zinc-700 dark:text-zinc-300 focus:outline-none resize-y placeholder:text-zinc-300 dark:placeholder:text-zinc-600 leading-7"
                                                 placeholder={`Jot down notes for this lecture…\n\n• Key concepts\n• Timestamps e.g. [2:30]\n• Questions to revisit`}
                                                 value={notes}
                                                 onChange={(e) => setNotes(e.target.value)}
@@ -1152,21 +1153,21 @@ const CourseView = () => {
                                     <div className="space-y-4">
                                         {/* Comment Input */}
                                         <form onSubmit={handleAddComment} className="flex gap-3 items-start">
-                                            <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-xs font-bold text-blue-600 dark:text-blue-400 uppercase shrink-0">
+                                            <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase shrink-0">
                                                 {user?.name?.charAt(0) || 'U'}
                                             </div>
-                                            <div className="flex-1 flex gap-2 items-center bg-slate-50 dark:bg-slate-900 rounded-full px-4 py-2 border border-gray-200 dark:border-slate-700">
+                                            <div className="flex-1 flex gap-2 items-center bg-zinc-50 dark:bg-zinc-900 rounded-lg px-4 py-2 border border-zinc-200 dark:border-zinc-700">
                                                 <input
                                                     type="text"
-                                                    className="flex-1 bg-transparent text-sm text-slate-900 dark:text-white focus:outline-none placeholder:text-slate-400"
-                                                    placeholder="Add a comment…"
+                                                    className="flex-1 bg-transparent text-sm text-zinc-900 dark:text-white focus:outline-none placeholder:text-zinc-400"
+                                                    placeholder="Add a comment"
                                                     value={newComment}
                                                     onChange={(e) => setNewComment(e.target.value)}
                                                 />
                                                 <button
                                                     type="submit"
                                                     disabled={!newComment.trim()}
-                                                    className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-3 py-1.5 rounded-full text-xs font-bold hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shrink-0"
+                                                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed transition shrink-0"
                                                 >
                                                     Post
                                                 </button>
@@ -1179,17 +1180,17 @@ const CourseView = () => {
                                                 <div className="space-y-3">
                                                     {comments.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((comment) => (
                                                         <div key={comment._id} className="flex gap-3">
-                                                            <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-300 shrink-0 uppercase">
+                                                            <div className="w-9 h-9 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-xs font-semibold text-zinc-600 dark:text-zinc-300 shrink-0 uppercase">
                                                                 {(comment.user?.name || comment.student?.name || '?').charAt(0)}
                                                             </div>
-                                                            <div className="flex-1 min-w-0 bg-slate-50 dark:bg-slate-900 rounded-xl px-4 py-3">
+                                                            <div className="flex-1 min-w-0 bg-zinc-50 dark:bg-zinc-900 rounded-xl px-4 py-3">
                                                                 <div className="flex items-center gap-2 mb-1">
-                                                                    <span className="text-sm font-semibold text-slate-900 dark:text-white">
+                                                                    <span className="text-sm font-medium text-zinc-900 dark:text-white">
                                                                         {(comment.user?._id || comment.student?._id) === user?._id ? 'You' : (comment.user?.name || comment.student?.name || 'Unknown')}
                                                                     </span>
-                                                                    <span className="text-[10px] text-slate-400">{new Date(comment.createdAt).toLocaleDateString()}</span>
+                                                                    <span className="text-[11px] text-zinc-400">{new Date(comment.createdAt).toLocaleDateString()}</span>
                                                                 </div>
-                                                                <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed break-words">{comment.details}</p>
+                                                                <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed break-words">{comment.details}</p>
                                                             </div>
                                                         </div>
                                                     ))}
@@ -1206,7 +1207,7 @@ const CourseView = () => {
                                             </>
                                         ) : (
                                             <div className="py-8 text-center">
-                                                <p className="text-sm text-slate-400 dark:text-slate-500">No comments yet. Be the first!</p>
+                                                <p className="text-sm text-zinc-400 dark:text-zinc-500">No comments yet</p>
                                             </div>
                                         )}
                                     </div>
@@ -1214,9 +1215,9 @@ const CourseView = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="flex flex-col justify-center items-center h-full text-slate-400 dark:text-slate-500 space-y-4 p-4">
-                            <div className="w-14 h-14 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-3xl">👈</div>
-                            <p className="text-base font-medium text-slate-600 dark:text-slate-400 text-center">Select a lecture from the sidebar to start learning.</p>
+                        <div className="flex flex-col justify-center items-center h-full text-zinc-400 dark:text-zinc-500 space-y-4 p-4">
+                            <div className="w-14 h-14 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-xl"><FaArrowLeft /></div>
+                            <p className="text-base font-medium text-zinc-600 dark:text-zinc-400 text-center">Select a lecture from the sidebar</p>
                         </div>
                     )}
                 </div>

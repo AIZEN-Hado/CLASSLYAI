@@ -37,7 +37,7 @@ const StarRating = ({ rating, size = 'md', showCount = false, count = 0 }) => {
                 {renderStars()}
             </div>
             {showCount && (
-                <span className="text-slate-500 dark:text-slate-400 ml-1">
+                <span className="text-zinc-500 dark:text-zinc-400 ml-1">
                     ({count})
                 </span>
             )}

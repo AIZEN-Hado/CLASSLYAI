@@ -1,13 +1,11 @@
-import { useState, useEffect, useContext } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
-import { FaSearch, FaFilter, FaTimes, FaChevronDown, FaStore, FaGraduationCap, FaChalkboardTeacher } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { FaSearch, FaFilter, FaTimes, FaChevronDown, FaBookOpen } from 'react-icons/fa';
 import api from '../../api/axios';
 import CourseCard from '../../components/ui/CourseCard';
-import AuthContext from '../../context/AuthContext';
 import { showError } from '../../utils/toast';
 
 const Marketplace = () => {
-    const { user } = useContext(AuthContext);
     const [searchParams, setSearchParams] = useSearchParams();
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -129,55 +127,27 @@ const Marketplace = () => {
         searchParams.get('minPrice') || searchParams.get('maxPrice') || searchParams.get('minRating');
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-slate-950">
-            {/* Navigation Tabs - Only show for logged in users */}
-            {user && (
-                <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-10">
-                    <div className="container mx-auto px-4">
-                        <div className="flex gap-1">
-                            <div className="flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400">
-                                <FaStore className="text-sm" />
-                                <span>Marketplace</span>
-                            </div>
-                            <Link
-                                to="/my-learning"
-                                className="flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all"
-                            >
-                                <FaGraduationCap className="text-sm" />
-                                <span>My Learning</span>
-                            </Link>
-                            <Link
-                                to="/my-courses"
-                                className="flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all"
-                            >
-                                <FaChalkboardTeacher className="text-sm" />
-                                <span>My Courses</span>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+            {/* Main Content (tab bar lives in LearnTabs) */}
+            <div className="max-w-7xl mx-auto px-4 py-8 motion-safe:animate-fade-in">
                 {/* Filter Bar */}
                 <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => setShowFilters(!showFilters)}
-                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:border-indigo-500 transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg hover:border-blue-500 transition-colors"
                         >
-                            <FaFilter className="text-indigo-500" />
+                            <FaFilter className="text-zinc-400" />
                             <span>Filters</span>
                             {hasActiveFilters && (
-                                <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                                <span className="w-2 h-2 rounded-full bg-blue-500"></span>
                             )}
                         </button>
 
                         {hasActiveFilters && (
                             <button
                                 onClick={clearFilters}
-                                className="flex items-center gap-1 text-sm text-slate-500 hover:text-red-500 transition-colors"
+                                className="flex items-center gap-1 text-sm text-zinc-500 hover:text-red-500 transition-colors"
                             >
                                 <FaTimes />
                                 Clear all
@@ -195,7 +165,7 @@ const Marketplace = () => {
                                 newParams.set('sortBy', e.target.value);
                                 setSearchParams(newParams);
                             }}
-                            className="appearance-none px-4 py-2 pr-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:border-indigo-500"
+                            className="appearance-none px-4 py-2 pr-10 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500"
                         >
                             {sortOptions.map(option => (
                                 <option key={option.value} value={option.value}>
@@ -203,23 +173,23 @@ const Marketplace = () => {
                                 </option>
                             ))}
                         </select>
-                        <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                        <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
                     </div>
                 </div>
 
                 {/* Filter Panel */}
                 {showFilters && (
-                    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 mb-6 border border-slate-200 dark:border-slate-700">
+                    <div className="bg-white dark:bg-zinc-800 rounded-xl p-6 mb-6 border border-zinc-200 dark:border-zinc-700">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                             {/* Category */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                     Category
                                 </label>
                                 <select
                                     value={filters.category}
                                     onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-                                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                    className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                 >
                                     <option value="">All Categories</option>
                                     {categories.map(cat => (
@@ -230,13 +200,13 @@ const Marketplace = () => {
 
                             {/* Level */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                     Level
                                 </label>
                                 <select
                                     value={filters.level}
                                     onChange={(e) => setFilters({ ...filters, level: e.target.value })}
-                                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                    className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                 >
                                     <option value="">All Levels</option>
                                     {levels.map(level => (
@@ -247,8 +217,8 @@ const Marketplace = () => {
 
                             {/* Price Range */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                                    Price Range
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                                    Price range
                                 </label>
                                 <div className="flex gap-2">
                                     <input
@@ -256,27 +226,27 @@ const Marketplace = () => {
                                         placeholder="Min"
                                         value={filters.minPrice}
                                         onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
-                                        className="w-1/2 px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                        className="w-1/2 px-3 py-2 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                     />
                                     <input
                                         type="number"
                                         placeholder="Max"
                                         value={filters.maxPrice}
                                         onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
-                                        className="w-1/2 px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                        className="w-1/2 px-3 py-2 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                     />
                                 </div>
                             </div>
 
                             {/* Min Rating */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                                    Minimum Rating
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                                    Minimum rating
                                 </label>
                                 <select
                                     value={filters.minRating}
                                     onChange={(e) => setFilters({ ...filters, minRating: e.target.value })}
-                                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                    className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                 >
                                     <option value="">Any Rating</option>
                                     <option value="4.5">4.5 & up</option>
@@ -290,51 +260,51 @@ const Marketplace = () => {
                         <div className="flex justify-end mt-4 gap-3">
                             <button
                                 onClick={() => setShowFilters(false)}
-                                className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                                className="px-4 py-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={applyFilters}
-                                className="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors"
+                                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                             >
-                                Apply Filters
+                                Apply filters
                             </button>
                         </div>
                     </div>
                 )}
 
                 {/* Results Count */}
-                <p className="text-slate-600 dark:text-slate-400 mb-6">
-                    {pagination.total} courses found
+                <p className="text-zinc-600 dark:text-zinc-400 mb-6">
+                    {pagination.total} {pagination.total === 1 ? 'course' : 'courses'}
                 </p>
 
                 {/* Course Grid */}
                 {loading ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {[...Array(8)].map((_, i) => (
-                            <div key={i} className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden animate-pulse">
-                                <div className="aspect-video bg-slate-200 dark:bg-slate-700"></div>
+                            <div key={i} className="bg-white dark:bg-zinc-800 rounded-xl overflow-hidden animate-pulse">
+                                <div className="aspect-video bg-zinc-200 dark:bg-zinc-700"></div>
                                 <div className="p-4 space-y-3">
-                                    <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4"></div>
-                                    <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
-                                    <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-1/3"></div>
+                                    <div className="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-3/4"></div>
+                                    <div className="h-3 bg-zinc-200 dark:bg-zinc-700 rounded w-1/2"></div>
+                                    <div className="h-6 bg-zinc-200 dark:bg-zinc-700 rounded w-1/3"></div>
                                 </div>
                             </div>
                         ))}
                     </div>
                 ) : courses.length === 0 ? (
                     <div className="text-center py-16">
-                        <div className="text-6xl mb-4">📚</div>
-                        <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
+                        <FaBookOpen className="mx-auto text-3xl mb-4 text-zinc-400 dark:text-zinc-600" />
+                        <h3 className="text-xl font-medium text-zinc-900 dark:text-white mb-2">
                             No courses found
                         </h3>
-                        <p className="text-slate-600 dark:text-slate-400 mb-4">
+                        <p className="text-zinc-600 dark:text-zinc-400 mb-4">
                             Try adjusting your search or filters
                         </p>
                         <button
                             onClick={clearFilters}
-                            className="text-indigo-500 hover:text-indigo-600 font-medium"
+                            className="text-blue-500 hover:text-blue-600 font-medium"
                         >
                             Clear all filters
                         </button>
@@ -359,8 +329,8 @@ const Marketplace = () => {
                                     setSearchParams(newParams);
                                 }}
                                 className={`w-10 h-10 rounded-lg font-medium transition-colors ${pagination.page === i + 1
-                                    ? 'bg-indigo-500 text-white'
-                                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-indigo-50 dark:hover:bg-slate-700'
+                                    ? 'bg-blue-500 text-white'
+                                    : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-blue-50 dark:hover:bg-zinc-700'
                                     }`}
                             >
                                 {i + 1}

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { FaUsers, FaClock, FaPlayCircle } from 'react-icons/fa';
+import { FaPlayCircle } from 'react-icons/fa';
 import StarRating from './StarRating';
 import PriceDisplay from './PriceDisplay';
 
@@ -33,28 +33,28 @@ const CourseCard = ({ course }) => {
     return (
         <Link
             to={`/marketplace/course/${_id}`}
-            className="group bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-slate-700 flex flex-col"
+            className="group bg-white dark:bg-zinc-800 rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors flex flex-col"
         >
             {/* Thumbnail */}
-            <div className="relative aspect-video overflow-hidden bg-slate-200 dark:bg-slate-700">
+            <div className="relative aspect-video overflow-hidden bg-zinc-200 dark:bg-zinc-700">
                 {thumbnail ? (
                     <img
                         src={thumbnail}
                         alt={title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-cover"
                     />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                        <FaPlayCircle className="text-4xl text-slate-400" />
+                    <div className="w-full h-full flex items-center justify-center bg-[repeating-linear-gradient(to_bottom,transparent_0,transparent_15px,rgba(0,0,0,0.05)_15px,rgba(0,0,0,0.05)_16px)] dark:bg-[repeating-linear-gradient(to_bottom,transparent_0,transparent_15px,rgba(255,255,255,0.05)_15px,rgba(255,255,255,0.05)_16px)]">
+                        <FaPlayCircle className="text-3xl text-zinc-400 dark:text-zinc-500" />
                     </div>
                 )}
                 {category && (
-                    <span className="absolute top-2 left-2 bg-indigo-500/90 text-white text-xs font-medium px-2 py-1 rounded">
+                    <span className="absolute top-2 left-2 bg-zinc-900/70 text-white text-xs font-medium px-2 py-1 rounded-md">
                         {category}
                     </span>
                 )}
                 {level && (
-                    <span className="absolute top-2 right-2 bg-slate-900/70 text-white text-xs font-medium px-2 py-1 rounded">
+                    <span className="absolute top-2 right-2 bg-zinc-900/70 text-white text-xs font-medium px-2 py-1 rounded-md">
                         {level}
                     </span>
                 )}
@@ -62,41 +62,32 @@ const CourseCard = ({ course }) => {
 
             {/* Content */}
             <div className="p-4 flex flex-col flex-1">
-                <h3 className="font-semibold text-slate-900 dark:text-white line-clamp-2 mb-1 group-hover:text-indigo-500 transition-colors">
+                <h3 className="font-medium text-zinc-900 dark:text-white line-clamp-2 mb-1">
                     {title}
                 </h3>
 
                 {instructor && (
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-2">
                         {instructor.name}
                     </p>
                 )}
 
                 {/* Rating */}
                 <div className="flex items-center gap-2 mb-2">
-                    <span className="font-bold text-amber-500">{rating?.average?.toFixed(1) || '0.0'}</span>
+                    <span className="font-medium tabular-nums text-zinc-900 dark:text-white">{rating?.average?.toFixed(1) || '0.0'}</span>
                     <StarRating rating={rating?.average || 0} size="sm" />
-                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                    <span className="text-xs text-zinc-500 dark:text-zinc-400">
                         ({rating?.count || 0})
                     </span>
                 </div>
 
                 {/* Stats */}
-                <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mb-3">
-                    <span className="flex items-center gap-1">
-                        <FaUsers />
-                        {enrollmentCount || 0} students
-                    </span>
-                    {totalDuration > 0 && (
-                        <span className="flex items-center gap-1">
-                            <FaClock />
-                            {formatDuration(totalDuration)}
-                        </span>
-                    )}
-                </div>
+                <p className="text-xs tabular-nums text-zinc-500 dark:text-zinc-400 mb-3">
+                    {enrollmentCount || 0} students{totalDuration > 0 && ` · ${formatDuration(totalDuration)}`}
+                </p>
 
                 {/* Price - pushed to bottom */}
-                <div className="mt-auto pt-2 border-t border-slate-100 dark:border-slate-700">
+                <div className="mt-auto pt-2 border-t border-zinc-100 dark:border-zinc-700">
                     <PriceDisplay
                         price={price}
                         originalPrice={originalPrice}

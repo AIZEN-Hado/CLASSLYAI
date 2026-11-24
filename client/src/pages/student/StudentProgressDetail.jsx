@@ -58,7 +58,7 @@ const StudentProgressDetail = () => {
         } else if (status === inProgressLabel || status === 'In Progress') {
             return <FaPlayCircle className="text-amber-500" />;
         }
-        return <FaClock className="text-slate-400" />;
+        return <FaClock className="text-zinc-400" />;
     };
 
     const getStatusColor = (status) => {
@@ -69,7 +69,7 @@ const StudentProgressDetail = () => {
         // Defaults
         if (status === 'Completed') return '#10b981';
         if (status === 'In Progress') return '#f59e0b';
-        return '#64748b';
+        return '#71717a';
     };
 
     const getStatusBadgeClasses = (status) => {
@@ -81,14 +81,14 @@ const StudentProgressDetail = () => {
         } else if (status === 'In Progress') {
             return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
         } else if (status === 'Not Started') {
-            return 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400';
+            return 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400';
         }
 
         // For custom statuses, use color from config if available
         if (statusConfig?.color) {
-            return 'bg-slate-100 dark:bg-slate-800';
+            return 'bg-zinc-100 dark:bg-zinc-800';
         }
-        return 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400';
+        return 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400';
     };
 
     const getStatusDateLabel = (status) => {
@@ -106,35 +106,35 @@ const StudentProgressDetail = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-center justify-center">
-                <div className="text-slate-500 dark:text-slate-400">Loading student progress...</div>
+            <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center">
+                <div className="text-zinc-500 dark:text-zinc-400">Loading student progress...</div>
             </div>
         );
     }
 
     if (!data) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-center justify-center">
-                <div className="text-slate-500 dark:text-slate-400">Failed to load data</div>
+            <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center">
+                <div className="text-zinc-500 dark:text-zinc-400">Failed to load data</div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-slate-950 text-slate-900 dark:text-gray-100 pb-12 transition-colors duration-300">
+        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-12 transition-colors duration-300">
             {/* Header */}
-            <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 sticky top-navbar z-10 transition-colors">
+            <div className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 sticky top-navbar z-10 transition-colors">
                 <div className="container mx-auto px-4 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => navigate(-1)}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-slate-500"
+                            className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors text-zinc-500"
                         >
                             <FaArrowLeft />
                         </button>
                         <div>
-                            <h1 className="text-xl font-bold text-slate-900 dark:text-white">Student Progress</h1>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{data.course.title}</p>
+                            <h1 className="text-2xl font-semibold text-zinc-900 dark:text-white">Student progress</h1>
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{data.course.title}</p>
                         </div>
                     </div>
                 </div>
@@ -142,21 +142,21 @@ const StudentProgressDetail = () => {
 
             <div className="container mx-auto px-4 py-8 max-w-4xl">
                 {/* Student Info Card */}
-                <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm p-6 mb-6">
+                <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm p-6 mb-6">
                     <div className="flex items-start gap-4">
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold">
+                        <div className="w-16 h-16 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-200 text-2xl font-semibold">
                             {data.student.name?.charAt(0)?.toUpperCase() || '?'}
                         </div>
                         <div className="flex-1">
-                            <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                <FaUserGraduate className="text-slate-400" />
+                            <h2 className="text-lg font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
+                                <FaUserGraduate className="text-zinc-400" />
                                 {data.student.name}
                             </h2>
-                            <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2 mt-1">
+                            <p className="text-sm text-zinc-500 dark:text-zinc-400 flex items-center gap-2 mt-1">
                                 <FaEnvelope className="text-xs" />
                                 {data.student.email}
                             </p>
-                            <p className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-2 mt-1">
+                            <p className="text-xs text-zinc-400 dark:text-zinc-500 flex items-center gap-2 mt-1">
                                 <FaCalendarAlt className="text-xs" />
                                 Enrolled on {new Date(data.enrolledAt).toLocaleDateString()}
                             </p>
@@ -164,16 +164,16 @@ const StudentProgressDetail = () => {
                     </div>
 
                     {/* Overall Progress */}
-                    <div className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-800">
+                    <div className="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-800">
                         <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Overall Progress</span>
-                            <span className="text-sm font-bold text-slate-900 dark:text-white">
+                            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Overall progress</span>
+                            <span className="text-sm font-semibold text-zinc-900 dark:text-white">
                                 {data.progress.completedLectures}/{data.progress.totalLectures} lectures ({data.progress.progressPercent}%)
                             </span>
                         </div>
-                        <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-3">
+                        <div className="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-3">
                             <div
-                                className="bg-gradient-to-r from-blue-500 to-green-500 h-3 rounded-full transition-all duration-500"
+                                className="bg-blue-500 h-3 rounded-full transition duration-500"
                                 style={{ width: `${data.progress.progressPercent}%` }}
                             />
                         </div>
@@ -185,36 +185,36 @@ const StudentProgressDetail = () => {
                     {data.sections.map((section) => (
                         <div
                             key={section._id}
-                            className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden"
+                            className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden"
                         >
                             {/* Section Header */}
                             <button
                                 onClick={() => toggleSection(section._id)}
-                                className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors"
+                                className="w-full px-6 py-4 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
                             >
                                 <div className="flex items-center gap-3">
                                     {expandedSections[section._id] ? (
-                                        <FaChevronDown className="text-slate-400 text-sm" />
+                                        <FaChevronDown className="text-zinc-400 text-sm" />
                                     ) : (
-                                        <FaChevronRight className="text-slate-400 text-sm" />
+                                        <FaChevronRight className="text-zinc-400 text-sm" />
                                     )}
                                     <div className="text-left">
-                                        <h3 className="font-semibold text-slate-900 dark:text-white">
+                                        <h3 className="font-medium text-zinc-900 dark:text-white">
                                             Section {section.sectionNumber}: {section.title}
                                         </h3>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                                             {section.completedCount}/{section.totalCount} completed
                                         </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <div className="w-24 bg-gray-200 dark:bg-slate-700 rounded-full h-2">
+                                    <div className="w-24 bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
                                         <div
-                                            className="bg-green-500 h-2 rounded-full transition-all"
+                                            className="bg-green-500 h-2 rounded-full transition"
                                             style={{ width: `${section.progressPercent}%` }}
                                         />
                                     </div>
-                                    <span className="text-sm font-medium text-slate-600 dark:text-slate-300 w-12 text-right">
+                                    <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300 w-12 text-right">
                                         {section.progressPercent}%
                                     </span>
                                 </div>
@@ -222,31 +222,31 @@ const StudentProgressDetail = () => {
 
                             {/* Lectures List */}
                             {expandedSections[section._id] && (
-                                <div className="border-t border-gray-100 dark:border-slate-800">
+                                <div className="border-t border-zinc-100 dark:border-zinc-800">
                                     {section.lectures.length > 0 ? (
                                         [...section.lectures].sort((a, b) => a.number - b.number).map((lecture, idx) => (
                                             <div
                                                 key={lecture._id}
-                                                className="px-6 py-3 flex items-center justify-between border-b border-gray-50 dark:border-slate-800/50 last:border-b-0 hover:bg-gray-50/50 dark:hover:bg-slate-800/30 transition-colors"
+                                                className="px-6 py-3 flex items-center justify-between border-b border-zinc-50 dark:border-zinc-800/50 last:border-b-0 hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors"
                                             >
                                                 <div className="flex items-center gap-3">
                                                     {getStatusIcon(lecture.status)}
                                                     <div>
-                                                        <p className="text-sm text-slate-800 dark:text-slate-200">
-                                                            <span className="text-slate-400 dark:text-slate-500 mr-2">
+                                                        <p className="text-sm text-zinc-800 dark:text-zinc-200">
+                                                            <span className="text-zinc-400 dark:text-zinc-500 mr-2">
                                                                 {lecture.number || idx + 1}.
                                                             </span>
                                                             {lecture.title}
                                                         </p>
                                                         {lecture.statusDate && lecture.status !== 'Not Started' && getStatusDateLabel(lecture.status) && (
-                                                            <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
+                                                            <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-0.5">
                                                                 {getStatusDateLabel(lecture.status)} {new Date(lecture.statusDate).toLocaleDateString()}
                                                             </p>
                                                         )}
                                                     </div>
                                                 </div>
                                                 <span
-                                                    className={`text-xs px-2.5 py-1 rounded-full font-medium ${getStatusBadgeClasses(lecture.status)}`}
+                                                    className={`text-xs px-2.5 py-1 rounded-md font-medium ${getStatusBadgeClasses(lecture.status)}`}
                                                     style={getStatusColor(lecture.status) ? {
                                                         backgroundColor: `${getStatusColor(lecture.status)}20`,
                                                         color: getStatusColor(lecture.status)
@@ -257,7 +257,7 @@ const StudentProgressDetail = () => {
                                             </div>
                                         ))
                                     ) : (
-                                        <div className="px-6 py-4 text-sm text-slate-400 dark:text-slate-500 italic">
+                                        <div className="px-6 py-4 text-sm text-zinc-400 dark:text-zinc-500 italic">
                                             No lectures in this section
                                         </div>
                                     )}
@@ -267,8 +267,8 @@ const StudentProgressDetail = () => {
                     ))}
 
                     {data.sections.length === 0 && (
-                        <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm p-8 text-center">
-                            <p className="text-slate-500 dark:text-slate-400">No sections in this course yet.</p>
+                        <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm p-8 text-center">
+                            <p className="text-zinc-500 dark:text-zinc-400">No sections in this course yet.</p>
                         </div>
                     )}
                 </div>

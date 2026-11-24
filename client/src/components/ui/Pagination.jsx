@@ -97,14 +97,14 @@ const Pagination = ({
     }
 
     return (
-        <div className={`flex items-center justify-between gap-4 ${compact ? 'py-2' : 'px-6 py-4 border-t border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-950/50'}`}>
+        <div className={`flex items-center justify-between gap-4 ${compact ? 'py-2' : 'px-6 py-4 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50'}`}>
             {/* Left side: Limit selector + Record info */}
             <div className="flex items-center gap-3">
                 {showLimitSelector && (
                     <select
                         value={itemsPerPage}
                         onChange={handleLimitChange}
-                        className="px-2 py-1.5 text-xs rounded-md border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 cursor-pointer"
+                        className="px-2 py-1.5 text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 cursor-pointer"
                     >
                         {limitOptions.map((limit) => (
                             <option key={limit} value={limit}>
@@ -113,7 +113,7 @@ const Pagination = ({
                         ))}
                     </select>
                 )}
-                <span className="text-xs text-slate-500 dark:text-slate-400">
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">
                     Showing {startItem} - {endItem} of {totalItems} Records
                 </span>
             </div>
@@ -125,8 +125,8 @@ const Pagination = ({
                     onClick={handlePrevPage}
                     disabled={currentPage <= 1}
                     className={`p-1.5 rounded-md border transition-colors ${currentPage <= 1
-                            ? 'border-gray-200 dark:border-slate-700 text-slate-300 dark:text-slate-600 cursor-not-allowed'
-                            : 'border-gray-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
+                            ? 'border-zinc-200 dark:border-zinc-700 text-zinc-300 dark:text-zinc-600 cursor-not-allowed'
+                            : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700 hover:text-zinc-900 dark:hover:text-white'
                         }`}
                     aria-label="Previous page"
                 >
@@ -140,12 +140,12 @@ const Pagination = ({
                     onChange={handlePageInputChange}
                     onBlur={handlePageInputSubmit}
                     onKeyDown={handlePageInputKeyDown}
-                    className="w-12 px-2 py-1.5 text-xs text-center rounded-md border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400"
+                    className="w-12 px-2 py-1.5 text-xs text-center rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400"
                     aria-label="Page number"
                 />
 
                 {/* Page info */}
-                <span className="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                <span className="text-xs text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
                     of {totalPages}
                 </span>
 
@@ -154,8 +154,8 @@ const Pagination = ({
                     onClick={handleNextPage}
                     disabled={currentPage >= totalPages}
                     className={`p-1.5 rounded-md border transition-colors ${currentPage >= totalPages
-                            ? 'border-gray-200 dark:border-slate-700 text-slate-300 dark:text-slate-600 cursor-not-allowed'
-                            : 'border-gray-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
+                            ? 'border-zinc-200 dark:border-zinc-700 text-zinc-300 dark:text-zinc-600 cursor-not-allowed'
+                            : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700 hover:text-zinc-900 dark:hover:text-white'
                         }`}
                     aria-label="Next page"
                 >

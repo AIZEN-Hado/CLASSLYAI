@@ -5,12 +5,12 @@ import api from '../../api/axios';
 
 const typeConfig = {
     new_content: { icon: FaBook, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-900/20' },
-    broadcast: { icon: FaBullhorn, color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-900/20' },
+    broadcast: { icon: FaBullhorn, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-900/20' },
     quiz: { icon: FaClipboardList, color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-900/20' },
     due_date: { icon: FaClock, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-900/20' },
-    ai_access: { icon: FaRobot, color: 'text-indigo-500', bg: 'bg-indigo-50 dark:bg-indigo-900/20' },
+    ai_access: { icon: FaRobot, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-900/20' },
     milestone: { icon: FaTrophy, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-900/20' },
-    custom: { icon: FaPaperPlane, color: 'text-slate-500', bg: 'bg-slate-50 dark:bg-slate-800' },
+    custom: { icon: FaPaperPlane, color: 'text-zinc-500', bg: 'bg-zinc-50 dark:bg-zinc-800' },
 };
 
 const priorityDot = {
@@ -122,12 +122,12 @@ const NotificationBell = () => {
             {/* Bell Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+                className="relative p-2 rounded-full text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                 title="Notifications"
             >
                 <FaBell size={18} />
                 {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center px-1 ring-2 ring-white dark:ring-slate-950">
+                    <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[11px] font-semibold min-w-[18px] h-[18px] rounded-full flex items-center justify-center px-1 ring-2 ring-white dark:ring-zinc-950">
                         {unreadCount > 99 ? '99+' : unreadCount}
                     </span>
                 )}
@@ -135,15 +135,15 @@ const NotificationBell = () => {
 
             {/* Dropdown Panel */}
             {isOpen && (
-                <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl shadow-2xl z-50 overflow-hidden">
+                <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden">
                     {/* Header */}
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-slate-800">
-                        <h3 className="text-sm font-bold text-slate-900 dark:text-white">Notifications</h3>
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
+                        <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">Notifications</h3>
                         <div className="flex items-center gap-2">
                             {unreadCount > 0 && (
                                 <button
                                     onClick={handleMarkAllRead}
-                                    className="text-[10px] font-medium text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                                    className="text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
                                 >
                                     <FaCheckDouble size={10} /> Mark all read
                                 </button>
@@ -155,15 +155,15 @@ const NotificationBell = () => {
                     <div className="max-h-[400px] overflow-y-auto">
                         {loading ? (
                             <div className="flex items-center justify-center py-10">
-                                <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                                <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                             </div>
                         ) : notifications.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-12 px-4">
-                                <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
-                                    <FaBell className="text-slate-300 dark:text-slate-600" size={20} />
+                                <div className="w-12 h-12 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-3">
+                                    <FaBell className="text-zinc-300 dark:text-zinc-600" size={20} />
                                 </div>
-                                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">No notifications yet</p>
-                                <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">You're all caught up!</p>
+                                <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">No notifications yet</p>
+                                <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-1">You're all caught up</p>
                             </div>
                         ) : (
                             notifications.map((notif) => {
@@ -173,7 +173,7 @@ const NotificationBell = () => {
                                     <div
                                         key={notif._id}
                                         onClick={() => handleClick(notif)}
-                                        className={`group flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors border-b border-gray-50 dark:border-slate-800/50 hover:bg-gray-50 dark:hover:bg-slate-800/50 ${!notif.read ? 'bg-indigo-50/40 dark:bg-indigo-900/10' : ''}`}
+                                        className={`group flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors border-b border-zinc-50 dark:border-zinc-800/50 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 ${!notif.read ? 'bg-blue-50/40 dark:bg-blue-900/10' : ''}`}
                                     >
                                         {/* Icon */}
                                         <div className={`w-9 h-9 rounded-full ${config.bg} flex items-center justify-center shrink-0 mt-0.5`}>
@@ -183,29 +183,29 @@ const NotificationBell = () => {
                                         {/* Content */}
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-start justify-between gap-2">
-                                                <p className={`text-xs leading-relaxed ${!notif.read ? 'font-semibold text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}>
+                                                <p className={`text-xs leading-relaxed ${!notif.read ? 'font-medium text-zinc-900 dark:text-white' : 'text-zinc-700 dark:text-zinc-300'}`}>
                                                     {notif.title}
                                                 </p>
                                                 <button
                                                     onClick={(e) => handleDelete(e, notif._id)}
-                                                    className="p-1 rounded text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all shrink-0"
+                                                    className="p-1 rounded text-zinc-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition shrink-0"
                                                 >
                                                     <FaTimes size={10} />
                                                 </button>
                                             </div>
                                             {notif.message && (
-                                                <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5">{notif.message}</p>
+                                                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-0.5">{notif.message}</p>
                                             )}
                                             <div className="flex items-center gap-2 mt-1">
-                                                <span className="text-[10px] text-slate-400 dark:text-slate-500">{timeAgo(notif.createdAt)}</span>
+                                                <span className="text-[11px] text-zinc-400 dark:text-zinc-500">{timeAgo(notif.createdAt)}</span>
                                                 {notif.course?.title && (
-                                                    <span className="text-[10px] text-slate-400 dark:text-slate-500 truncate">· {notif.course.title}</span>
+                                                    <span className="text-[11px] text-zinc-400 dark:text-zinc-500 truncate">· {notif.course.title}</span>
                                                 )}
                                                 {priorityDot[notif.priority] && (
                                                     <span className={`w-1.5 h-1.5 rounded-full ${priorityDot[notif.priority]}`} />
                                                 )}
                                                 {!notif.read && (
-                                                    <span className="w-2 h-2 rounded-full bg-indigo-500 shrink-0" />
+                                                    <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
                                                 )}
                                             </div>
                                         </div>
@@ -217,10 +217,10 @@ const NotificationBell = () => {
 
                     {/* Footer */}
                     {notifications.length > 0 && (
-                        <div className="border-t border-gray-100 dark:border-slate-800 px-4 py-2.5">
+                        <div className="border-t border-zinc-100 dark:border-zinc-800 px-4 py-2.5">
                             <button
                                 onClick={() => { setIsOpen(false); navigate('/notifications'); }}
-                                className="w-full text-center text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
+                                className="w-full text-center text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
                             >
                                 View all notifications
                             </button>

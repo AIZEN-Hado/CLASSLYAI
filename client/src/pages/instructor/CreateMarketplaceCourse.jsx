@@ -127,7 +127,7 @@ const CreateMarketplaceCourse = () => {
             };
 
             const res = await api.post('/instructor/course', payload);
-            showSuccess('Course created successfully!');
+            showSuccess('Course created');
             navigate(`/admin/course/${res.data._id}`);
         } catch (error) {
             showError(error, 'Failed to create course');
@@ -137,21 +137,21 @@ const CreateMarketplaceCourse = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-slate-950 py-8 px-4">
+        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 py-8 px-4">
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center gap-4 mb-8">
                     <button
                         onClick={() => navigate('/instructor/dashboard')}
-                        className="p-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                        className="p-2 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
                     >
                         <FaArrowLeft />
                     </button>
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-                            Create New Course
+                        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-white">
+                            Create new course
                         </h1>
-                        <p className="text-slate-600 dark:text-slate-400">
+                        <p className="text-zinc-600 dark:text-zinc-400">
                             Fill in the details to create your marketplace course
                         </p>
                     </div>
@@ -162,18 +162,18 @@ const CreateMarketplaceCourse = () => {
                     {[1, 2, 3].map((s) => (
                         <div key={s} className="flex items-center">
                             <div
-                                className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-colors ${s === step
-                                        ? 'bg-indigo-500 text-white'
+                                className={`w-10 h-10 rounded-full flex items-center justify-center font-medium transition-colors ${s === step
+                                        ? 'bg-blue-500 text-white'
                                         : s < step
                                             ? 'bg-green-500 text-white'
-                                            : 'bg-slate-200 dark:bg-slate-700 text-slate-500'
+                                            : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-500'
                                     }`}
                             >
                                 {s}
                             </div>
                             {s < 3 && (
                                 <div
-                                    className={`w-20 h-1 mx-2 rounded ${s < step ? 'bg-green-500' : 'bg-slate-200 dark:bg-slate-700'
+                                    className={`w-20 h-1 mx-2 rounded ${s < step ? 'bg-green-500' : 'bg-zinc-200 dark:bg-zinc-700'
                                         }`}
                                 />
                             )}
@@ -182,16 +182,16 @@ const CreateMarketplaceCourse = () => {
                 </div>
 
                 {/* Form Card */}
-                <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
+                <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
                     {/* Step 1: Basic Info */}
                     {step === 1 && (
                         <div className="space-y-6">
-                            <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
-                                Basic Information
+                            <h2 className="text-xl font-medium text-zinc-900 dark:text-white">
+                                Basic information
                             </h2>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                     Course Title *
                                 </label>
                                 <input
@@ -200,12 +200,12 @@ const CreateMarketplaceCourse = () => {
                                     value={formData.title}
                                     onChange={handleChange}
                                     placeholder="e.g., Complete Web Development Bootcamp"
-                                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                    className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                     Description *
                                 </label>
                                 <textarea
@@ -213,21 +213,21 @@ const CreateMarketplaceCourse = () => {
                                     value={formData.description}
                                     onChange={handleChange}
                                     rows={5}
-                                    placeholder="Describe what students will learn..."
-                                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500 resize-none"
+                                    placeholder="Describe what students will learn"
+                                    className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500 resize-none"
                                 />
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                         Category
                                     </label>
                                     <select
                                         name="category"
                                         value={formData.category}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                        className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                     >
                                         <option value="">Select category</option>
                                         {categories.map(cat => (
@@ -237,14 +237,14 @@ const CreateMarketplaceCourse = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                         Level
                                     </label>
                                     <select
                                         name="level"
                                         value={formData.level}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                        className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                     >
                                         <option value="">Select level</option>
                                         {levels.map(level => (
@@ -254,7 +254,7 @@ const CreateMarketplaceCourse = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                         Language
                                     </label>
                                     <input
@@ -262,7 +262,7 @@ const CreateMarketplaceCourse = () => {
                                         name="language"
                                         value={formData.language}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                        className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                     />
                                 </div>
                             </div>
@@ -272,54 +272,54 @@ const CreateMarketplaceCourse = () => {
                     {/* Step 2: Pricing & Media */}
                     {step === 2 && (
                         <div className="space-y-6">
-                            <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+                            <h2 className="text-xl font-medium text-zinc-900 dark:text-white">
                                 Pricing & Media
                             </h2>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                         Price *
                                     </label>
                                     <div className="relative">
-                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">₹</span>
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">₹</span>
                                         <input
                                             type="number"
                                             name="price"
                                             value={formData.price}
                                             onChange={handleChange}
                                             placeholder="499"
-                                            className="w-full px-4 py-3 pl-8 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                            className="w-full px-4 py-3 pl-8 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                         />
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                         Original Price (for discount)
                                     </label>
                                     <div className="relative">
-                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">₹</span>
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">₹</span>
                                         <input
                                             type="number"
                                             name="originalPrice"
                                             value={formData.originalPrice}
                                             onChange={handleChange}
                                             placeholder="999"
-                                            className="w-full px-4 py-3 pl-8 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                            className="w-full px-4 py-3 pl-8 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                         />
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                         Currency
                                     </label>
                                     <select
                                         name="currency"
                                         value={formData.currency}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                        className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                     >
                                         <option value="INR">INR (₹)</option>
                                         <option value="USD">USD ($)</option>
@@ -328,7 +328,7 @@ const CreateMarketplaceCourse = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                     <FaImage className="inline mr-2" />
                                     Thumbnail URL
                                 </label>
@@ -338,12 +338,12 @@ const CreateMarketplaceCourse = () => {
                                     value={formData.thumbnail}
                                     onChange={handleChange}
                                     placeholder="https://example.com/image.jpg"
-                                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                    className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                     <FaVideo className="inline mr-2" />
                                     Preview Video URL (optional)
                                 </label>
@@ -352,8 +352,8 @@ const CreateMarketplaceCourse = () => {
                                     name="previewVideo"
                                     value={formData.previewVideo}
                                     onChange={handleChange}
-                                    placeholder="https://youtube.com/watch?v=..."
-                                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                    placeholder="https://youtube.com/watch?v="
+                                    className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                 />
                             </div>
                         </div>
@@ -362,13 +362,13 @@ const CreateMarketplaceCourse = () => {
                     {/* Step 3: Learning Content */}
                     {step === 3 && (
                         <div className="space-y-6">
-                            <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
-                                Learning Content
+                            <h2 className="text-xl font-medium text-zinc-900 dark:text-white">
+                                Learning content
                             </h2>
 
                             {/* What you'll learn */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                     What students will learn
                                 </label>
                                 <div className="space-y-2">
@@ -379,7 +379,7 @@ const CreateMarketplaceCourse = () => {
                                                 value={item}
                                                 onChange={(e) => handleArrayChange('whatYouWillLearn', index, e.target.value)}
                                                 placeholder="e.g., Build full-stack web applications"
-                                                className="flex-1 px-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                                className="flex-1 px-4 py-2 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                             />
                                             {formData.whatYouWillLearn.length > 1 && (
                                                 <button
@@ -395,7 +395,7 @@ const CreateMarketplaceCourse = () => {
                                     <button
                                         type="button"
                                         onClick={() => addArrayItem('whatYouWillLearn')}
-                                        className="flex items-center gap-2 text-indigo-500 hover:text-indigo-600 text-sm font-medium"
+                                        className="flex items-center gap-2 text-blue-500 hover:text-blue-600 text-sm font-medium"
                                     >
                                         <FaPlus /> Add more
                                     </button>
@@ -404,7 +404,7 @@ const CreateMarketplaceCourse = () => {
 
                             {/* Requirements */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                     Requirements / Prerequisites
                                 </label>
                                 <div className="space-y-2">
@@ -415,7 +415,7 @@ const CreateMarketplaceCourse = () => {
                                                 value={item}
                                                 onChange={(e) => handleArrayChange('requirements', index, e.target.value)}
                                                 placeholder="e.g., Basic HTML knowledge"
-                                                className="flex-1 px-4 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500"
+                                                className="flex-1 px-4 py-2 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500"
                                             />
                                             {formData.requirements.length > 1 && (
                                                 <button
@@ -431,7 +431,7 @@ const CreateMarketplaceCourse = () => {
                                     <button
                                         type="button"
                                         onClick={() => addArrayItem('requirements')}
-                                        className="flex items-center gap-2 text-indigo-500 hover:text-indigo-600 text-sm font-medium"
+                                        className="flex items-center gap-2 text-blue-500 hover:text-blue-600 text-sm font-medium"
                                     >
                                         <FaPlus /> Add more
                                     </button>
@@ -441,11 +441,11 @@ const CreateMarketplaceCourse = () => {
                     )}
 
                     {/* Navigation Buttons */}
-                    <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+                    <div className="flex items-center justify-between mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-700">
                         <button
                             onClick={prevStep}
                             disabled={step === 1}
-                            className="px-6 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="px-6 py-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                             Back
                         </button>
@@ -455,7 +455,7 @@ const CreateMarketplaceCourse = () => {
                                 <button
                                     onClick={() => handleSubmit('Draft')}
                                     disabled={loading}
-                                    className="px-6 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg disabled:opacity-50 transition-colors"
+                                    className="px-6 py-2 border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700 rounded-lg disabled:opacity-50 transition-colors"
                                 >
                                     Save as Draft
                                 </button>
@@ -464,7 +464,7 @@ const CreateMarketplaceCourse = () => {
                             {step < 3 ? (
                                 <button
                                     onClick={nextStep}
-                                    className="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors"
+                                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                                 >
                                     Continue
                                 </button>
@@ -472,10 +472,10 @@ const CreateMarketplaceCourse = () => {
                                 <button
                                     onClick={() => handleSubmit('Draft')}
                                     disabled={loading}
-                                    className="flex items-center gap-2 px-6 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg disabled:opacity-50 transition-colors"
+                                    className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 transition-colors"
                                 >
                                     <FaSave />
-                                    {loading ? 'Creating...' : 'Create Course'}
+                                    {loading ? 'Creating...' : 'Create course'}
                                 </button>
                             )}
                         </div>

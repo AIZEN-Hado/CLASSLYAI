@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext, useRef } from 'react';
+import TabLabel from '../../components/ui/TabLabel';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import api from '../../api/axios';
 import { FaEye, FaEyeSlash, FaEdit, FaTrash, FaChevronDown, FaBook, FaCog, FaUsers, FaBullhorn, FaUserTie, FaTimes, FaSignOutAlt, FaChartBar, FaClipboardList, FaSearch, FaUserPlus, FaHistory, FaRobot, FaUserGraduate, FaCheckCircle, FaPlayCircle, FaClock, FaGripVertical, FaGripHorizontal, FaFolderOpen, FaBan, FaComments, FaChevronRight, FaUser, FaFilter, FaBell, FaPaperPlane, FaCheck } from 'react-icons/fa';
@@ -253,7 +254,7 @@ const CourseManage = () => {
         } else if (status === 'In Progress') {
             return <FaPlayCircle className="text-amber-500" size={12} />;
         }
-        return <FaClock className="text-slate-400" size={12} />;
+        return <FaClock className="text-zinc-400" size={12} />;
     };
 
     // Helper: get status badge color
@@ -263,7 +264,7 @@ const CourseManage = () => {
         if (config?.color) return config.color;
         if (status === 'Completed') return '#10b981';
         if (status === 'In Progress') return '#f59e0b';
-        return '#94a3b8';
+        return '#a1a1aa';
     };
 
     // Fetch broadcasts (lazy load)
@@ -347,7 +348,7 @@ const CourseManage = () => {
             } else {
                 await api.post(`/courses/${id}/sections`, { title: newSectionTitle, isPublic: newSectionIsPublic, isPreview: newSectionIsPreview, importance: newSectionImportance });
                 if (sectionBroadcast.enabled) {
-                    const broadcastMsg = sectionBroadcast.message || `📚 New section added: "${newSectionTitle}"`;
+                    const broadcastMsg = sectionBroadcast.message || `New section added: "${newSectionTitle}"`;
                     await api.post(`/broadcasts/course/${id}`, {
                         title: `New Section: ${newSectionTitle}`,
                         message: broadcastMsg,
@@ -362,7 +363,7 @@ const CourseManage = () => {
             setEditingSectionId(null);
             setSectionBroadcast({ enabled: false, message: '', priority: 'normal' });
             fetchCourse(true);
-            showSuccess(editingSectionId ? 'Section updated!' : 'Section added!');
+            showSuccess(editingSectionId ? 'Section updated' : 'Section added');
         } catch (error) {
             showError('Error saving section');
         }
@@ -390,8 +391,8 @@ const CourseManage = () => {
                 if (lectureBroadcast.enabled) {
                     const sectionTitle = course?.sections?.find(s => s._id === activeSectionId)?.title || '';
                     const lectureLink = createdLecture?._id ? `${window.location.origin}/course/${id}/lecture/${createdLecture._id}` : '';
-                    const defaultMsg = `🎬 New lecture added: "${newLecture.title}"${sectionTitle ? ` in "${sectionTitle}"` : ''}${lectureLink ? `\n🔗 ${lectureLink}` : ''}`;
-                    const broadcastMsg = lectureBroadcast.message + (lectureLink ? `\n🔗 ${lectureLink}` : '');
+                    const defaultMsg = `New lecture added: "${newLecture.title}"${sectionTitle ? ` in "${sectionTitle}"` : ''}${lectureLink ? `\n${lectureLink}` : ''}`;
+                    const broadcastMsg = lectureBroadcast.message + (lectureLink ? `\n${lectureLink}` : '');
                     await api.post(`/broadcasts/course/${id}`, {
                         title: `New Lecture: ${newLecture.title}`,
                         message: broadcastMsg || defaultMsg,
@@ -405,7 +406,7 @@ const CourseManage = () => {
             setEditingLectureId(null);
             setLectureBroadcast({ enabled: false, message: '', priority: 'normal' });
             fetchCourse(true);
-            showSuccess(editingLectureId ? 'Lecture updated!' : 'Lecture added!');
+            showSuccess(editingLectureId ? 'Lecture updated' : 'Lecture added');
         } catch (error) {
             if (!error.handled) {
                 showError(error, 'Error saving lecture');
@@ -544,14 +545,14 @@ const CourseManage = () => {
         }
     };
 
-    if (!course) return <div className="p-8 text-center text-slate-500 font-medium animate-pulse">Loading Course...</div>;
+    if (!course) return <div className="p-8 text-center text-zinc-500 font-medium">Loading Course...</div>;
 
     // Render Broadcasts Tab Content (using shared component)
     const renderBroadcastsTab = () => {
         if (!broadcastsLoaded) {
             return (
                 <div className="flex items-center justify-center py-12">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900 dark:border-white"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900 dark:border-white"></div>
                 </div>
             );
         }
@@ -577,10 +578,10 @@ const CourseManage = () => {
     const renderTeachersTab = () => (
         <div className="space-y-6">
             <div>
-                <h2 className="text-lg font-bold text-slate-800 dark:text-white">Course Teachers</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Manage teachers and their permissions for this course</p>
+                <h2 className="text-base sm:text-lg font-semibold text-zinc-800 dark:text-white">Course teachers</h2>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Manage teachers and their permissions for this course</p>
             </div>
-            <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 p-6">
+            <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
                 <TeacherManagement
                     courseId={id}
                     canManageTeachers={canManageTeachers}
@@ -593,36 +594,36 @@ const CourseManage = () => {
 
 
     return (
-        <div className={`min-h-[calc(100vh-64px)] bg-gray-50 dark:bg-slate-950 text-slate-900 dark:text-gray-100 transition-all duration-300 ${tabLayout === 'vertical' ? `pb-20 md:pb-12 glass-content-area ${sidebarHovered ? 'glass-content-expanded' : ''}` : 'pb-12'}`}>
+        <div className={`min-h-[calc(100vh-64px)] bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition duration-300 ${tabLayout === 'vertical' ? `pb-20 md:pb-12 glass-content-area ${sidebarHovered ? 'glass-content-expanded' : ''}` : 'pb-12'}`}>
 
             {/* Header */}
-            <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 sticky top-navbar z-30 transition-all duration-300 shadow-sm">
+            <div className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 sticky top-navbar z-30 transition duration-300 shadow-sm">
                 <div className="container mx-auto px-3 sm:px-4">
-                    <div className={`flex items-center justify-between gap-2 transition-all duration-300 ${headerScrolled ? 'py-1.5' : 'py-3 sm:py-4'}`}>
+                    <div className={`flex items-center justify-between gap-2 transition duration-300 ${headerScrolled ? 'py-1.5' : 'py-3 sm:py-4'}`}>
                         <div className="min-w-0 flex-1">
-                            <h1 className={`font-bold text-slate-900 dark:text-white leading-tight truncate transition-all duration-300 ${headerScrolled ? 'text-sm' : 'text-base sm:text-lg'}`}>{course.title}</h1>
+                            <h1 className={`font-semibold text-zinc-900 dark:text-white leading-tight truncate transition duration-300 ${headerScrolled ? 'text-sm' : 'text-base sm:text-lg'}`}>{course.title}</h1>
                             {course.description && (
-                                <p className={`text-xs text-slate-500 dark:text-slate-400 line-clamp-1 transition-all duration-300 overflow-hidden ${headerScrolled ? 'max-h-0 opacity-0 mt-0' : 'max-h-10 opacity-100 mt-1 hidden sm:block'}`}>{course.description}</p>
+                                <p className={`text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 transition duration-300 overflow-hidden ${headerScrolled ? 'max-h-0 opacity-0 mt-0' : 'max-h-10 opacity-100 mt-1 hidden sm:block'}`}>{course.description}</p>
                             )}
                         </div>
                         <div className="flex gap-1.5 sm:gap-2 shrink-0">
                             <button
                                 onClick={() => navigate(`/course/${id}`)}
-                                className={`flex items-center gap-1 sm:gap-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-md text-[10px] sm:text-xs font-medium transition-all duration-300 ${headerScrolled ? 'px-2 py-1' : 'px-2 sm:px-3 py-1 sm:py-1.5'}`}
+                                className={`flex items-center gap-1 sm:gap-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-md text-[11px] sm:text-xs font-medium transition duration-300 ${headerScrolled ? 'px-2 py-1' : 'px-2 sm:px-3 py-1 sm:py-1.5'}`}
                             >
-                                <FaEye className="text-slate-400" size={10} /> <span className={`hidden xs:inline transition-all duration-300 ${headerScrolled ? 'sm:inline' : ''}`}>Preview</span>
+                                <FaEye className="text-zinc-400" size={10} /> <span className={`hidden xs:inline transition duration-300 ${headerScrolled ? 'sm:inline' : ''}`}>Preview</span>
                             </button>
                             <button
                                 onClick={() => navigate(`/admin/course/${id}/analytics`)}
-                                className={`flex items-center gap-1 sm:gap-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-md text-[10px] sm:text-xs font-medium transition-all duration-300 ${headerScrolled ? 'px-2 py-1' : 'px-2 sm:px-3 py-1 sm:py-1.5'}`}
+                                className={`flex items-center gap-1 sm:gap-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-md text-[11px] sm:text-xs font-medium transition duration-300 ${headerScrolled ? 'px-2 py-1' : 'px-2 sm:px-3 py-1 sm:py-1.5'}`}
                             >
-                                <FaChartBar className="text-slate-400" size={10} /> <span className={`hidden xs:inline transition-all duration-300 ${headerScrolled ? 'sm:inline' : ''}`}>Analytics</span>
+                                <FaChartBar className="text-zinc-400" size={10} /> <span className={`hidden xs:inline transition duration-300 ${headerScrolled ? 'sm:inline' : ''}`}>Analytics</span>
                             </button>
                             <button
                                 onClick={() => navigate(`/admin/course/${id}/settings`)}
-                                className={`flex items-center gap-1 sm:gap-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-md text-[10px] sm:text-xs font-medium hover:opacity-90 transition-all duration-300 ${headerScrolled ? 'px-2 py-1' : 'px-2 sm:px-3 py-1 sm:py-1.5'}`}
+                                className={`flex items-center gap-1 sm:gap-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-[11px] sm:text-xs font-medium hover:opacity-90 transition duration-300 ${headerScrolled ? 'px-2 py-1' : 'px-2 sm:px-3 py-1 sm:py-1.5'}`}
                             >
-                                <FaCog size={10} /> <span className={`hidden xs:inline transition-all duration-300 ${headerScrolled ? 'sm:inline' : ''}`}>Settings</span>
+                                <FaCog size={10} /> <span className={`hidden xs:inline transition duration-300 ${headerScrolled ? 'sm:inline' : ''}`}>Settings</span>
                             </button>
                         </div>
                     </div>
@@ -638,15 +639,15 @@ const CourseManage = () => {
                                         <button
                                             key={tab.id}
                                             onClick={() => setActiveTab(tab.id)}
-                                            className={`flex items-center gap-1 sm:gap-2 font-medium border-b-2 transition-all duration-300 whitespace-nowrap ${headerScrolled ? 'px-2 sm:px-3 py-1.5 text-[10px] sm:text-xs' : 'px-3 sm:px-4 py-2.5 sm:py-3 text-[11px] sm:text-sm'} ${activeTab === tab.id
-                                                ? 'border-slate-900 dark:border-white text-slate-900 dark:text-white'
-                                                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                                            className={`flex items-center font-medium border-b-2 transition duration-300 whitespace-nowrap ${headerScrolled ? 'px-2 sm:px-3 py-1.5 text-[11px] sm:text-xs' : 'px-3 sm:px-4 py-2.5 sm:py-3 text-[11px] sm:text-sm'} ${activeTab === tab.id
+                                                ? 'border-zinc-900 dark:border-white text-zinc-900 dark:text-white'
+                                                : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300'
                                                 }`}
                                         >
-                                            <Icon className={`shrink-0 transition-all duration-300 ${headerScrolled ? 'text-[10px] sm:text-xs' : 'text-[12px] sm:text-sm'}`} />
-                                            {tab.label}
+                                            <Icon className={`shrink-0 transition duration-300 ${headerScrolled ? 'text-[11px] sm:text-xs' : 'text-[12px] sm:text-sm'}`} />
+                                            <TabLabel active={activeTab === tab.id}>{tab.label}</TabLabel>
                                             {showBadge && (
-                                                <span className="bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-1 sm:px-1.5 py-0.5 rounded-full min-w-[16px] sm:min-w-[18px] text-center">
+                                                <span className="ml-1.5 bg-red-500 text-white text-[11px] font-semibold px-1 sm:px-1.5 py-0.5 rounded-full min-w-[16px] sm:min-w-[18px] text-center">
                                                     {unreadBroadcastCount > 99 ? '99+' : unreadBroadcastCount}
                                                 </span>
                                             )}
@@ -656,7 +657,7 @@ const CourseManage = () => {
                             </div>
                             <button
                                 onClick={toggleTabLayout}
-                                className="p-1.5 ml-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded transition-colors"
+                                className="p-1.5 ml-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded transition-colors"
                                 title="Switch to vertical sidebar"
                             >
                                 <FaGripVertical size={12} />
@@ -669,44 +670,44 @@ const CourseManage = () => {
             {/* Teacher Permissions Banner - Compact & Mobile Friendly */}
             {userPermissions.isTeacher && !isOwner && showPermissionsBanner && (
                 <div className="container mx-auto px-4 pt-3">
-                    <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-200 dark:border-indigo-800 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5">
+                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5">
                         <div className="flex items-center justify-between gap-2">
                             {/* Left: Icon + Text */}
                             <div className="flex items-center gap-2 min-w-0 flex-1">
-                                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center shrink-0">
-                                    <FaUserTie className="text-indigo-600 dark:text-indigo-400 text-xs sm:text-sm" />
+                                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center shrink-0">
+                                    <FaUserTie className="text-blue-600 dark:text-zinc-400 text-xs sm:text-sm" />
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <div className="flex items-center gap-1.5 flex-wrap">
-                                        <span className="text-xs sm:text-sm font-medium text-slate-800 dark:text-white whitespace-nowrap">You're a Teacher</span>
-                                        <span className="hidden sm:inline text-slate-400 dark:text-slate-500">|</span>
+                                        <span className="text-xs sm:text-sm font-medium text-zinc-800 dark:text-white whitespace-nowrap">You're a Teacher</span>
+                                        <span className="hidden sm:inline text-zinc-400 dark:text-zinc-500">|</span>
                                         <div className="flex flex-wrap gap-1">
                                             {userPermissions.permissions.full_access ? (
-                                                <span className="text-[10px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 font-medium">
-                                                    Full Access
+                                                <span className="text-[11px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-md bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 font-medium">
+                                                    Full access
                                                 </span>
                                             ) : (
                                                 <>
                                                     {userPermissions.permissions.manage_content && (
-                                                        <span className="text-[10px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 font-medium">
+                                                        <span className="text-[11px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-md bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 font-medium">
                                                             Content
                                                         </span>
                                                     )}
                                                     {userPermissions.permissions.manage_students && (
-                                                        <span className="text-[10px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-full bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 font-medium">
+                                                        <span className="text-[11px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-md bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 font-medium">
                                                             Students
                                                         </span>
                                                     )}
                                                     {userPermissions.permissions.manage_teachers && (
-                                                        <span className="text-[10px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300 font-medium">
+                                                        <span className="text-[11px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-md bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300 font-medium">
                                                             Teachers
                                                         </span>
                                                     )}
                                                     {!userPermissions.permissions.manage_content &&
                                                         !userPermissions.permissions.manage_students &&
                                                         !userPermissions.permissions.manage_teachers && (
-                                                            <span className="text-[10px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 font-medium">
-                                                                View Only
+                                                            <span className="text-[11px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 font-medium">
+                                                                View only
                                                             </span>
                                                         )}
                                                 </>
@@ -719,7 +720,7 @@ const CourseManage = () => {
                             <div className="flex items-center gap-0.5 shrink-0">
                                 <button
                                     onClick={handleLeaveCourse}
-                                    className="flex items-center gap-1 px-1.5 sm:px-2 py-1 text-[10px] sm:text-[11px] font-medium text-red-600 hover:text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors"
+                                    className="flex items-center gap-1 px-1.5 sm:px-2 py-1 text-[11px] sm:text-[11px] font-medium text-red-600 hover:text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors"
                                     title="Leave this course"
                                 >
                                     <FaSignOutAlt size={10} />
@@ -727,7 +728,7 @@ const CourseManage = () => {
                                 </button>
                                 <button
                                     onClick={() => setShowPermissionsBanner(false)}
-                                    className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded transition-colors"
+                                    className="p-1 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 rounded transition-colors"
                                     title="Dismiss"
                                 >
                                     <FaTimes size={12} />
@@ -740,8 +741,8 @@ const CourseManage = () => {
 
             {/* Mobile bottom nav bar when vertical layout is active */}
             {tabLayout === 'vertical' && (
-                <div className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-800 safe-area-bottom">
-                    <div className="flex items-stretch">
+                <div className="mobile-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 safe-area-bottom">
+                    <div className="flex items-stretch overflow-x-auto [scrollbar-width:none]">
                         {tabs.map((tab) => {
                             const Icon = tab.icon;
                             const showBadge = tab.id === 'broadcasts' && unreadBroadcastCount > 0;
@@ -750,16 +751,17 @@ const CourseManage = () => {
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`relative flex-1 flex flex-col items-center gap-0.5 py-2 pt-2.5 transition-colors ${isActive
+                                    aria-label={tab.label}
+                                    className={`relative flex flex-auto items-center justify-center px-2 py-3 text-xs font-medium transition-colors ${isActive
                                         ? 'text-blue-600 dark:text-blue-400'
-                                        : 'text-slate-400 dark:text-slate-500'
+                                        : 'text-zinc-400 dark:text-zinc-500'
                                         }`}
                                 >
                                     {isActive && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />}
-                                    <Icon className="text-[17px]" />
-                                    <span className="text-[9px] font-semibold leading-tight">{tab.label}</span>
+                                    <Icon className="text-[17px] shrink-0" />
+                                    <TabLabel active={isActive}>{tab.label}</TabLabel>
                                     {showBadge && (
-                                        <span className="absolute top-1 right-1/2 translate-x-3 bg-red-500 text-white text-[7px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center ring-2 ring-white dark:ring-slate-900">
+                                        <span className="absolute top-1 right-1/2 translate-x-3 bg-red-500 text-white text-[10px] font-semibold w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white dark:ring-zinc-900">
                                             {unreadBroadcastCount > 9 ? '9+' : unreadBroadcastCount}
                                         </span>
                                     )}
@@ -768,10 +770,11 @@ const CourseManage = () => {
                         })}
                         <Link
                             to="/ai-chat"
-                            className="relative flex-1 flex flex-col items-center gap-0.5 py-2 pt-2.5 text-slate-400 dark:text-slate-500"
+                            aria-label="AI Chat"
+                            className="relative flex flex-auto items-center justify-center px-2 py-3 text-xs font-medium text-zinc-400 dark:text-zinc-500"
                         >
-                            <FaRobot className="text-[17px]" />
-                            <span className="text-[9px] font-semibold leading-tight">AI Chat</span>
+                            <FaRobot className="text-[17px] shrink-0" />
+                            <TabLabel active={false}>AI Chat</TabLabel>
                         </Link>
                     </div>
                 </div>
@@ -794,14 +797,14 @@ const CourseManage = () => {
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`glass-nav-item relative ${isActive
-                                        ? 'glass-nav-active text-white'
-                                        : 'text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400'
+                                        ? 'glass-nav-active text-zinc-900 dark:text-zinc-50'
+                                        : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
                                         }`}
                                 >
                                     <Icon className="glass-nav-icon text-[18px]" />
-                                    <span className="glass-nav-label text-[12px] font-semibold">{tab.label}</span>
+                                    <span className="glass-nav-label text-[13px] font-medium">{tab.label}</span>
                                     {showBadge && (
-                                        <span className="absolute top-1 right-1 bg-red-500 text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white dark:ring-slate-900">
+                                        <span className="absolute top-1 right-1 bg-red-500 text-white text-[11px] font-semibold w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white dark:ring-zinc-900">
                                             {unreadBroadcastCount > 9 ? '9+' : unreadBroadcastCount}
                                         </span>
                                     )}
@@ -812,19 +815,19 @@ const CourseManage = () => {
                     <div className="flex flex-col gap-1 px-1.5">
                         <Link
                             to="/ai-chat"
-                            className="glass-nav-item text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400"
+                            className="glass-nav-item text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
                             title="AI Chat Assistant"
                         >
                             <FaRobot className="glass-nav-icon text-[18px]" />
-                            <span className="glass-nav-label text-[12px] font-semibold">AI Chat</span>
+                            <span className="glass-nav-label text-[13px] font-medium">AI Chat</span>
                         </Link>
                         <button
                             onClick={toggleTabLayout}
-                            className="glass-nav-item text-slate-300 dark:text-slate-600 hover:text-slate-500 dark:hover:text-slate-400"
+                            className="glass-nav-item text-zinc-300 dark:text-zinc-600 hover:text-zinc-500 dark:hover:text-zinc-400"
                             title="Switch to horizontal tabs"
                         >
                             <FaGripHorizontal className="glass-nav-icon text-sm" />
-                            <span className="glass-nav-label text-[11px] font-medium">Layout</span>
+                            <span className="glass-nav-label text-[13px] font-medium">Layout</span>
                         </button>
                     </div>
                 </div>
@@ -916,21 +919,21 @@ const CourseManage = () => {
                     handleSaveSection(e);
                     setIsSectionModalOpen(false);
                 }} className="space-y-4">
-                    <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-800 pb-3 mb-2">
-                        <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Visible to Students</label>
+                    <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3 mb-2">
+                        <label className="text-[11px] font-semibold text-zinc-400 dark:text-zinc-500">Visible to students</label>
                         <button
                             type="button"
                             onClick={() => setNewSectionIsPublic(!newSectionIsPublic)}
-                            className={`w-9 h-5 rounded-full flex items-center transition-colors px-1 ${newSectionIsPublic ? 'bg-green-500' : 'bg-slate-200 dark:bg-slate-700'}`}
+                            className={`w-9 h-5 rounded-full flex items-center transition-colors px-1 ${newSectionIsPublic ? 'bg-green-500' : 'bg-zinc-200 dark:bg-zinc-700'}`}
                         >
                             <div className={`w-3.5 h-3.5 bg-white rounded-full shadow-sm transition-transform ${newSectionIsPublic ? 'translate-x-4' : 'translate-x-0'}`} />
                         </button>
                     </div>
                     <div>
-                        <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1">Section Title</label>
+                        <label className="block text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 mb-1">Section title</label>
                         <input
                             type="text"
-                            className="w-full rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-white"
+                            className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:focus:ring-white"
                             value={newSectionTitle}
                             onChange={(e) => setNewSectionTitle(e.target.value)}
                             placeholder="e.g. Introduction to React"
@@ -944,17 +947,17 @@ const CourseManage = () => {
                             id="isSectionPreview"
                             checked={newSectionIsPreview}
                             onChange={(e) => setNewSectionIsPreview(e.target.checked)}
-                            className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500 cursor-pointer"
+                            className="w-4 h-4 text-blue-600 rounded border-zinc-300 focus:ring-blue-500 cursor-pointer"
                         />
-                        <label htmlFor="isSectionPreview" className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase cursor-pointer">
-                            Free Preview Section
+                        <label htmlFor="isSectionPreview" className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 cursor-pointer">
+                            Free preview section
                         </label>
                     </div>
 
                     <div>
-                        <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1">Importance</label>
+                        <label className="block text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 mb-1">Importance</label>
                         <select
-                            className="w-full rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-white"
+                            className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:focus:ring-white"
                             value={newSectionImportance}
                             onChange={(e) => setNewSectionImportance(e.target.value)}
                         >
@@ -968,42 +971,42 @@ const CourseManage = () => {
 
                     {/* Auto-broadcast toggle — only for new sections */}
                     {!editingSectionId && (
-                        <div className={`rounded-lg border transition-colors ${sectionBroadcast.enabled ? 'border-indigo-300 dark:border-indigo-700 bg-indigo-50/50 dark:bg-indigo-900/10' : 'border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900/50'}`}>
+                        <div className={`rounded-lg border transition-colors ${sectionBroadcast.enabled ? 'border-blue-300 dark:border-blue-700 bg-blue-50/50 dark:bg-blue-900/10' : 'border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/50'}`}>
                             <button
                                 type="button"
                                 onClick={() => setSectionBroadcast(prev => ({
                                     ...prev,
                                     enabled: !prev.enabled,
-                                    message: !prev.enabled ? `📚 New section added: "${newSectionTitle}"` : prev.message
+                                    message: !prev.enabled ? `New section added: "${newSectionTitle}"` : prev.message
                                 }))}
                                 className="w-full flex items-center justify-between px-4 py-3"
                             >
                                 <div className="flex items-center gap-2.5">
-                                    <FaBullhorn className={`text-sm ${sectionBroadcast.enabled ? 'text-indigo-500' : 'text-slate-400'}`} />
-                                    <span className={`text-xs font-bold uppercase tracking-wide ${sectionBroadcast.enabled ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                                    <FaBullhorn className={`text-sm ${sectionBroadcast.enabled ? 'text-blue-500' : 'text-zinc-400'}`} />
+                                    <span className={`text-xs font-semibold uppercase ${sectionBroadcast.enabled ? 'text-blue-600 dark:text-blue-400' : 'text-zinc-500 dark:text-zinc-400'}`}>
                                         Notify Students via Broadcast
                                     </span>
                                 </div>
-                                <div className={`w-9 h-5 rounded-full flex items-center px-1 transition-colors ${sectionBroadcast.enabled ? 'bg-indigo-500' : 'bg-slate-200 dark:bg-slate-700'}`}>
+                                <div className={`w-9 h-5 rounded-full flex items-center px-1 transition-colors ${sectionBroadcast.enabled ? 'bg-blue-500' : 'bg-zinc-200 dark:bg-zinc-700'}`}>
                                     <div className={`w-3.5 h-3.5 bg-white rounded-full shadow-sm transition-transform ${sectionBroadcast.enabled ? 'translate-x-4' : 'translate-x-0'}`} />
                                 </div>
                             </button>
                             {sectionBroadcast.enabled && (
-                                <div className="px-4 pb-4 space-y-3 border-t border-indigo-200 dark:border-indigo-800/50 pt-3">
+                                <div className="px-4 pb-4 space-y-3 border-t border-blue-200 dark:border-blue-800/50 pt-3">
                                     <div>
-                                        <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1">Message</label>
+                                        <label className="block text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 mb-1">Message</label>
                                         <textarea
                                             rows={2}
-                                            className="w-full rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
-                                            placeholder="Broadcast message..."
+                                            className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                                            placeholder="Broadcast message"
                                             value={sectionBroadcast.message}
                                             onChange={(e) => setSectionBroadcast(prev => ({ ...prev, message: e.target.value }))}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1">Priority</label>
+                                        <label className="block text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 mb-1">Priority</label>
                                         <select
-                                            className="w-full rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                                            className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
                                             value={sectionBroadcast.priority}
                                             onChange={(e) => setSectionBroadcast(prev => ({ ...prev, priority: e.target.value }))}
                                         >
@@ -1018,8 +1021,8 @@ const CourseManage = () => {
                     )}
 
                     <div className="flex justify-end pt-4">
-                        <button type="submit" className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-2.5 rounded-full text-sm font-bold shadow-lg hover:shadow-xl hover:bg-slate-800 transition-all transform hover:-translate-y-0.5">
-                            {editingSectionId ? "Update Section" : "Add Section"}
+                        <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition transform ">
+                            {editingSectionId ? "Update section" : "Add Section"}
                         </button>
                     </div>
                 </form>
@@ -1029,40 +1032,40 @@ const CourseManage = () => {
             <Modal
                 isOpen={isLectureModalOpen}
                 onClose={() => setIsLectureModalOpen(false)}
-                title={editingLectureId ? 'Edit Lecture' : 'New Lecture'}
+                title={editingLectureId ? 'Edit lecture' : 'New lecture'}
             >
                 <form onSubmit={(e) => { handleSaveLecture(e); setIsLectureModalOpen(false); }} className="space-y-5">
 
                     {/* Row 1: Number + Title */}
                     <div className="flex gap-3">
                         <div className="w-20 flex-shrink-0">
-                            <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1.5">#</label>
+                            <label className="block text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 mb-1.5">#</label>
                             <input
                                 type="number"
-                                className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 px-3 py-2.5 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-3 py-2.5 text-sm font-medium text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                                 value={newLecture.number}
                                 onChange={(e) => setNewLecture({ ...newLecture, number: e.target.value })}
                                 required
                             />
                         </div>
                         <div className="flex-1">
-                            <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1.5">Title *</label>
+                            <label className="block text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 mb-1.5">Title *</label>
                             <input
                                 type="text"
-                                className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-3 py-2.5 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                                 value={newLecture.title}
                                 onChange={(e) => {
                                     const title = e.target.value;
                                     setNewLecture({ ...newLecture, title });
                                     if (lectureBroadcast.enabled) {
                                         const sectionTitle = course?.sections?.find(s => s._id === activeSectionId)?.title || '';
-                                        const expectedMsg = `🎬 New lecture added: "${newLecture.title}"${sectionTitle ? ` in "${sectionTitle}"` : ''}`;
+                                        const expectedMsg = `New lecture added: "${newLecture.title}"${sectionTitle ? ` in "${sectionTitle}"` : ''}`;
                                         if (lectureBroadcast.message === expectedMsg) {
-                                            setLectureBroadcast(prev => ({ ...prev, message: `🎬 New lecture added: "${title}"${sectionTitle ? ` in "${sectionTitle}"` : ''}` }));
+                                            setLectureBroadcast(prev => ({ ...prev, message: `New lecture added: "${title}"${sectionTitle ? ` in "${sectionTitle}"` : ''}` }));
                                         }
                                     }
                                 }}
-                                placeholder="Lecture title..."
+                                placeholder="Lecture title"
                                 required
                             />
                         </div>
@@ -1071,20 +1074,20 @@ const CourseManage = () => {
                     {/* Row 2: Resource URL + Due Date */}
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1.5">Resource URL</label>
+                            <label className="block text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 mb-1.5">Resource URL</label>
                             <input
                                 type="url"
-                                className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-3 py-2.5 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                                 value={newLecture.resourceUrl}
                                 onChange={(e) => setNewLecture({ ...newLecture, resourceUrl: e.target.value })}
-                                placeholder="https://..."
+                                placeholder="https://"
                             />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1.5">Due Date</label>
+                            <label className="block text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 mb-1.5">Due date</label>
                             <input
                                 type="date"
-                                className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-3 py-2.5 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                                 value={newLecture.dueDate}
                                 onChange={(e) => setNewLecture({ ...newLecture, dueDate: e.target.value })}
                             />
@@ -1093,10 +1096,10 @@ const CourseManage = () => {
 
                     {/* Row 3: Description */}
                     <div>
-                        <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1.5">Description</label>
+                        <label className="block text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 mb-1.5">Description</label>
                         <textarea
                             rows={3}
-                            className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent resize-none"
+                            className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-3 py-2.5 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none"
                             value={newLecture.description}
                             onChange={(e) => setNewLecture({ ...newLecture, description: e.target.value })}
                             placeholder="What will students learn in this lecture?"
@@ -1105,16 +1108,16 @@ const CourseManage = () => {
 
                     {/* Row 4: Importance pills */}
                     <div>
-                        <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-2">Importance</label>
+                        <label className="block text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 mb-2">Importance</label>
                         <div className="flex flex-wrap gap-2">
                             {[{ value: '', label: 'Inherit' }, { value: 'None', label: 'None' }, { value: 'Optional', label: 'Optional' }, { value: 'Normal', label: 'Normal' }, { value: 'Important', label: 'Important' }, { value: 'Very Important', label: 'Very Important' }].map(opt => (
                                 <button
                                     key={opt.value}
                                     type="button"
                                     onClick={() => setNewLecture({ ...newLecture, importance: opt.value })}
-                                    className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${(newLecture.importance || '') === opt.value
-                                        ? 'bg-indigo-500 border-indigo-500 text-white'
-                                        : 'border-gray-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-indigo-400 hover:text-indigo-500'}`}
+                                    className={`px-3 py-1 rounded-full text-xs font-medium border transition ${(newLecture.importance || '') === opt.value
+                                        ? 'bg-blue-500 border-blue-500 text-white'
+                                        : 'border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:border-blue-400 hover:text-blue-500'}`}
                                 >
                                     {opt.label}
                                 </button>
@@ -1123,37 +1126,37 @@ const CourseManage = () => {
                     </div>
 
                     {/* Row 5: Toggles — Visible & Free Preview */}
-                    <div className="flex items-center gap-4 p-3 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+                    <div className="flex items-center gap-4 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
                         <button
                             type="button"
                             onClick={() => setNewLecture({ ...newLecture, isPublic: !newLecture.isPublic })}
                             className="flex items-center gap-2 flex-1"
                         >
-                            <div className={`w-8 h-4.5 h-[18px] rounded-full flex items-center px-0.5 transition-colors ${newLecture.isPublic ? 'bg-green-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                            <div className={`w-8 h-4.5 h-[18px] rounded-full flex items-center px-0.5 transition-colors ${newLecture.isPublic ? 'bg-green-500' : 'bg-zinc-300 dark:bg-zinc-600'}`}>
                                 <div className={`w-3.5 h-3.5 bg-white rounded-full shadow transition-transform ${newLecture.isPublic ? 'translate-x-[14px]' : 'translate-x-0'}`} />
                             </div>
-                            <span className={`text-xs font-semibold ${newLecture.isPublic ? 'text-green-600 dark:text-green-400' : 'text-slate-400'}`}>
-                                Visible to Students
+                            <span className={`text-xs font-medium ${newLecture.isPublic ? 'text-green-600 dark:text-green-400' : 'text-zinc-400'}`}>
+                                Visible to students
                             </span>
                         </button>
-                        <div className="w-px h-5 bg-gray-200 dark:bg-slate-700" />
+                        <div className="w-px h-5 bg-zinc-200 dark:bg-zinc-700" />
                         <button
                             type="button"
                             onClick={() => setNewLecture({ ...newLecture, isPreview: !newLecture.isPreview })}
                             className="flex items-center gap-2 flex-1"
                         >
-                            <div className={`w-8 h-[18px] rounded-full flex items-center px-0.5 transition-colors ${newLecture.isPreview ? 'bg-amber-400' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                            <div className={`w-8 h-[18px] rounded-full flex items-center px-0.5 transition-colors ${newLecture.isPreview ? 'bg-amber-400' : 'bg-zinc-300 dark:bg-zinc-600'}`}>
                                 <div className={`w-3.5 h-3.5 bg-white rounded-full shadow transition-transform ${newLecture.isPreview ? 'translate-x-[14px]' : 'translate-x-0'}`} />
                             </div>
-                            <span className={`text-xs font-semibold ${newLecture.isPreview ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400'}`}>
-                                Free Preview
+                            <span className={`text-xs font-medium ${newLecture.isPreview ? 'text-amber-600 dark:text-amber-400' : 'text-zinc-400'}`}>
+                                Free preview
                             </span>
                         </button>
                     </div>
 
                     {/* Row 6: Auto-broadcast — only for new lectures */}
                     {!editingLectureId && (
-                        <div className={`rounded-lg border transition-all ${lectureBroadcast.enabled ? 'border-indigo-300 dark:border-indigo-700 bg-indigo-50/50 dark:bg-indigo-900/10' : 'border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800'}`}>
+                        <div className={`rounded-lg border transition ${lectureBroadcast.enabled ? 'border-blue-300 dark:border-blue-700 bg-blue-50/50 dark:bg-blue-900/10' : 'border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800'}`}>
                             <button
                                 type="button"
                                 onClick={() => {
@@ -1161,27 +1164,27 @@ const CourseManage = () => {
                                     setLectureBroadcast(prev => ({
                                         ...prev,
                                         enabled: !prev.enabled,
-                                        message: !prev.enabled ? `🎬 New lecture added: "${newLecture.title}"${sectionTitle ? ` in "${sectionTitle}"` : ''}` : prev.message
+                                        message: !prev.enabled ? `New lecture added: "${newLecture.title}"${sectionTitle ? ` in "${sectionTitle}"` : ''}` : prev.message
                                     }));
                                 }}
                                 className="w-full flex items-center justify-between px-4 py-3"
                             >
                                 <div className="flex items-center gap-2.5">
-                                    <FaBullhorn className={`text-sm ${lectureBroadcast.enabled ? 'text-indigo-500' : 'text-slate-400'}`} />
-                                    <span className={`text-xs font-bold uppercase tracking-wide ${lectureBroadcast.enabled ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                                    <FaBullhorn className={`text-sm ${lectureBroadcast.enabled ? 'text-blue-500' : 'text-zinc-400'}`} />
+                                    <span className={`text-xs font-semibold uppercase ${lectureBroadcast.enabled ? 'text-blue-600 dark:text-blue-400' : 'text-zinc-500 dark:text-zinc-400'}`}>
                                         Notify Students via Broadcast
                                     </span>
                                 </div>
-                                <div className={`w-9 h-5 rounded-full flex items-center px-1 transition-colors ${lectureBroadcast.enabled ? 'bg-indigo-500' : 'bg-slate-200 dark:bg-slate-700'}`}>
+                                <div className={`w-9 h-5 rounded-full flex items-center px-1 transition-colors ${lectureBroadcast.enabled ? 'bg-blue-500' : 'bg-zinc-200 dark:bg-zinc-700'}`}>
                                     <div className={`w-3.5 h-3.5 bg-white rounded-full shadow-sm transition-transform ${lectureBroadcast.enabled ? 'translate-x-4' : 'translate-x-0'}`} />
                                 </div>
                             </button>
                             {lectureBroadcast.enabled && (
-                                <div className="px-4 pb-4 space-y-3 border-t border-indigo-200 dark:border-indigo-800/50 pt-3">
+                                <div className="px-4 pb-4 space-y-3 border-t border-blue-200 dark:border-blue-800/50 pt-3">
                                     <textarea
                                         rows={2}
-                                        className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
-                                        placeholder="Broadcast message..."
+                                        className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                                        placeholder="Broadcast message"
                                         value={lectureBroadcast.message}
                                         onChange={(e) => setLectureBroadcast(prev => ({ ...prev, message: e.target.value }))}
                                     />
@@ -1191,11 +1194,11 @@ const CourseManage = () => {
                                                 key={p}
                                                 type="button"
                                                 onClick={() => setLectureBroadcast(prev => ({ ...prev, priority: p }))}
-                                                className={`flex-1 py-1.5 rounded-full text-xs font-bold capitalize border transition-all ${lectureBroadcast.priority === p
+                                                className={`flex-1 py-1.5 rounded-full text-xs font-semibold capitalize border transition ${lectureBroadcast.priority === p
                                                     ? p === 'urgent' ? 'bg-red-500 border-red-500 text-white'
                                                         : p === 'important' ? 'bg-amber-500 border-amber-500 text-white'
-                                                            : 'bg-indigo-500 border-indigo-500 text-white'
-                                                    : 'border-gray-200 dark:border-slate-700 text-slate-500 hover:border-indigo-300'}`}
+                                                            : 'bg-blue-500 border-blue-500 text-white'
+                                                    : 'border-zinc-200 dark:border-zinc-700 text-zinc-500 hover:border-blue-300'}`}
                                             >
                                                 {p}
                                             </button>
@@ -1208,8 +1211,8 @@ const CourseManage = () => {
 
                     {/* Submit */}
                     <div className="flex justify-end pt-1">
-                        <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg transition-all transform hover:-translate-y-0.5">
-                            {editingLectureId ? 'Update Lecture' : 'Save Lecture'}
+                        <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-medium shadow-lg transition transform ">
+                            {editingLectureId ? 'Update lecture' : 'Save lecture'}
                         </button>
                     </div>
                 </form>
@@ -1219,20 +1222,20 @@ const CourseManage = () => {
             <Modal
                 isOpen={isNotifModalOpen}
                 onClose={() => setIsNotifModalOpen(false)}
-                title="Send Notification"
+                title="Send notification"
             >
                 <div className="space-y-4">
                     {/* Target: All or Specific */}
                     <div>
-                        <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1.5">Send To</label>
+                        <label className="block text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 mb-1.5">Send to</label>
                         <div className="flex gap-2">
                             <button type="button" onClick={() => { setNotifTarget('all'); setNotifSelectedStudents([]); }}
-                                className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-all ${notifTarget === 'all' ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white' : 'border-gray-200 dark:border-slate-700 text-slate-500 hover:border-slate-400'}`}>
-                                All Students
+                                className={`flex-1 py-2 rounded-lg text-xs font-semibold border transition ${notifTarget === 'all' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white' : 'border-zinc-200 dark:border-zinc-700 text-zinc-500 hover:border-zinc-400'}`}>
+                                All students
                             </button>
                             <button type="button" onClick={() => setNotifTarget('specific')}
-                                className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-all ${notifTarget === 'specific' ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white' : 'border-gray-200 dark:border-slate-700 text-slate-500 hover:border-slate-400'}`}>
-                                Specific Students
+                                className={`flex-1 py-2 rounded-lg text-xs font-semibold border transition ${notifTarget === 'specific' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white' : 'border-zinc-200 dark:border-zinc-700 text-zinc-500 hover:border-zinc-400'}`}>
+                                Specific students
                             </button>
                         </div>
                     </div>
@@ -1244,7 +1247,7 @@ const CourseManage = () => {
                             {notifSelectedStudents.length > 0 && (
                                 <div className="flex flex-wrap gap-1.5 mb-2">
                                     {notifSelectedStudents.map(s => (
-                                        <span key={s._id} className="inline-flex items-center gap-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-[10px] font-medium px-2 py-1 rounded-full">
+                                        <span key={s._id} className="inline-flex items-center gap-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-[11px] font-medium px-2 py-1 rounded-md">
                                             {s.name}
                                             <button onClick={() => setNotifSelectedStudents(prev => prev.filter(x => x._id !== s._id))} className="hover:text-red-500 transition-colors">
                                                 <FaTimes size={8} />
@@ -1255,17 +1258,17 @@ const CourseManage = () => {
                             )}
                             {/* Search */}
                             <div className="relative">
-                                <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={10} />
+                                <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={10} />
                                 <input
                                     type="text"
                                     value={notifStudentSearch}
                                     onChange={(e) => setNotifStudentSearch(e.target.value)}
-                                    placeholder="Search students..."
-                                    className="w-full pl-8 pr-3 py-2 text-xs bg-gray-50 dark:bg-slate-950 border border-gray-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 text-slate-800 dark:text-slate-200"
+                                    placeholder="Search students"
+                                    className="w-full pl-8 pr-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-zinc-800 dark:text-zinc-200"
                                 />
                             </div>
                             {/* Student list */}
-                            <div className="max-h-36 overflow-y-auto mt-2 border border-gray-200 dark:border-slate-700 rounded-lg divide-y divide-gray-100 dark:divide-slate-800">
+                            <div className="max-h-36 overflow-y-auto mt-2 border border-zinc-200 dark:border-zinc-700 rounded-lg divide-y divide-zinc-100 dark:divide-zinc-800">
                                 {notifStudentList.length > 0 ? notifStudentList.map(s => {
                                     const isSelected = notifSelectedStudents.some(x => x._id === s._id);
                                     return (
@@ -1275,56 +1278,56 @@ const CourseManage = () => {
                                             } else {
                                                 setNotifSelectedStudents(prev => [...prev, { _id: s._id, name: s.name, email: s.email }]);
                                             }
-                                        }} className={`w-full flex items-center gap-2 px-3 py-2 text-left transition-colors ${isSelected ? 'bg-indigo-50 dark:bg-indigo-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-800'}`}>
-                                            <div className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 ${isSelected ? 'bg-indigo-500 border-indigo-500 text-white' : 'border-gray-300 dark:border-slate-600'}`}>
+                                        }} className={`w-full flex items-center gap-2 px-3 py-2 text-left transition-colors ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800'}`}>
+                                            <div className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 ${isSelected ? 'bg-blue-500 border-blue-500 text-white' : 'border-zinc-300 dark:border-zinc-600'}`}>
                                                 {isSelected && <FaCheck size={8} />}
                                             </div>
                                             <div className="min-w-0">
-                                                <p className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate">{s.name}</p>
-                                                <p className="text-[10px] text-slate-400 truncate">{s.email}</p>
+                                                <p className="text-xs font-medium text-zinc-800 dark:text-zinc-200 truncate">{s.name}</p>
+                                                <p className="text-[11px] text-zinc-400 truncate">{s.email}</p>
                                             </div>
                                         </button>
                                     );
                                 }) : (
-                                    <div className="px-3 py-4 text-xs text-slate-400 text-center">No students found</div>
+                                    <div className="px-3 py-4 text-xs text-zinc-400 text-center">No students found</div>
                                 )}
                             </div>
                         </div>
                     )}
 
                     <div>
-                        <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1">Title *</label>
+                        <label className="block text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 mb-1">Title *</label>
                         <input
                             type="text"
                             value={notifTitle}
                             onChange={(e) => setNotifTitle(e.target.value)}
-                            placeholder="Notification title..."
-                            className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-950 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                            placeholder="Notification title"
+                            className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
                         />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1">Message</label>
+                        <label className="block text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 mb-1">Message</label>
                         <textarea
                             rows={3}
                             value={notifMessage}
                             onChange={(e) => setNotifMessage(e.target.value)}
-                            placeholder="Optional message..."
-                            className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-950 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+                            placeholder="Optional message"
+                            className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
                         />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1.5">Priority</label>
+                        <label className="block text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 mb-1.5">Priority</label>
                         <div className="flex gap-2">
                             {['normal', 'important', 'urgent'].map(p => (
                                 <button
                                     key={p}
                                     type="button"
                                     onClick={() => setNotifPriority(p)}
-                                    className={`flex-1 py-2 rounded-lg text-xs font-bold capitalize border transition-all ${notifPriority === p
+                                    className={`flex-1 py-2 rounded-lg text-xs font-semibold capitalize border transition ${notifPriority === p
                                         ? p === 'urgent' ? 'bg-red-500 border-red-500 text-white'
                                         : p === 'important' ? 'bg-amber-500 border-amber-500 text-white'
-                                        : 'bg-indigo-500 border-indigo-500 text-white'
-                                        : 'border-gray-200 dark:border-slate-700 text-slate-500 hover:border-indigo-300'}`}
+                                        : 'bg-blue-500 border-blue-500 text-white'
+                                        : 'border-zinc-200 dark:border-zinc-700 text-zinc-500 hover:border-blue-300'}`}
                                 >
                                     {p}
                                 </button>
@@ -1334,7 +1337,7 @@ const CourseManage = () => {
                     <button
                         onClick={handleSendNotification}
                         disabled={sendingNotif || !notifTitle.trim() || (notifTarget === 'specific' && notifSelectedStudents.length === 0)}
-                        className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <FaPaperPlane size={12} /> {sendingNotif ? 'Sending...' : notifTarget === 'specific' ? `Send to ${notifSelectedStudents.length} Student(s)` : 'Send to All Students'}
                     </button>
@@ -1348,49 +1351,49 @@ const CourseManage = () => {
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setAiChatDrawerOpen(false)} />
 
                     {/* Drawer */}
-                    <div className="relative ml-auto w-full max-w-3xl h-full bg-white dark:bg-slate-900 shadow-2xl flex flex-col">
+                    <div className="relative ml-auto w-full max-w-3xl h-full bg-white dark:bg-zinc-900 shadow-2xl flex flex-col">
                         {/* Header */}
-                        <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-200 dark:border-slate-800 shrink-0">
-                            <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-                                <FaRobot className="text-indigo-500" size={14} />
+                        <div className="flex items-center gap-3 px-5 py-4 border-b border-zinc-200 dark:border-zinc-800 shrink-0">
+                            <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                <FaRobot className="text-zinc-400" size={14} />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                                <p className="text-sm font-semibold text-zinc-900 dark:text-white truncate">
                                     {aiChatViewStudent?.name}'s AI Conversations
                                 </p>
-                                <p className="text-[11px] text-slate-400 truncate">{aiChatViewStudent?.email} · Using your API key</p>
+                                <p className="text-[11px] text-zinc-400 truncate">{aiChatViewStudent?.email} · Using your API key</p>
                             </div>
-                            <button onClick={() => setAiChatDrawerOpen(false)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-400 transition-colors">
+                            <button onClick={() => setAiChatDrawerOpen(false)} className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 transition-colors">
                                 <FaTimes size={16} />
                             </button>
                         </div>
 
                         <div className="flex flex-1 min-h-0">
                             {/* Conversation List */}
-                            <div className="w-56 shrink-0 border-r border-gray-200 dark:border-slate-800 flex flex-col">
-                                <div className="px-3 py-2.5 border-b border-gray-100 dark:border-slate-800">
-                                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Conversations</p>
+                            <div className="w-56 shrink-0 border-r border-zinc-200 dark:border-zinc-800 flex flex-col">
+                                <div className="px-3 py-2.5 border-b border-zinc-100 dark:border-zinc-800">
+                                    <p className="text-[11px] font-semibold text-zinc-400 ">Conversations</p>
                                 </div>
                                 <div className="flex-1 overflow-y-auto">
                                     {aiChatLoading ? (
                                         <div className="flex items-center justify-center py-10">
-                                            <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                                            <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                                         </div>
                                     ) : aiChatConversations.length === 0 ? (
                                         <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
-                                            <FaComments className="text-slate-300 dark:text-slate-600 mb-2" size={24} />
-                                            <p className="text-xs text-slate-400">No conversations yet</p>
-                                            <p className="text-[10px] text-slate-300 dark:text-slate-600 mt-1">Student hasn't used your AI key</p>
+                                            <FaComments className="text-zinc-300 dark:text-zinc-600 mb-2" size={24} />
+                                            <p className="text-xs text-zinc-400">No conversations yet</p>
+                                            <p className="text-[11px] text-zinc-300 dark:text-zinc-600 mt-1">Student hasn't used your AI key</p>
                                         </div>
                                     ) : (
                                         aiChatConversations.map(conv => (
                                             <button
                                                 key={conv._id}
                                                 onClick={() => setAiChatSelectedConv(conv)}
-                                                className={`w-full text-left px-3 py-3 border-b border-gray-100 dark:border-slate-800/60 hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors ${aiChatSelectedConv?._id === conv._id ? 'bg-indigo-50 dark:bg-indigo-900/20 border-l-2 border-l-indigo-500' : ''}`}
+                                                className={`w-full text-left px-3 py-3 border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors ${aiChatSelectedConv?._id === conv._id ? 'bg-blue-50 dark:bg-blue-900/20 border-l-2 border-l-blue-500' : ''}`}
                                             >
-                                                <p className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate">{conv.title || 'Untitled'}</p>
-                                                <p className="text-[10px] text-slate-400 mt-0.5">{conv.messages?.length || 0} messages · {new Date(conv.updatedAt).toLocaleDateString()}</p>
+                                                <p className="text-xs font-medium text-zinc-800 dark:text-zinc-200 truncate">{conv.title || 'Untitled'}</p>
+                                                <p className="text-[11px] text-zinc-400 mt-0.5">{conv.messages?.length || 0} messages · {new Date(conv.updatedAt).toLocaleDateString()}</p>
                                             </button>
                                         ))
                                     )}
@@ -1401,23 +1404,23 @@ const CourseManage = () => {
                             <div className="flex-1 flex flex-col min-w-0">
                                 {!aiChatSelectedConv ? (
                                     <div className="flex flex-col items-center justify-center h-full text-center px-8">
-                                        <FaChevronRight className="text-slate-200 dark:text-slate-700 mb-3" size={28} />
-                                        <p className="text-sm text-slate-400">Select a conversation</p>
-                                        <p className="text-xs text-slate-300 dark:text-slate-600 mt-1">to view messages</p>
+                                        <FaChevronRight className="text-zinc-200 dark:text-zinc-700 mb-3" size={28} />
+                                        <p className="text-sm text-zinc-400">Select a conversation</p>
+                                        <p className="text-xs text-zinc-300 dark:text-zinc-600 mt-1">to view messages</p>
                                     </div>
                                 ) : (
                                     <>
-                                        <div className="px-4 py-3 border-b border-gray-100 dark:border-slate-800 shrink-0">
-                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{aiChatSelectedConv.title}</p>
-                                            <p className="text-[10px] text-slate-400">{aiChatSelectedConv.messages?.length || 0} messages · Read-only</p>
+                                        <div className="px-4 py-3 border-b border-zinc-100 dark:border-zinc-800 shrink-0">
+                                            <p className="text-sm font-medium text-zinc-800 dark:text-zinc-100 truncate">{aiChatSelectedConv.title}</p>
+                                            <p className="text-[11px] text-zinc-400">{aiChatSelectedConv.messages?.length || 0} messages · Read-only</p>
                                         </div>
                                         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
                                             {(aiChatSelectedConv.messages || []).map((msg, i) => (
                                                 <div key={i} className={`flex gap-2.5 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                                                    <div className={`w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-xs font-bold ${msg.role === 'user' ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}`}>
+                                                    <div className={`w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-xs font-semibold ${msg.role === 'user' ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500'}`}>
                                                         {msg.role === 'user' ? <FaUser size={10} /> : <FaRobot size={10} />}
                                                     </div>
-                                                    <div className={`max-w-[75%] rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed ${msg.role === 'user' ? 'bg-indigo-500 text-white rounded-tr-sm' : 'bg-gray-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-tl-sm'}`}>
+                                                    <div className={`max-w-[75%] rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed ${msg.role === 'user' ? 'bg-blue-500 text-white rounded-tr-sm' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-tl-sm'}`}>
                                                         <p className="whitespace-pre-wrap break-words">{msg.content}</p>
                                                     </div>
                                                 </div>

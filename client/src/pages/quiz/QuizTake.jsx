@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../api/axios';
-import { FaClock, FaCheckCircle, FaTimesCircle, FaArrowLeft, FaArrowRight, FaFlag, FaTrophy, FaRedo } from 'react-icons/fa';
+import { FaClock, FaCheckCircle, FaTimesCircle, FaArrowLeft, FaArrowRight, FaFlag, FaTrophy, FaRedo, FaCheck, FaTimes } from 'react-icons/fa';
 import { showSuccess, showError } from '../../utils/toast';
 
 const QuizTake = () => {
@@ -116,7 +116,7 @@ const QuizTake = () => {
             });
 
             setResult(res.data);
-            showSuccess(res.data.result.passed ? 'Congratulations! You passed!' : 'Quiz submitted');
+            showSuccess(res.data.result.passed ? 'Quiz passed' : 'Quiz submitted');
         } catch (error) {
             showError(error, 'Failed to submit quiz');
         } finally {
@@ -165,10 +165,10 @@ const QuizTake = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-center justify-center">
+            <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center">
                 <div className="text-center">
                     <div className="w-10 h-10 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">Loading quiz...</p>
+                    <p className="text-zinc-500 dark:text-zinc-400 text-sm">Loading quiz...</p>
                 </div>
             </div>
         );
@@ -177,25 +177,25 @@ const QuizTake = () => {
     // Review Mode - Show previous attempt answers
     if (reviewMode && previousAttempt) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-slate-950">
+            <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
                 {/* Header */}
-                <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-10">
+                <div className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-10">
                     <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={() => navigate(`/course/${courseId}?tab=quizzes`)}
-                                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg text-slate-500"
+                                className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-500"
                             >
                                 <FaArrowLeft size={14} />
                             </button>
                             <div>
-                                <h1 className="text-sm font-semibold text-slate-900 dark:text-white">{quiz?.title}</h1>
-                                <p className="text-xs text-slate-500">Review Mode</p>
+                                <h1 className="text-sm font-medium text-zinc-900 dark:text-white">{quiz?.title}</h1>
+                                <p className="text-xs text-zinc-500">Review mode</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
                             <FaTrophy size={14} />
-                            <span className="text-sm font-semibold">{previousAttempt.percentage}% Passed</span>
+                            <span className="text-sm font-medium">{previousAttempt.percentage}% Passed</span>
                         </div>
                     </div>
                 </div>
@@ -208,7 +208,7 @@ const QuizTake = () => {
                                 <FaCheckCircle className="text-white" />
                             </div>
                             <div>
-                                <p className="font-semibold text-green-800 dark:text-green-300">You passed this quiz!</p>
+                                <p className="font-medium text-green-800 dark:text-green-300">You passed this quiz</p>
                                 <p className="text-sm text-green-600 dark:text-green-400">
                                     Score: {previousAttempt.score}/{previousAttempt.totalPoints} ({previousAttempt.percentage}%)
                                 </p>
@@ -216,7 +216,7 @@ const QuizTake = () => {
                         </div>
                     </div>
 
-                    <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Answer Review</h2>
+                    <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Answer review</h2>
 
                     <div className="space-y-4">
                         {quiz?.questions.map((q, idx) => {
@@ -224,20 +224,20 @@ const QuizTake = () => {
                             const isCorrect = userAnswer?.isCorrect;
 
                             return (
-                                <div key={idx} className="bg-white dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-slate-800 overflow-hidden">
+                                <div key={idx} className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 overflow-hidden">
                                     <div className={`px-4 py-3 border-b ${isCorrect ? 'bg-green-50 dark:bg-green-900/10 border-green-100 dark:border-green-900/30' : 'bg-red-50 dark:bg-red-900/10 border-red-100 dark:border-red-900/30'}`}>
                                         <div className="flex items-center gap-2">
-                                            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${isCorrect ? 'bg-green-500' : 'bg-red-500'}`}>
+                                            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold text-white ${isCorrect ? 'bg-green-500' : 'bg-red-500'}`}>
                                                 {idx + 1}
                                             </span>
                                             <span className={`text-xs font-medium ${isCorrect ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
                                                 {isCorrect ? 'Correct' : 'Incorrect'}
                                             </span>
-                                            <span className="text-xs text-slate-400 ml-auto">{q.points} pt{q.points !== 1 ? 's' : ''}</span>
+                                            <span className="text-xs text-zinc-400 ml-auto">{q.points} pt{q.points !== 1 ? 's' : ''}</span>
                                         </div>
                                     </div>
                                     <div className="p-4">
-                                        <p className="text-sm font-medium text-slate-900 dark:text-white mb-4">{q.questionText}</p>
+                                        <p className="text-sm font-medium text-zinc-900 dark:text-white mb-4">{q.questionText}</p>
 
                                         <div className="space-y-2">
                                             <div className={`flex items-start gap-2 p-3 rounded-lg text-sm ${isCorrect ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
@@ -263,15 +263,15 @@ const QuizTake = () => {
                     <div className="flex gap-3 mt-6">
                         <button
                             onClick={handleRetake}
-                            className="flex-1 flex items-center justify-center gap-2 bg-slate-900 dark:bg-slate-700 text-white font-semibold py-3 rounded-lg hover:opacity-90 transition-colors"
+                            className="flex-1 flex items-center justify-center gap-2 bg-zinc-900 dark:bg-zinc-700 text-white font-medium py-3 rounded-lg hover:opacity-90 transition-colors"
                         >
-                            <FaRedo size={14} /> Retake Quiz
+                            <FaRedo size={14} /> Retake quiz
                         </button>
                         <button
                             onClick={() => navigate(`/course/${courseId}?tab=quizzes`)}
-                            className="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold py-3 rounded-lg hover:opacity-90 transition-opacity"
+                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-opacity"
                         >
-                            Back to Course
+                            Back to course
                         </button>
                     </div>
                 </div>
@@ -285,7 +285,7 @@ const QuizTake = () => {
         const wrongCount = result.attempt.answers.filter(a => !a.isCorrect).length;
 
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-slate-950 py-6 px-4">
+            <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 py-6 px-4">
                 <div className="max-w-3xl mx-auto">
                     {/* Result Header */}
                     <div className={`rounded-xl p-6 mb-6 text-center ${result.result.passed ? 'bg-green-500' : 'bg-red-500'}`}>
@@ -296,42 +296,42 @@ const QuizTake = () => {
                                 <FaTimesCircle className="text-3xl text-white" />
                             )}
                         </div>
-                        <h1 className="text-2xl font-bold text-white mb-1">
-                            {result.result.passed ? 'You Passed!' : 'Not Quite'}
+                        <h1 className="text-2xl font-semibold text-white mb-1">
+                            {result.result.passed ? 'Passed' : 'Not passed'}
                         </h1>
                         <p className="text-white/80 text-sm">
-                            {result.result.passed ? 'Great job!' : `You need ${result.result.passingScore}% to pass`}
+                            {result.result.passed ? `Passing score is ${result.result.passingScore}%` : `You need ${result.result.passingScore}% to pass`}
                         </p>
                         <div className="mt-4 inline-block bg-white/20 rounded-lg px-6 py-3">
-                            <p className="text-4xl font-bold text-white">{result.result.percentage}%</p>
+                            <p className="text-4xl font-semibold text-white">{result.result.percentage}%</p>
                             <p className="text-xs text-white/70 mt-1">{result.result.score}/{result.result.totalPoints} points</p>
                         </div>
                     </div>
 
                     {/* Stats */}
                     <div className="grid grid-cols-3 gap-3 mb-6">
-                        <div className="bg-white dark:bg-slate-900 rounded-lg p-4 text-center border border-gray-200 dark:border-slate-800">
-                            <p className="text-2xl font-bold text-green-600">{correctCount}</p>
-                            <p className="text-xs text-slate-500">Correct</p>
+                        <div className="bg-white dark:bg-zinc-900 rounded-lg p-4 text-center border border-zinc-200 dark:border-zinc-800">
+                            <p className="text-2xl font-semibold text-green-600">{correctCount}</p>
+                            <p className="text-xs text-zinc-500">Correct</p>
                         </div>
-                        <div className="bg-white dark:bg-slate-900 rounded-lg p-4 text-center border border-gray-200 dark:border-slate-800">
-                            <p className="text-2xl font-bold text-red-500">{wrongCount}</p>
-                            <p className="text-xs text-slate-500">Wrong</p>
+                        <div className="bg-white dark:bg-zinc-900 rounded-lg p-4 text-center border border-zinc-200 dark:border-zinc-800">
+                            <p className="text-2xl font-semibold text-red-500">{wrongCount}</p>
+                            <p className="text-xs text-zinc-500">Wrong</p>
                         </div>
-                        <div className="bg-white dark:bg-slate-900 rounded-lg p-4 text-center border border-gray-200 dark:border-slate-800">
-                            <p className="text-2xl font-bold text-slate-700 dark:text-slate-300">
+                        <div className="bg-white dark:bg-zinc-900 rounded-lg p-4 text-center border border-zinc-200 dark:border-zinc-800">
+                            <p className="text-2xl font-semibold text-zinc-700 dark:text-zinc-300">
                                 {Math.floor(result.attempt.timeTaken / 60)}:{(result.attempt.timeTaken % 60).toString().padStart(2, '0')}
                             </p>
-                            <p className="text-xs text-slate-500">Time</p>
+                            <p className="text-xs text-zinc-500">Time</p>
                         </div>
                     </div>
 
                     {/* Answer Review */}
-                    <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 overflow-hidden">
-                        <div className="px-4 py-3 border-b border-gray-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800">
-                            <h3 className="font-semibold text-slate-900 dark:text-white">Review Answers</h3>
+                    <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+                        <div className="px-4 py-3 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800">
+                            <h3 className="font-medium text-zinc-900 dark:text-white">Review answers</h3>
                         </div>
-                        <div className="divide-y divide-gray-100 dark:divide-slate-800 max-h-[400px] overflow-y-auto">
+                        <div className="divide-y divide-zinc-100 dark:divide-zinc-800 max-h-[400px] overflow-y-auto">
                             {result.quiz.questions.map((q, idx) => {
                                 const userAnswer = result.attempt.answers.find(a => a.questionIndex === idx);
                                 const isCorrect = userAnswer?.isCorrect;
@@ -339,12 +339,12 @@ const QuizTake = () => {
                                 return (
                                     <div key={idx} className={`p-4 ${isCorrect ? 'bg-green-50/50 dark:bg-green-900/5' : 'bg-red-50/50 dark:bg-red-900/5'}`}>
                                         <div className="flex items-start gap-3">
-                                            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 ${isCorrect ? 'bg-green-500' : 'bg-red-500'}`}>
-                                                {isCorrect ? '✓' : '✗'}
+                                            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold text-white shrink-0 ${isCorrect ? 'bg-green-500' : 'bg-red-500'}`}>
+                                                {isCorrect ? <FaCheck /> : <FaTimes />}
                                             </span>
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-sm text-slate-900 dark:text-white mb-2">
-                                                    <span className="text-slate-400">Q{idx + 1}.</span> {q.questionText}
+                                                <p className="text-sm text-zinc-900 dark:text-white mb-2">
+                                                    <span className="text-zinc-400">Q{idx + 1}.</span> {q.questionText}
                                                 </p>
                                                 <div className="space-y-1 text-xs">
                                                     <p className={isCorrect ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}>
@@ -366,9 +366,9 @@ const QuizTake = () => {
 
                     <button
                         onClick={() => navigate(`/course/${courseId}?tab=quizzes`)}
-                        className="w-full mt-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold py-3 rounded-lg hover:opacity-90 transition-opacity"
+                        className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-opacity"
                     >
-                        Back to Course
+                        Back to course
                     </button>
                 </div>
             </div>
@@ -380,9 +380,9 @@ const QuizTake = () => {
     const answeredCount = Object.keys(answers).length;
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex flex-col">
+        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex flex-col">
             {/* Header */}
-            <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-10">
+            <div className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-10">
                 <div className="max-w-3xl mx-auto px-4">
                     <div className="h-14 flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -392,21 +392,21 @@ const QuizTake = () => {
                                         navigate(`/course/${courseId}?tab=quizzes`);
                                     }
                                 }}
-                                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg text-slate-500"
+                                className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-500"
                             >
                                 <FaArrowLeft size={14} />
                             </button>
                             <div>
-                                <h1 className="text-sm font-semibold text-slate-900 dark:text-white line-clamp-1">{quiz?.title}</h1>
-                                <p className="text-xs text-slate-500">{answeredCount}/{quiz?.questions.length} answered</p>
+                                <h1 className="text-sm font-medium text-zinc-900 dark:text-white line-clamp-1">{quiz?.title}</h1>
+                                <p className="text-xs text-zinc-500">{answeredCount}/{quiz?.questions.length} answered</p>
                             </div>
                         </div>
 
                         {quiz?.timeLimit > 0 && timeLeft !== null && (
-                            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-mono font-semibold ${
+                            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-mono font-medium ${
                                 timeLeft < 60 ? 'bg-red-100 dark:bg-red-900/30 text-red-600 animate-pulse' :
                                 timeLeft < 300 ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-600' :
-                                'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                                'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300'
                             }`}>
                                 <FaClock size={12} />
                                 {formatTime(timeLeft)}
@@ -415,9 +415,9 @@ const QuizTake = () => {
                     </div>
 
                     {/* Progress bar */}
-                    <div className="h-1 bg-gray-100 dark:bg-slate-800 -mx-4">
+                    <div className="h-1 bg-zinc-100 dark:bg-zinc-800 -mx-4">
                         <div
-                            className="h-full bg-blue-600 transition-all"
+                            className="h-full bg-blue-600 transition"
                             style={{ width: `${((currentIndex + 1) / quiz?.questions.length) * 100}%` }}
                         />
                     </div>
@@ -425,18 +425,18 @@ const QuizTake = () => {
             </div>
 
             {/* Question Navigation */}
-            <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 py-2 px-4 overflow-x-auto">
+            <div className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 py-2 px-4 overflow-x-auto">
                 <div className="flex gap-1.5 max-w-3xl mx-auto">
                     {quiz?.questions.map((_, idx) => (
                         <button
                             key={idx}
                             onClick={() => setCurrentIndex(idx)}
-                            className={`w-8 h-8 rounded-lg text-xs font-semibold transition-colors shrink-0 ${
+                            className={`w-8 h-8 rounded-lg text-xs font-medium transition-colors shrink-0 ${
                                 idx === currentIndex
                                     ? 'bg-blue-600 text-white'
                                     : answers[idx] !== undefined
                                         ? 'bg-green-500 text-white'
-                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-700'
                             }`}
                         >
                             {idx + 1}
@@ -447,21 +447,21 @@ const QuizTake = () => {
 
             {/* Question */}
             <div className="flex-1 max-w-3xl mx-auto w-full px-4 py-6">
-                <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 overflow-hidden">
-                    <div className="px-4 py-3 bg-slate-50 dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+                    <div className="px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border-b border-zinc-100 dark:border-zinc-700 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <span className="w-7 h-7 rounded-lg bg-blue-600 text-white text-xs font-bold flex items-center justify-center">
+                            <span className="w-7 h-7 rounded-lg bg-blue-600 text-white text-xs font-semibold flex items-center justify-center">
                                 {currentIndex + 1}
                             </span>
-                            <span className="text-xs text-slate-500 uppercase font-medium">
+                            <span className="text-xs text-zinc-500 font-medium">
                                 {currentQuestion?.questionType === 'mcq' ? 'Multiple Choice' : currentQuestion?.questionType === 'true-false' ? 'True/False' : 'Short Answer'}
                             </span>
                         </div>
-                        <span className="text-xs text-slate-400">{currentQuestion?.points} pt{currentQuestion?.points !== 1 ? 's' : ''}</span>
+                        <span className="text-xs text-zinc-400">{currentQuestion?.points} pt{currentQuestion?.points !== 1 ? 's' : ''}</span>
                     </div>
 
                     <div className="p-5">
-                        <h2 className="text-base font-medium text-slate-900 dark:text-white mb-5 leading-relaxed">
+                        <h2 className="text-base font-medium text-zinc-900 dark:text-white mb-5 leading-relaxed">
                             {currentQuestion?.questionText}
                         </h2>
 
@@ -469,18 +469,18 @@ const QuizTake = () => {
                             {currentQuestion?.questionType === 'mcq' && currentQuestion?.options.map((option, idx) => (
                                 <label
                                     key={idx}
-                                    className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all ${
+                                    className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition ${
                                         answers[currentIndex] === idx
                                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                                            : 'border-gray-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600'
+                                            : 'border-zinc-200 dark:border-zinc-700 hover:border-blue-300 dark:hover:border-blue-600'
                                     }`}
                                 >
                                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                                        answers[currentIndex] === idx ? 'border-blue-500 bg-blue-500' : 'border-gray-300 dark:border-slate-600'
+                                        answers[currentIndex] === idx ? 'border-blue-500 bg-blue-500' : 'border-zinc-300 dark:border-zinc-600'
                                     }`}>
                                         {answers[currentIndex] === idx && <div className="w-2 h-2 rounded-full bg-white" />}
                                     </div>
-                                    <span className={`text-sm ${answers[currentIndex] === idx ? 'text-blue-700 dark:text-blue-300 font-medium' : 'text-slate-700 dark:text-slate-300'}`}>
+                                    <span className={`text-sm ${answers[currentIndex] === idx ? 'text-blue-700 dark:text-blue-300 font-medium' : 'text-zinc-700 dark:text-zinc-300'}`}>
                                         {option}
                                     </span>
                                     <input type="radio" className="sr-only" checked={answers[currentIndex] === idx} onChange={() => handleAnswerChange(currentIndex, idx)} />
@@ -492,18 +492,18 @@ const QuizTake = () => {
                                     {[true, false].map((value) => (
                                         <label
                                             key={String(value)}
-                                            className={`flex items-center justify-center gap-2 p-4 rounded-lg border cursor-pointer transition-all ${
+                                            className={`flex items-center justify-center gap-2 p-4 rounded-lg border cursor-pointer transition ${
                                                 answers[currentIndex] === value
                                                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                                                    : 'border-gray-200 dark:border-slate-700 hover:border-blue-300'
+                                                    : 'border-zinc-200 dark:border-zinc-700 hover:border-blue-300'
                                             }`}
                                         >
                                             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                                                answers[currentIndex] === value ? 'border-blue-500 bg-blue-500' : 'border-gray-300 dark:border-slate-600'
+                                                answers[currentIndex] === value ? 'border-blue-500 bg-blue-500' : 'border-zinc-300 dark:border-zinc-600'
                                             }`}>
                                                 {answers[currentIndex] === value && <div className="w-2 h-2 rounded-full bg-white" />}
                                             </div>
-                                            <span className={`text-sm font-medium ${answers[currentIndex] === value ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-300'}`}>
+                                            <span className={`text-sm font-medium ${answers[currentIndex] === value ? 'text-blue-700 dark:text-blue-300' : 'text-zinc-700 dark:text-zinc-300'}`}>
                                                 {value ? 'True' : 'False'}
                                             </span>
                                             <input type="radio" className="sr-only" checked={answers[currentIndex] === value} onChange={() => handleAnswerChange(currentIndex, value)} />
@@ -517,8 +517,8 @@ const QuizTake = () => {
                                     type="text"
                                     value={answers[currentIndex] || ''}
                                     onChange={(e) => handleAnswerChange(currentIndex, e.target.value)}
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                    placeholder="Type your answer..."
+                                    className="w-full px-4 py-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    placeholder="Type your answer"
                                 />
                             )}
                         </div>
@@ -527,12 +527,12 @@ const QuizTake = () => {
             </div>
 
             {/* Footer */}
-            <div className="bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-800 sticky bottom-0">
+            <div className="bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 sticky bottom-0">
                 <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
                     <button
                         onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
                         disabled={currentIndex === 0}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                         <FaArrowLeft size={12} /> Prev
                     </button>

@@ -96,14 +96,14 @@ const CourseLanding = () => {
                     rating: reviewRating,
                     comment: reviewComment
                 });
-                showSuccess('Review updated!');
+                showSuccess('Review updated');
             } else {
                 await api.post('/reviews', {
                     courseId: id,
                     rating: reviewRating,
                     comment: reviewComment
                 });
-                showSuccess('Review submitted!');
+                showSuccess('Review submitted');
             }
             fetchCourse();
             fetchMyReview();
@@ -133,7 +133,7 @@ const CourseLanding = () => {
                 courseId: id
             });
             setCouponApplied(res.data);
-            showSuccess('Coupon applied successfully!');
+            showSuccess('Coupon applied');
         } catch (error) {
             showError(error, 'Invalid coupon');
             setCouponApplied(null);
@@ -174,8 +174,8 @@ const CourseLanding = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-center justify-center">
-                <div className="w-10 h-10 border-3 border-slate-200 dark:border-slate-700 border-t-indigo-500 rounded-full animate-spin"></div>
+            <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center">
+                <div className="w-10 h-10 border-3 border-zinc-200 dark:border-zinc-700 border-t-blue-500 rounded-full animate-spin"></div>
             </div>
         );
     }
@@ -186,61 +186,61 @@ const CourseLanding = () => {
     const totalLectures = course.sections?.reduce((acc, s) => s.isPublic !== false ? acc + s.lectures.filter(l => l.isPublic !== false).length : acc, 0) || 0;
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-slate-950">
+        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
             {/* Hero Section */}
-            <div className="bg-gradient-to-r from-slate-900 to-slate-800 py-12 px-4">
+            <div className="bg-zinc-900 py-12 px-4">
                 <div className="max-w-6xl mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Course Info */}
                         <div className="lg:col-span-2">
                             {course.category && (
-                                <span className="inline-block bg-indigo-500/20 text-indigo-400 text-sm font-medium px-3 py-1 rounded-full mb-4">
+                                <span className="inline-block text-zinc-400 text-sm mb-4">
                                     {course.category}
                                 </span>
                             )}
-                            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                            <h1 className="text-3xl md:text-5xl font-medium text-white mb-4 leading-[1.08] tracking-[-0.02em]">
                                 {course.title}
                             </h1>
-                            <p className="text-slate-300 text-lg mb-6 line-clamp-3">
+                            <p className="text-zinc-300 text-lg mb-6 line-clamp-3">
                                 {course.description}
                             </p>
 
                             {/* Rating & Stats */}
                             <div className="flex items-center gap-4 flex-wrap mb-6">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-yellow-400 font-bold text-lg">
+                                    <span className="text-white font-medium text-lg tabular-nums">
                                         {course.rating?.average?.toFixed(1) || '0.0'}
                                     </span>
                                     <StarRating rating={course.rating?.average || 0} />
-                                    <span className="text-slate-400">
-                                        ({course.rating?.count || 0} reviews)
+                                    <span className="text-zinc-400">
+                                        ({course.rating?.count || 0} {course.rating?.count === 1 ? 'review' : 'reviews'})
                                     </span>
                                 </div>
-                                <span className="text-slate-400 flex items-center gap-1">
+                                <span className="text-zinc-400 flex items-center gap-1">
                                     <FaUsers /> {course.enrollmentCount || 0} students
                                 </span>
                             </div>
 
                             {/* Instructor */}
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-medium">
+                                <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-200 font-medium">
                                     {course.user?.name?.charAt(0).toUpperCase()}
                                 </div>
                                 <div>
-                                    <p className="text-sm text-slate-400">Created by</p>
+                                    <p className="text-sm text-zinc-400">Created by</p>
                                     <p className="text-white font-medium">{course.user?.name}</p>
                                 </div>
                             </div>
 
                             {/* Meta */}
-                            <div className="flex items-center gap-4 mt-6 text-sm text-slate-400 flex-wrap">
+                            <div className="flex items-center gap-4 mt-6 text-sm text-zinc-400 flex-wrap">
                                 {course.language && (
                                     <span className="flex items-center gap-1">
                                         <FaGlobe /> {course.language}
                                     </span>
                                 )}
                                 {course.level && (
-                                    <span className="bg-slate-700 px-2 py-1 rounded">
+                                    <span className="bg-zinc-700 px-2 py-1 rounded">
                                         {course.level}
                                     </span>
                                 )}
@@ -252,9 +252,9 @@ const CourseLanding = () => {
 
                         {/* Purchase Card */}
                         <div className="lg:col-span-1">
-                            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl overflow-hidden sticky top-24">
+                            <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-xl overflow-hidden sticky top-24">
                                 {/* Thumbnail */}
-                                <div className="aspect-video relative bg-slate-900">
+                                <div className="aspect-video relative bg-zinc-900">
                                     {showPreviewVideo && course.previewVideo ? (
                                         <iframe
                                             src={course.previewVideo.replace('watch?v=', 'embed/')}
@@ -278,7 +278,7 @@ const CourseLanding = () => {
                                                     className="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/50 transition-colors"
                                                 >
                                                     <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
-                                                        <FaPlay className="text-indigo-500 text-xl ml-1" />
+                                                        <FaPlay className="text-zinc-400 text-xl ml-1" />
                                                     </div>
                                                 </button>
                                             )}
@@ -306,11 +306,11 @@ const CourseLanding = () => {
                                                     value={couponCode}
                                                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                                                     placeholder="Enter coupon code"
-                                                    className="flex-1 px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:border-indigo-500"
+                                                    className="flex-1 px-3 py-2 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg text-sm focus:outline-none focus:border-blue-500"
                                                 />
                                                 <button
                                                     onClick={handleApplyCoupon}
-                                                    className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg text-sm font-medium transition-colors"
+                                                    className="px-4 py-2 bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600 rounded-lg text-sm font-medium transition-colors"
                                                 >
                                                     Apply
                                                 </button>
@@ -322,7 +322,7 @@ const CourseLanding = () => {
                                         <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
                                             <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
                                                 <FaTag />
-                                                <span className="font-medium">Coupon applied!</span>
+                                                <span className="font-medium">Coupon applied</span>
                                             </div>
                                             <p className="text-sm text-green-600 dark:text-green-400 mt-1">
                                                 You save ₹{couponApplied.discountAmount}
@@ -334,32 +334,32 @@ const CourseLanding = () => {
                                     {hasPurchased ? (
                                         <button
                                             onClick={() => navigate(`/course/${id}`)}
-                                            className="w-full py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                                            className="w-full py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
                                         >
-                                            <FaCheck /> Go to Course
+                                            <FaCheck /> Go to course
                                         </button>
                                     ) : (
                                         <button
                                             onClick={handlePurchase}
                                             disabled={purchasing}
-                                            className="w-full py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
-                                            {purchasing ? 'Processing...' : 'Buy Now'}
+                                            {purchasing ? 'Processing...' : 'Buy now'}
                                         </button>
                                     )}
 
                                     {/* Course includes */}
-                                    <div className="mt-6 space-y-3 text-sm text-slate-600 dark:text-slate-400">
+                                    <div className="mt-6 space-y-3 text-sm text-zinc-600 dark:text-zinc-400">
                                         <div className="flex items-center gap-2">
-                                            <FaPlay className="text-indigo-500" />
+                                            <FaPlay className="text-zinc-400" />
                                             <span>{totalLectures} lectures</span>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <FaClock className="text-indigo-500" />
+                                            <FaClock className="text-zinc-400" />
                                             <span>Full lifetime access</span>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <FaGlobe className="text-indigo-500" />
+                                            <FaGlobe className="text-zinc-400" />
                                             <span>Access on mobile and desktop</span>
                                         </div>
                                     </div>
@@ -377,15 +377,15 @@ const CourseLanding = () => {
                         {/* What you'll learn */}
                         {course.whatYouWillLearn?.length > 0 && (
                             <section>
-                                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+                                <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white mb-4">
                                     What you'll learn
                                 </h2>
-                                <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
+                                <div className="bg-white dark:bg-zinc-800 rounded-xl p-6 border border-zinc-200 dark:border-zinc-700">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         {course.whatYouWillLearn.map((item, index) => (
                                             <div key={index} className="flex items-start gap-2">
                                                 <FaCheck className="text-green-500 mt-1 flex-shrink-0" />
-                                                <span className="text-slate-600 dark:text-slate-300">{item}</span>
+                                                <span className="text-zinc-600 dark:text-zinc-300">{item}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -396,13 +396,13 @@ const CourseLanding = () => {
                         {/* Requirements */}
                         {course.requirements?.length > 0 && (
                             <section>
-                                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+                                <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white mb-4">
                                     Requirements
                                 </h2>
                                 <ul className="space-y-2">
                                     {course.requirements.map((req, index) => (
-                                        <li key={index} className="flex items-start gap-2 text-slate-600 dark:text-slate-300">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-2"></span>
+                                        <li key={index} className="flex items-start gap-2 text-zinc-600 dark:text-zinc-300">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 mt-2"></span>
                                             {req}
                                         </li>
                                     ))}
@@ -412,37 +412,37 @@ const CourseLanding = () => {
 
                         {/* Curriculum */}
                         <section>
-                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-                                Course Curriculum
+                            <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white mb-4">
+                                Course curriculum
                             </h2>
-                            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                            <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
                                 {course.sections?.map((section, index) => (
-                                    <div key={section._id} className="border-b border-slate-200 dark:border-slate-700 last:border-0">
+                                    <div key={section._id} className="border-b border-zinc-200 dark:border-zinc-700 last:border-0">
                                         <button
                                             onClick={() => toggleSection(section._id)}
-                                            className="w-full flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                                            className="w-full flex items-center justify-between p-4 hover:bg-zinc-50 dark:hover:bg-zinc-700/50 transition-colors"
                                         >
                                             <div className="flex items-center gap-3">
                                                 {expandedSections[section._id] ? (
-                                                    <FaChevronUp className="text-slate-400" />
+                                                    <FaChevronUp className="text-zinc-400" />
                                                 ) : (
-                                                    <FaChevronDown className="text-slate-400" />
+                                                    <FaChevronDown className="text-zinc-400" />
                                                 )}
-                                                <span className="font-medium text-slate-900 dark:text-white">
+                                                <span className="font-medium text-zinc-900 dark:text-white">
                                                     {section.title}
                                                 </span>
                                                 {section.importance && (
-                                                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide shrink-0 ${
+                                                    <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded uppercase shrink-0 ${
                                                         section.importance === 'Very Important' ? 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800' :
                                                         section.importance === 'Important' ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800' :
                                                         section.importance === 'Normal' ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800' :
-                                                        'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
+                                                        'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700'
                                                     }`}>
                                                         {section.importance}
                                                     </span>
                                                 )}
                                             </div>
-                                            <span className="text-sm text-slate-500">
+                                            <span className="text-sm text-zinc-500">
                                                 {section.lectures?.length || 0} lectures
                                             </span>
                                         </button>
@@ -460,21 +460,21 @@ const CourseLanding = () => {
                                                                 }
                                                             }}
                                                             className={`flex items-center gap-3 py-2 px-4 text-sm transition-colors ${isPreview
-                                                                ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/80 cursor-pointer rounded-lg'
-                                                                : 'text-slate-500 dark:text-slate-500 cursor-not-allowed opacity-80'
+                                                                ? 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700/80 cursor-pointer rounded-lg'
+                                                                : 'text-zinc-500 dark:text-zinc-500 cursor-not-allowed opacity-80'
                                                                 }`}
                                                         >
                                                             {isPreview ? (
                                                                 <FaUnlock className="text-green-500 text-xs shrink-0" />
                                                             ) : (
-                                                                <FaLock className="text-slate-400 text-xs shrink-0" />
+                                                                <FaLock className="text-zinc-400 text-xs shrink-0" />
                                                             )}
                                                             <span className={`flex-1 truncate ${isPreview ? 'font-medium' : ''}`}>
                                                                 {lecture.title}
                                                             </span>
                                                             {isPreview && (
-                                                                <span className="ml-2 text-[10px] uppercase font-bold bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 px-2 py-0.5 rounded shrink-0">
-                                                                    Free Preview
+                                                                <span className="ml-2 text-[11px] font-semibold bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 px-2 py-0.5 rounded shrink-0">
+                                                                    Free preview
                                                                 </span>
                                                             )}
                                                         </div>
@@ -490,12 +490,12 @@ const CourseLanding = () => {
                         {/* Review Form - Show for purchased users */}
                         {hasPurchased && (
                             <section>
-                                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-                                    {myReview ? 'Update Your Review' : 'Leave a Review'}
+                                <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white mb-4">
+                                    {myReview ? 'Update your review' : 'Leave a Review'}
                                 </h2>
-                                <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
+                                <div className="bg-white dark:bg-zinc-800 rounded-xl p-6 border border-zinc-200 dark:border-zinc-700">
                                     <div className="mb-4">
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                        <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                             Rating
                                         </label>
                                         <div className="flex gap-1">
@@ -508,7 +508,7 @@ const CourseLanding = () => {
                                                     <FaStar
                                                         className={`text-2xl ${star <= reviewRating
                                                             ? 'text-yellow-400'
-                                                            : 'text-slate-300 dark:text-slate-600'
+                                                            : 'text-zinc-300 dark:text-zinc-600'
                                                         }`}
                                                     />
                                                 </button>
@@ -516,23 +516,23 @@ const CourseLanding = () => {
                                         </div>
                                     </div>
                                     <div className="mb-4">
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                        <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                                             Comment
                                         </label>
                                         <textarea
                                             value={reviewComment}
                                             onChange={(e) => setReviewComment(e.target.value)}
                                             rows={4}
-                                            placeholder="Share your experience with this course..."
-                                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500 resize-none"
+                                            placeholder="Share your experience with this course"
+                                            className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg focus:outline-none focus:border-blue-500 resize-none"
                                         />
                                     </div>
                                     <button
                                         onClick={handleSubmitReview}
                                         disabled={submittingReview}
-                                        className="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
+                                        className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
                                     >
-                                        {submittingReview ? 'Submitting...' : myReview ? 'Update Review' : 'Submit Review'}
+                                        {submittingReview ? 'Submitting...' : myReview ? 'Update review' : 'Submit review'}
                                     </button>
                                 </div>
                             </section>
@@ -540,8 +540,8 @@ const CourseLanding = () => {
 
                         {/* Reviews */}
                         <section>
-                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-                                Student Reviews
+                            <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white mb-4">
+                                Student reviews
                             </h2>
                             {reviews.length > 0 ? (
                                 <div className="space-y-4">
@@ -554,7 +554,7 @@ const CourseLanding = () => {
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-slate-500 dark:text-slate-400">
+                                <p className="text-zinc-500 dark:text-zinc-400">
                                     No reviews yet. Be the first to review this course!
                                 </p>
                             )}
@@ -564,7 +564,7 @@ const CourseLanding = () => {
                     {/* Sidebar - Instructor */}
                     <div className="lg:col-span-1">
                         <div className="sticky top-24">
-                            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+                            <h3 className="text-lg font-medium text-zinc-900 dark:text-white mb-4">
                                 Instructor
                             </h3>
                             <InstructorProfileCard instructor={course.user} />

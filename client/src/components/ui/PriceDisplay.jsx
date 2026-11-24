@@ -20,7 +20,7 @@ const PriceDisplay = ({ price, originalPrice, currency = 'INR', size = 'md' }) =
 
     if (price === 0) {
         return (
-            <span className={`${sizeClasses[size].price} font-bold text-green-500`}>
+            <span className={`${sizeClasses[size].price} font-semibold text-green-500`}>
                 Free
             </span>
         );
@@ -28,12 +28,12 @@ const PriceDisplay = ({ price, originalPrice, currency = 'INR', size = 'md' }) =
 
     return (
         <div className="flex items-center gap-2 flex-wrap">
-            <span className={`${sizeClasses[size].price} font-bold text-slate-900 dark:text-white`}>
+            <span className={`${sizeClasses[size].price} font-semibold text-zinc-900 dark:text-white`}>
                 {formatPrice(price)}
             </span>
             {hasDiscount && (
                 <>
-                    <span className={`${sizeClasses[size].original} text-slate-400 line-through`}>
+                    <span className={`${sizeClasses[size].original} text-zinc-400 line-through`}>
                         {formatPrice(originalPrice)}
                     </span>
                     <span className="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-sm font-medium px-2 py-0.5 rounded">

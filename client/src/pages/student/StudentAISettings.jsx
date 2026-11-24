@@ -67,7 +67,7 @@ const StudentAISettings = () => {
             setMaskedKey(res.data.apiKeyMasked);
             setApiKey('');
             setHasExisting(true);
-            showSuccess('AI configuration saved!');
+            showSuccess('AI configuration saved');
         } catch (err) {
             showError(err, 'Failed to save');
         } finally { setSaving(false); }
@@ -78,7 +78,7 @@ const StudentAISettings = () => {
         setTesting(true);
         try {
             const res = await api.post('/student-ai/test', { provider, apiKey, model });
-            if (res.data.success) showSuccess('Connection successful!');
+            if (res.data.success) showSuccess('Connection successful');
             else showError('Unexpected response');
         } catch (err) {
             const msg = err.response?.data?.message || 'Connection test failed';
@@ -102,22 +102,22 @@ const StudentAISettings = () => {
     };
 
     if (loading) return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950">
-            <div className="animate-pulse text-slate-500">Loading AI settings...</div>
+        <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+            <div className="text-zinc-500">Loading AI settings...</div>
         </div>
     );
 
     const cur = PROVIDERS[provider];
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-slate-950 text-slate-900 dark:text-white pb-12">
-            <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 sticky top-navbar z-10">
+        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-white pb-12">
+            <div className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 sticky top-navbar z-10">
                 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-                    <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                    <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
                         <FaArrowLeft /> <span className="hidden sm:inline">Back</span>
                     </button>
-                    <h1 className="text-lg font-bold flex items-center gap-2">
-                        <FaRobot className="text-purple-500" /> AI Chat Settings
+                    <h1 className="text-lg font-semibold flex items-center gap-2">
+                        <FaRobot className="text-zinc-400" /> AI Chat Settings
                     </h1>
                     <div className="w-20" />
                 </div>
@@ -125,10 +125,10 @@ const StudentAISettings = () => {
 
             <div className="container mx-auto max-w-2xl px-4 py-8 space-y-6">
                 {hasExisting && (
-                    <div className="flex items-center gap-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl px-5 py-4">
+                    <div className="flex items-center gap-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg px-5 py-4">
                         <FaCheckCircle className="text-green-500 text-lg shrink-0" />
                         <div>
-                            <p className="text-sm font-bold text-green-800 dark:text-green-300">AI Connected</p>
+                            <p className="text-sm font-semibold text-green-800 dark:text-green-300">AI Connected</p>
                             <p className="text-xs text-green-600 dark:text-green-400">
                                 {cur.label} &middot; {model} &middot; Key: {maskedKey}
                             </p>
@@ -136,21 +136,21 @@ const StudentAISettings = () => {
                     </div>
                 )}
 
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-950/50">
-                        <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">AI Provider</h2>
-                        <p className="text-xs text-slate-400 mt-1">Choose your AI provider for the chatbot</p>
+                <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+                    <div className="px-6 py-4 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50">
+                        <h2 className="text-sm font-semibold text-zinc-500">AI Provider</h2>
+                        <p className="text-xs text-zinc-400 mt-1">Choose your AI provider for the chatbot</p>
                     </div>
 
                     <div className="p-6 space-y-6">
                         <div className="grid grid-cols-3 gap-3">
                             {Object.entries(PROVIDERS).map(([key, p]) => (
                                 <button key={key} onClick={() => handleProviderChange(key)}
-                                    className={`p-4 rounded-xl border-2 text-center transition-all ${provider === key
-                                        ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 shadow-md'
-                                        : 'border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600'
+                                    className={`p-4 rounded-xl border-2 text-center transition ${provider === key
+                                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md'
+                                        : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600'
                                     }`}>
-                                    <span className={`text-sm font-bold ${provider === key ? 'text-purple-600 dark:text-purple-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                                    <span className={`text-sm font-semibold ${provider === key ? 'text-blue-600 dark:text-blue-400' : 'text-zinc-700 dark:text-zinc-300'}`}>
                                         {p.label}
                                     </span>
                                 </button>
@@ -158,42 +158,42 @@ const StudentAISettings = () => {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-400 uppercase">Model</label>
-                            <select className="w-full bg-white dark:bg-slate-950 border border-gray-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 outline-none"
+                            <label className="text-xs font-semibold text-zinc-400">Model</label>
+                            <select className="w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                                 value={model} onChange={(e) => setModel(e.target.value)}>
                                 {cur.models.map(m => <option key={m} value={m}>{m}</option>)}
                             </select>
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-2">
+                            <label className="text-xs font-semibold text-zinc-400 flex items-center gap-2">
                                 <FaKey className="text-xs" /> API Key
                             </label>
                             <input type="password"
-                                className="w-full bg-white dark:bg-slate-950 border border-gray-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-sm font-mono focus:ring-2 focus:ring-purple-500 outline-none"
+                                className="w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none"
                                 value={apiKey} onChange={(e) => setApiKey(e.target.value)}
                                 placeholder={hasExisting ? `Current: ${maskedKey} (enter new to change)` : cur.placeholder} />
-                            <p className="text-[11px] text-slate-400">
+                            <p className="text-[11px] text-zinc-400">
                                 Get your key from{' '}
-                                <a href={cur.helpUrl} target="_blank" rel="noopener noreferrer" className="text-purple-500 hover:underline">{cur.label} Dashboard</a>.
+                                <a href={cur.helpUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{cur.label} Dashboard</a>.
                                 Your key is encrypted and never shown again.
                             </p>
                         </div>
 
                         <div className="flex flex-wrap gap-3 pt-2">
                             <button onClick={handleTest} disabled={!apiKey || testing}
-                                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold border border-gray-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                                className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition disabled:opacity-40 disabled:cursor-not-allowed">
                                 {testing ? <FaSpinner className="animate-spin" /> : <FaFlask />}
-                                {testing ? 'Testing...' : 'Test Connection'}
+                                {testing ? 'Testing...' : 'Test connection'}
                             </button>
                             <button onClick={handleSave} disabled={!apiKey || saving}
-                                className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">
+                                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-medium shadow-lg transition active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">
                                 {saving ? <FaSpinner className="animate-spin" /> : <FaSave />}
-                                {saving ? 'Saving...' : 'Save Configuration'}
+                                {saving ? 'Saving...' : 'Save configuration'}
                             </button>
                             {hasExisting && (
                                 <button onClick={handleDelete}
-                                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all ml-auto">
+                                    className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition ml-auto">
                                     <FaTrash /> Remove
                                 </button>
                             )}
@@ -201,14 +201,14 @@ const StudentAISettings = () => {
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm p-6">
-                    <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">How it works</h3>
-                    <ul className="space-y-2 text-sm text-slate-500 dark:text-slate-400">
-                        <li className="flex items-start gap-2"><span className="text-purple-500 mt-0.5 font-bold">1.</span> Enter your API key from any supported provider</li>
-                        <li className="flex items-start gap-2"><span className="text-purple-500 mt-0.5 font-bold">2.</span> Your key is encrypted with AES-256 and stored securely</li>
-                        <li className="flex items-start gap-2"><span className="text-purple-500 mt-0.5 font-bold">3.</span> Use the AI Chat to ask questions about your courses</li>
-                        <li className="flex items-start gap-2"><span className="text-purple-500 mt-0.5 font-bold">4.</span> Upload PDFs or images and the AI will analyze them</li>
-                        <li className="flex items-start gap-2"><span className="text-purple-500 mt-0.5 font-bold">5.</span> API calls use YOUR key — you control the cost</li>
+                <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm p-6">
+                    <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 mb-3">How it works</h3>
+                    <ul className="space-y-2 text-sm text-zinc-500 dark:text-zinc-400">
+                        <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5 font-semibold">1.</span> Enter your API key from any supported provider</li>
+                        <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5 font-semibold">2.</span> Your key is encrypted with AES-256 and stored securely</li>
+                        <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5 font-semibold">3.</span> Use the AI Chat to ask questions about your courses</li>
+                        <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5 font-semibold">4.</span> Upload PDFs or images and the AI will analyze them</li>
+                        <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5 font-semibold">5.</span> API calls use YOUR key — you control the cost</li>
                     </ul>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactPlayer from 'react-player';
-import { FaPlayCircle } from 'react-icons/fa';
+import { FaPlayCircle, FaBookOpen } from 'react-icons/fa';
 
 const VideoPlayer = ({ url, onProgress, onDuration, onEnded }) => {
     // Helper to determine player type
@@ -16,9 +16,9 @@ const VideoPlayer = ({ url, onProgress, onDuration, onEnded }) => {
 
     if (type === 'none') {
         return (
-            <div className="absolute inset-0 flex items-center justify-center bg-slate-900 text-slate-500 flex-col">
-                <span className="text-6xl mb-4">📚</span>
-                <span className="font-medium">No Video Resource</span>
+            <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 text-zinc-500 flex-col">
+                <FaBookOpen className="text-3xl mb-4 text-zinc-600" />
+                <span className="font-medium">No video resource</span>
             </div>
         );
     }
@@ -32,9 +32,9 @@ const VideoPlayer = ({ url, onProgress, onDuration, onEnded }) => {
                     href={url}
                     target="_blank"
                     rel="noreferrer"
-                    className="bg-black/70 hover:bg-black text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 backdrop-blur-sm transition-all"
+                    className="bg-black/70 hover:bg-black text-white px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-2 backdrop-blur-sm transition"
                 >
-                    <FaPlayCircle /> Open Original Link
+                    <FaPlayCircle /> Open original link
                 </a>
             </div>
         </div>
@@ -43,20 +43,20 @@ const VideoPlayer = ({ url, onProgress, onDuration, onEnded }) => {
     if (type === 'telegram') {
         return (
             <PlayerWrapper>
-                <div className="w-full h-full bg-slate-900 flex flex-col items-center justify-center relative">
+                <div className="w-full h-full bg-zinc-900 flex flex-col items-center justify-center relative">
                     <div className="text-center p-6 z-10">
-                        <div className="w-16 h-16 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-full flex items-center justify-center text-white text-3xl mx-auto mb-4 shadow-lg shadow-indigo-500/30">
+                        <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-3xl mx-auto mb-4 shadow-lg ">
                             <FaPlayCircle />
                         </div>
-                        <h3 className="text-white font-bold text-lg mb-2">Telegram Video</h3>
-                        <p className="text-slate-400 text-sm mb-6 max-w-sm mx-auto">
+                        <h3 className="text-white font-semibold text-lg mb-2">Telegram video</h3>
+                        <p className="text-zinc-400 text-sm mb-6 max-w-sm mx-auto">
                             This content is hosted on Telegram. If it doesn't play automatically, please open it directly.
                         </p>
                         <a
                             href={url}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white px-6 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-indigo-500/30"
+                            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium transition shadow-lg "
                         >
                             View on Telegram
                         </a>

@@ -10,22 +10,20 @@ const FloatingAIChatButton = () => {
     return (
         <Link
             to="/ai-chat"
-            className="fixed bottom-24 md:bottom-10 right-6 md:right-10 z-50 group"
+            className="ai-fab fixed bottom-6 right-4 md:bottom-10 md:right-10 z-50 group"
             title="AI Chat Assistant"
         >
             <div className="relative">
-                {/* Pulse ring */}
-                <div className="absolute inset-0 bg-purple-500 rounded-full animate-ping opacity-20" />
 
                 {/* Button */}
-                <div className="relative w-14 h-14 bg-gradient-to-br from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white rounded-full shadow-lg hover:shadow-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 active:scale-95">
-                    <FaRobot className="text-xl" />
+                <div className="relative w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.12)] flex items-center justify-center transition-colors active:scale-[0.97]">
+                    <FaRobot className="text-lg" />
                 </div>
 
                 {/* Tooltip */}
-                <div className="absolute bottom-full right-0 mb-2 px-3 py-1.5 bg-slate-900 dark:bg-slate-700 text-white text-xs font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
+                <div className="absolute bottom-full right-0 mb-2 px-3 py-1.5 bg-zinc-900 dark:bg-zinc-700 text-white text-xs font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                     AI Chat
-                    <div className="absolute top-full right-5 w-2 h-2 bg-slate-900 dark:bg-slate-700 rotate-45 -mt-1" />
+                    <div className="absolute top-full right-5 w-2 h-2 bg-zinc-900 dark:bg-zinc-700 rotate-45 -mt-1" />
                 </div>
             </div>
         </Link>

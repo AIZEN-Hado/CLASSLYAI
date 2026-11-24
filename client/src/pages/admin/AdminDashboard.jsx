@@ -1,10 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
+import TabLabel from '../../components/ui/TabLabel';
 import { Link, useNavigate } from 'react-router-dom';
 import {
     FaUsers, FaChalkboardTeacher, FaGraduationCap, FaBook,
-    FaRupeeSign, FaChartLine, FaMoneyCheckAlt, FaHistory,
-    FaArrowRight, FaExclamationCircle, FaCheckCircle, FaSearch,
-    FaBan, FaUnlock, FaExclamationTriangle, FaTimes, FaEdit,
+    FaChartLine, FaMoneyCheckAlt, FaHistory,
+    FaArrowRight, FaCheckCircle, FaSearch,
+    FaBan, FaCheck, FaUnlock, FaExclamationTriangle, FaTimes, FaEdit,
     FaChevronDown, FaChevronUp, FaShieldAlt, FaChevronLeft, FaChevronRight,
     FaUserSecret, FaSignInAlt
 } from 'react-icons/fa';
@@ -19,12 +20,12 @@ const formatCurrency = (amount) => `₹${(amount || 0).toLocaleString('en-IN')}`
 
 const Avatar = ({ name, color = 'indigo', size = 9, blocked = false }) => {
     const palette = {
-        indigo: 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400',
-        slate:  'bg-slate-100  dark:bg-slate-700       text-slate-600  dark:text-slate-300',
+        indigo: 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400',
+        slate:  'bg-zinc-100  dark:bg-zinc-700       text-zinc-600  dark:text-zinc-300',
         red:    'bg-red-100    dark:bg-red-900/40      text-red-600    dark:text-red-400',
     };
     return (
-        <div className={`w-${size} h-${size} rounded-full flex items-center justify-center text-sm font-semibold shrink-0 ${blocked ? palette.red : palette[color]}`}>
+        <div className={`w-${size} h-${size} rounded-full flex items-center justify-center text-sm font-medium shrink-0 ${blocked ? palette.red : palette[color]}`}>
             {name?.charAt(0)?.toUpperCase() || '?'}
         </div>
     );
@@ -36,13 +37,13 @@ const Badge = ({ variant, children }) => {
         blocked:     'bg-red-50     dark:bg-red-900/20     text-red-700     dark:text-red-400     ring-1 ring-red-200     dark:ring-red-800',
         warned:      'bg-amber-50   dark:bg-amber-900/20   text-amber-700   dark:text-amber-400   ring-1 ring-amber-200   dark:ring-amber-800',
         student:     'bg-sky-50     dark:bg-sky-900/20     text-sky-700     dark:text-sky-400     ring-1 ring-sky-200     dark:ring-sky-800',
-        instructor:  'bg-violet-50  dark:bg-violet-900/20  text-violet-700  dark:text-violet-400  ring-1 ring-violet-200  dark:ring-violet-800',
+        instructor:  'bg-blue-50  dark:bg-blue-900/20  text-blue-700  dark:text-blue-400  ring-1 ring-blue-200  dark:ring-blue-800',
         completed:   'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 ring-1 ring-emerald-200 dark:ring-emerald-800',
         pending:     'bg-amber-50   dark:bg-amber-900/20   text-amber-700   dark:text-amber-400   ring-1 ring-amber-200   dark:ring-amber-800',
         failed:      'bg-red-50     dark:bg-red-900/20     text-red-700     dark:text-red-400     ring-1 ring-red-200     dark:ring-red-800',
     };
     return (
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium ${variants[variant] || variants.active}`}>
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium ${variants[variant] || variants.active}`}>
             {children}
         </span>
     );
@@ -51,13 +52,13 @@ const Badge = ({ variant, children }) => {
 const Pagination = ({ page, totalPages, onPageChange }) => {
     if (totalPages <= 1) return null;
     return (
-        <div className="flex items-center justify-center gap-2 px-4 py-3 border-t border-slate-200 dark:border-slate-700">
+        <div className="flex items-center justify-center gap-2 px-4 py-3 border-t border-zinc-200 dark:border-zinc-800">
             <button
                 onClick={() => onPageChange(page - 1)}
                 disabled={page === 1}
-                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-slate-200 dark:border-slate-700 rounded-lg disabled:opacity-40 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-zinc-200 dark:border-zinc-700 rounded-lg disabled:opacity-40 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
             >
-                <FaChevronLeft className="text-[10px]" /> Prev
+                <FaChevronLeft className="text-[11px]" /> Prev
             </button>
             <div className="flex items-center gap-1">
                 {Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -69,14 +70,14 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
                     }, [])
                     .map((p, i) =>
                         p === '...'
-                            ? <span key={`dots-${i}`} className="px-1 text-xs text-slate-400">…</span>
+                            ? <span key={`dots-${i}`} className="px-1 text-xs text-zinc-400">…</span>
                             : <button
                                 key={p}
                                 onClick={() => onPageChange(p)}
                                 className={`w-7 h-7 text-xs rounded-lg font-medium transition-colors ${
                                     p === page
-                                        ? 'bg-indigo-500 text-white'
-                                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
+                                        ? 'bg-blue-500 text-white'
+                                        : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700'
                                 }`}
                             >{p}</button>
                     )
@@ -85,38 +86,24 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
             <button
                 onClick={() => onPageChange(page + 1)}
                 disabled={page === totalPages}
-                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-slate-200 dark:border-slate-700 rounded-lg disabled:opacity-40 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-zinc-200 dark:border-zinc-700 rounded-lg disabled:opacity-40 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
             >
-                Next <FaChevronRight className="text-[10px]" />
+                Next <FaChevronRight className="text-[11px]" />
             </button>
         </div>
     );
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Stat Card
+   Stat card
 ───────────────────────────────────────────────────────────────────────────── */
-const StatCard = ({ icon: Icon, label, value, sub, color }) => {
-    const colors = {
-        blue:   { wrap: 'bg-blue-500',   ring: 'ring-blue-100 dark:ring-blue-900/30',   text: 'text-blue-600 dark:text-blue-400' },
-        purple: { wrap: 'bg-violet-500', ring: 'ring-violet-100 dark:ring-violet-900/30', text: 'text-violet-600 dark:text-violet-400' },
-        green:  { wrap: 'bg-emerald-500', ring: 'ring-emerald-100 dark:ring-emerald-900/30', text: 'text-emerald-600 dark:text-emerald-400' },
-        orange: { wrap: 'bg-orange-500', ring: 'ring-orange-100 dark:ring-orange-900/30', text: 'text-orange-600 dark:text-orange-400' },
-    };
-    const c = colors[color];
-    return (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-xl ${c.wrap} flex items-center justify-center shadow-sm shrink-0`}>
-                <Icon className="text-white text-lg" />
-            </div>
-            <div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mb-0.5">{label}</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white leading-none">{value ?? '—'}</p>
-                {sub && <p className="text-xs text-slate-400 mt-0.5">{sub}</p>}
-            </div>
-        </div>
-    );
-};
+const StatCard = ({ label, value, sub }) => (
+    <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-5">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">{label}</p>
+        <p className="mt-2 text-3xl font-medium text-zinc-900 dark:text-white leading-none tabular-nums">{value ?? '—'}</p>
+        {sub && <p className="mt-2 text-xs tabular-nums text-zinc-500 dark:text-zinc-400">{sub}</p>}
+    </div>
+);
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Payouts Tab (server-side pagination)
@@ -142,55 +129,55 @@ const PayoutsTab = () => {
         }
     };
 
-    if (loading) return <div className="text-center py-20 text-slate-500 dark:text-slate-400">Loading payouts…</div>;
+    if (loading) return <div className="text-center py-20 text-zinc-500 dark:text-zinc-400">Loading payouts…</div>;
 
     if (payouts.length === 0) {
         return (
-            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-16 text-center">
-                <FaHistory className="text-4xl text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-                <p className="text-slate-500 dark:text-slate-400 font-medium">No payouts recorded yet</p>
+            <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-16 text-center">
+                <FaHistory className="text-4xl text-zinc-300 dark:text-zinc-600 mx-auto mb-3" />
+                <p className="text-zinc-500 dark:text-zinc-400 font-medium">No payouts recorded yet</p>
             </div>
         );
     }
 
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
             <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                     <thead>
-                        <tr className="bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-700 text-xs uppercase tracking-wide">
-                            <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Instructor</th>
-                            <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Amount</th>
-                            <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Method</th>
-                            <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Transaction ID</th>
-                            <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Status</th>
-                            <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Processed By</th>
-                            <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Date</th>
+                        <tr className="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-200 dark:border-zinc-800 text-xs ">
+                            <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Instructor</th>
+                            <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Amount</th>
+                            <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Method</th>
+                            <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Transaction ID</th>
+                            <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Status</th>
+                            <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Processed by</th>
+                            <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Date</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                    <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
                         {payouts.map(p => (
-                            <tr key={p._id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                            <tr key={p._id} className="hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors">
                                 <td className="px-5 py-3.5">
                                     <div className="flex items-center gap-3">
                                         <Avatar name={p.instructor?.name} color="indigo" />
                                         <div>
-                                            <p className="font-medium text-slate-900 dark:text-white">{p.instructor?.name}</p>
-                                            <p className="text-xs text-slate-500 dark:text-slate-400">{p.instructor?.email}</p>
+                                            <p className="font-medium text-zinc-900 dark:text-white">{p.instructor?.name}</p>
+                                            <p className="text-xs text-zinc-500 dark:text-zinc-400">{p.instructor?.email}</p>
                                         </div>
                                     </div>
                                 </td>
-                                <td className="px-5 py-3.5 font-semibold text-slate-900 dark:text-white">{formatCurrency(p.amount)}</td>
-                                <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300 capitalize">{p.method?.replace('_', ' ')}</td>
-                                <td className="px-5 py-3.5 font-mono text-xs text-slate-500 dark:text-slate-400">{p.transactionId || '—'}</td>
+                                <td className="px-5 py-3.5 font-medium text-zinc-900 dark:text-white">{formatCurrency(p.amount)}</td>
+                                <td className="px-5 py-3.5 text-zinc-600 dark:text-zinc-300 capitalize">{p.method?.replace('_', ' ')}</td>
+                                <td className="px-5 py-3.5 font-mono text-xs text-zinc-500 dark:text-zinc-400">{p.transactionId || '—'}</td>
                                 <td className="px-5 py-3.5">
                                     <Badge variant={p.status}>
-                                        {p.status === 'completed' && <FaCheckCircle className="text-[9px]" />}
+                                        {p.status === 'completed' && <FaCheckCircle className="text-[11px]" />}
                                         {p.status}
                                     </Badge>
                                 </td>
-                                <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300">{p.processedBy?.name || '—'}</td>
-                                <td className="px-5 py-3.5 text-xs text-slate-500 dark:text-slate-400">{new Date(p.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                                <td className="px-5 py-3.5 text-zinc-600 dark:text-zinc-300">{p.processedBy?.name || '—'}</td>
+                                <td className="px-5 py-3.5 text-xs text-zinc-500 dark:text-zinc-400">{new Date(p.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -335,39 +322,39 @@ const UsersTab = () => {
         { id: 'blocked', label: 'Blocked', count: users.filter(u => u.isBlocked).length },
     ];
 
-    if (loading) return <div className="text-center py-20 text-slate-500 dark:text-slate-400">Loading users…</div>;
+    if (loading) return <div className="text-center py-20 text-zinc-500 dark:text-zinc-400">Loading users…</div>;
 
     return (
         <div className="space-y-4">
             {/* Search + Filter bar */}
             <div className="flex flex-col sm:flex-row gap-3">
                 <div className="relative flex-1 max-w-sm">
-                    <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
+                    <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-xs" />
                     <input
                         type="text"
-                        placeholder="Search name or email…"
+                        placeholder="Search name or email"
                         value={search}
                         onChange={e => setSearch(e.target.value)}
-                        className="w-full pl-8 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full pl-8 pr-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
                 <div className="flex gap-1.5 flex-wrap">
                     {filterOptions.map(f => {
                         const isActive = filter === f.id;
                         const accentMap = { blocked: 'bg-red-500 border-red-500', warned: 'bg-amber-500 border-amber-500' };
-                        const accent = accentMap[f.id] || 'bg-indigo-500 border-indigo-500';
+                        const accent = accentMap[f.id] || 'bg-blue-500 border-blue-500';
                         return (
                             <button
                                 key={f.id}
                                 onClick={() => setFilter(f.id)}
-                                className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
+                                className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition ${
                                     isActive
                                         ? `${accent} text-white shadow-sm`
-                                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600'
+                                        : 'bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600'
                                 }`}
                             >
                                 {f.label}
-                                <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold ${isActive ? 'bg-white/25' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'}`}>
+                                <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[11px] font-semibold ${isActive ? 'bg-white/25' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-400'}`}>
                                     {f.count}
                                 </span>
                             </button>
@@ -377,33 +364,33 @@ const UsersTab = () => {
             </div>
 
             {/* Summary bar */}
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-                Showing <span className="font-medium text-slate-700 dark:text-slate-300">{filteredUsers.length}</span> user{filteredUsers.length !== 1 ? 's' : ''}
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                Showing <span className="font-medium text-zinc-700 dark:text-zinc-300">{filteredUsers.length}</span> user{filteredUsers.length !== 1 ? 's' : ''}
                 {search && <> matching &quot;<span className="font-medium">{search}</span>&quot;</>}
                 {page > 1 && <> · Page {page} of {totalPages}</>}
             </p>
 
             {/* Users Table */}
-            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
                 {pagedUsers.length === 0 ? (
                     <div className="py-16 text-center">
-                        <FaUsers className="text-4xl text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-                        <p className="text-slate-500 dark:text-slate-400 font-medium">No users found</p>
+                        <FaUsers className="text-4xl text-zinc-300 dark:text-zinc-600 mx-auto mb-3" />
+                        <p className="text-zinc-500 dark:text-zinc-400 font-medium">No users found</p>
                     </div>
                 ) : (
                     <>
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                                 <thead>
-                                    <tr className="bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-700 text-xs uppercase tracking-wide">
-                                        <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">User</th>
-                                        <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Role</th>
-                                        <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Warnings</th>
-                                        <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Status</th>
-                                        <th className="text-right px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Actions</th>
+                                    <tr className="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-200 dark:border-zinc-800 text-xs ">
+                                        <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">User</th>
+                                        <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Role</th>
+                                        <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Warnings</th>
+                                        <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Status</th>
+                                        <th className="text-right px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                                <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
                                     {pagedUsers.map(user => {
                                         const warnCount = user.warnings?.length || 0;
                                         const maxWarn = user.maxWarnings || 2;
@@ -415,15 +402,15 @@ const UsersTab = () => {
                                             <>
                                                 <tr
                                                     key={user._id}
-                                                    className={`hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors ${user.isBlocked ? 'bg-red-50/40 dark:bg-red-900/10' : ''}`}
+                                                    className={`hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors ${user.isBlocked ? 'bg-red-50/40 dark:bg-red-900/10' : ''}`}
                                                 >
                                                     {/* User info */}
                                                     <td className="px-5 py-4">
                                                         <div className="flex items-center gap-3">
                                                             <Avatar name={user.name} color={user.isBlocked ? 'red' : 'slate'} blocked={user.isBlocked} />
                                                             <div className="min-w-0">
-                                                                <p className="font-medium text-slate-900 dark:text-white truncate">{user.name}</p>
-                                                                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
+                                                                <p className="font-medium text-zinc-900 dark:text-white truncate">{user.name}</p>
+                                                                <p className="text-xs text-zinc-500 dark:text-zinc-400 truncate">{user.email}</p>
                                                                 {user.isBlocked && user.blockReason && (
                                                                     <p className="text-[11px] text-red-500 dark:text-red-400 mt-0.5 truncate max-w-[200px]" title={user.blockReason}>
                                                                         {user.blockReason}
@@ -438,9 +425,9 @@ const UsersTab = () => {
                                                         <select
                                                             value={user.role}
                                                             onChange={e => handleChangeRole(user._id, e.target.value)}
-                                                            className={`text-xs px-2.5 py-1.5 rounded-lg border font-medium focus:outline-none focus:ring-2 focus:ring-indigo-400 cursor-pointer ${
+                                                            className={`text-xs px-2.5 py-1.5 rounded-lg border font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer ${
                                                                 user.role === 'instructor'
-                                                                    ? 'bg-violet-50 dark:bg-violet-900/20 border-violet-200 dark:border-violet-800 text-violet-700 dark:text-violet-300'
+                                                                    ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300'
                                                                     : 'bg-sky-50 dark:bg-sky-900/20 border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300'
                                                             }`}
                                                         >
@@ -454,14 +441,14 @@ const UsersTab = () => {
                                                         <div className="space-y-1.5">
                                                             <div className="flex items-center gap-2">
                                                                 {/* Count pill */}
-                                                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ${
+                                                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium ${
                                                                     warnCount === 0
-                                                                        ? 'bg-slate-100 dark:bg-slate-700 text-slate-400'
+                                                                        ? 'bg-zinc-100 dark:bg-zinc-700 text-zinc-400'
                                                                         : warnCount >= maxWarn
                                                                             ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'
                                                                             : 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'
                                                                 }`}>
-                                                                    {warnCount > 0 && <FaExclamationTriangle className="text-[8px]" />}
+                                                                    {warnCount > 0 && <FaExclamationTriangle className="text-[11px]" />}
                                                                     {warnCount}/{maxWarn}
                                                                 </span>
 
@@ -473,15 +460,15 @@ const UsersTab = () => {
                                                                             min="1"
                                                                             value={maxWarningsInput[user._id] ?? maxWarn}
                                                                             onChange={e => setMaxWarningsInput(prev => ({ ...prev, [user._id]: e.target.value }))}
-                                                                            className="w-11 text-xs px-1.5 py-0.5 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                                                            className="w-11 text-xs px-1.5 py-0.5 border border-zinc-300 dark:border-zinc-600 rounded bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                                                                         />
-                                                                        <button onClick={() => handleSetMaxWarnings(user._id)} className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 font-bold text-sm">✓</button>
-                                                                        <button onClick={() => setEditMaxWarnings(prev => ({ ...prev, [user._id]: false }))} className="text-slate-400 hover:text-slate-600 text-sm">✗</button>
+                                                                        <button onClick={() => handleSetMaxWarnings(user._id)} className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 font-semibold text-sm" aria-label="Save"><FaCheck /></button>
+                                                                        <button onClick={() => setEditMaxWarnings(prev => ({ ...prev, [user._id]: false }))} className="text-zinc-400 hover:text-zinc-600 text-sm" aria-label="Cancel"><FaTimes /></button>
                                                                     </div>
                                                                 ) : (
                                                                     <button
                                                                         onClick={() => { setEditMaxWarnings(prev => ({ ...prev, [user._id]: true })); setMaxWarningsInput(prev => ({ ...prev, [user._id]: maxWarn })); }}
-                                                                        className="text-slate-300 dark:text-slate-600 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors"
+                                                                        className="text-zinc-300 dark:text-zinc-600 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
                                                                         title="Edit limit"
                                                                     >
                                                                         <FaEdit className="text-[11px]" />
@@ -492,17 +479,17 @@ const UsersTab = () => {
                                                                 {warnCount > 0 && (
                                                                     <button
                                                                         onClick={() => setExpandedWarnings(prev => ({ ...prev, [user._id]: !prev[user._id] }))}
-                                                                        className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                                                                        className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
                                                                         title={isExpanded ? 'Hide warnings' : 'View warnings'}
                                                                     >
-                                                                        {isExpanded ? <FaChevronUp className="text-[10px]" /> : <FaChevronDown className="text-[10px]" />}
+                                                                        {isExpanded ? <FaChevronUp className="text-[11px]" /> : <FaChevronDown className="text-[11px]" />}
                                                                     </button>
                                                                 )}
                                                             </div>
 
                                                             {/* Progress bar */}
                                                             {warnCount > 0 && (
-                                                                <div className="w-20 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                                                <div className="w-20 h-1 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
                                                                     <div
                                                                         className={`h-full rounded-full ${warnCount >= maxWarn ? 'bg-red-500' : 'bg-amber-400'}`}
                                                                         style={{ width: `${warnPct}%` }}
@@ -515,11 +502,11 @@ const UsersTab = () => {
                                                     {/* Status */}
                                                     <td className="px-5 py-4">
                                                         {user.isBlocked ? (
-                                                            <Badge variant="blocked"><FaBan className="text-[9px]" /> Blocked</Badge>
+                                                            <Badge variant="blocked"><FaBan className="text-[11px]" /> Blocked</Badge>
                                                         ) : warnCount > 0 ? (
-                                                            <Badge variant="warned"><FaExclamationTriangle className="text-[9px]" /> Warned</Badge>
+                                                            <Badge variant="warned"><FaExclamationTriangle className="text-[11px]" /> Warned</Badge>
                                                         ) : (
-                                                            <Badge variant="active"><FaCheckCircle className="text-[9px]" /> Active</Badge>
+                                                            <Badge variant="active"><FaCheckCircle className="text-[11px]" /> Active</Badge>
                                                         )}
                                                     </td>
 
@@ -539,14 +526,14 @@ const UsersTab = () => {
                                                                     onClick={() => handleUnblock(user._id)}
                                                                     className="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 transition-colors flex items-center gap-1.5"
                                                                 >
-                                                                    <FaUnlock className="text-[10px]" /> Unblock
+                                                                    <FaUnlock className="text-[11px]" /> Unblock
                                                                 </button>
                                                             ) : (
                                                                 <button
                                                                     onClick={() => { setBlockModal({ open: true, user }); setBlockReason(''); setHideCourses(false); }}
                                                                     className="px-3 py-1.5 text-xs font-medium rounded-lg bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800 hover:bg-red-100 transition-colors flex items-center gap-1.5"
                                                                 >
-                                                                    <FaBan className="text-[10px]" /> Block
+                                                                    <FaBan className="text-[11px]" /> Block
                                                                 </button>
                                                             )}
                                                         </div>
@@ -557,22 +544,22 @@ const UsersTab = () => {
                                                 {isExpanded && warnCount > 0 && (
                                                     <tr key={`${user._id}-warn-history`} className="bg-amber-50/60 dark:bg-amber-900/10">
                                                         <td colSpan={5} className="px-5 py-4">
-                                                            <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 mb-2 uppercase tracking-wide">Warning history</p>
+                                                            <p className="text-xs font-medium text-amber-700 dark:text-amber-400 mb-2 ">Warning history</p>
                                                             <div className="space-y-2">
                                                                 {user.warnings.map((w, i) => (
-                                                                    <div key={i} className="flex items-start justify-between gap-3 p-3 bg-white dark:bg-slate-800 rounded-lg border border-amber-200 dark:border-amber-900/40">
+                                                                    <div key={i} className="flex items-start justify-between gap-3 p-3 bg-white dark:bg-zinc-800 rounded-lg border border-amber-200 dark:border-amber-900/40">
                                                                         <div className="flex items-start gap-2">
-                                                                            <span className="mt-0.5 w-5 h-5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[10px] font-bold flex items-center justify-center shrink-0">
+                                                                            <span className="mt-0.5 w-5 h-5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[11px] font-semibold flex items-center justify-center shrink-0">
                                                                                 {i + 1}
                                                                             </span>
                                                                             <div>
-                                                                                <p className="text-sm text-slate-700 dark:text-slate-300">{w.reason}</p>
-                                                                                <p className="text-[11px] text-slate-400 mt-0.5">{new Date(w.issuedAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                                                                                <p className="text-sm text-zinc-700 dark:text-zinc-300">{w.reason}</p>
+                                                                                <p className="text-[11px] text-zinc-400 mt-0.5">{new Date(w.issuedAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                                                                             </div>
                                                                         </div>
                                                                         <button
                                                                             onClick={() => handleRemoveWarning(user._id, i)}
-                                                                            className="p-1.5 text-slate-300 dark:text-slate-600 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors shrink-0"
+                                                                            className="p-1.5 text-zinc-300 dark:text-zinc-600 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors shrink-0"
                                                                             title="Remove warning"
                                                                         >
                                                                             <FaTimes className="text-xs" />
@@ -597,33 +584,33 @@ const UsersTab = () => {
             {/* ── Warn Modal ─────────────────────────────────────────────── */}
             {warnModal.open && warnModal.user && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md shadow-2xl">
+                    <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 w-full max-w-md shadow-2xl">
                         {/* Header */}
-                        <div className="p-5 border-b border-slate-200 dark:border-slate-700 flex items-center gap-3">
+                        <div className="p-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3">
                             <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
                                 <FaExclamationTriangle className="text-amber-500 text-sm" />
                             </div>
                             <div className="flex-1">
-                                <h3 className="font-semibold text-slate-900 dark:text-white">Issue Warning</h3>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">{warnModal.user.name} &middot; {warnModal.user.email}</p>
+                                <h3 className="font-medium text-zinc-900 dark:text-white">Issue warning</h3>
+                                <p className="text-xs text-zinc-500 dark:text-zinc-400">{warnModal.user.name} &middot; {warnModal.user.email}</p>
                             </div>
-                            <button onClick={() => setWarnModal({ open: false, user: null })} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 transition-colors">
+                            <button onClick={() => setWarnModal({ open: false, user: null })} className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-400 hover:text-zinc-600 transition-colors">
                                 <FaTimes />
                             </button>
                         </div>
 
                         <div className="p-5 space-y-4">
                             {/* Progress */}
-                            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-3 space-y-2">
+                            <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-xl p-3 space-y-2">
                                 <div className="flex items-center justify-between text-xs">
-                                    <span className="text-slate-500 dark:text-slate-400 font-medium">Warning count after this</span>
-                                    <span className={`font-bold ${isLastWarning(warnModal.user) ? 'text-red-500' : 'text-amber-500'}`}>
+                                    <span className="text-zinc-500 dark:text-zinc-400 font-medium">Warning count after this</span>
+                                    <span className={`font-semibold ${isLastWarning(warnModal.user) ? 'text-red-500' : 'text-amber-500'}`}>
                                         {(warnModal.user.warnings?.length || 0) + 1} / {warnModal.user.maxWarnings || 2}
                                     </span>
                                 </div>
-                                <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                <div className="w-full h-2 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
                                     <div
-                                        className={`h-full rounded-full transition-all ${isLastWarning(warnModal.user) ? 'bg-red-500' : 'bg-amber-400'}`}
+                                        className={`h-full rounded-full transition ${isLastWarning(warnModal.user) ? 'bg-red-500' : 'bg-amber-400'}`}
                                         style={{ width: `${Math.min(100, (((warnModal.user.warnings?.length || 0) + 1) / (warnModal.user.maxWarnings || 2)) * 100)}%` }}
                                     />
                                 </div>
@@ -634,40 +621,40 @@ const UsersTab = () => {
                                 <div className="flex items-start gap-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
                                     <FaExclamationTriangle className="text-red-500 mt-0.5 shrink-0" />
                                     <div>
-                                        <p className="text-sm font-semibold text-red-700 dark:text-red-400">Final warning</p>
+                                        <p className="text-sm font-medium text-red-700 dark:text-red-400">Final warning</p>
                                         <p className="text-xs text-red-600 dark:text-red-400 mt-0.5">The user will be automatically blocked after this warning.</p>
                                     </div>
                                 </div>
                             )}
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
                                     Reason <span className="text-red-500">*</span>
                                 </label>
                                 <textarea
                                     rows={3}
                                     value={warnReason}
                                     onChange={e => setWarnReason(e.target.value)}
-                                    placeholder="Explain why this warning is being issued…"
-                                    className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+                                    placeholder="Explain why this warning is being issued"
+                                    className="w-full px-3 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
                                 />
                             </div>
 
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setWarnModal({ open: false, user: null })}
-                                    className="flex-1 px-4 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                                    className="flex-1 px-4 py-2.5 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-lg text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleWarn}
                                     disabled={warnLoading}
-                                    className={`flex-1 px-4 py-2.5 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50 ${
+                                    className={`flex-1 px-4 py-2.5 text-white rounded-xl text-sm font-medium transition-colors disabled:opacity-50 ${
                                         isLastWarning(warnModal.user) ? 'bg-red-500 hover:bg-red-600' : 'bg-amber-500 hover:bg-amber-600'
                                     }`}
                                 >
-                                    {warnLoading ? 'Issuing…' : isLastWarning(warnModal.user) ? 'Warn & Block' : 'Issue Warning'}
+                                    {warnLoading ? 'Issuing…' : isLastWarning(warnModal.user) ? 'Warn & Block' : 'Issue warning'}
                                 </button>
                             </div>
                         </div>
@@ -678,16 +665,16 @@ const UsersTab = () => {
             {/* ── Block Modal ─────────────────────────────────────────────── */}
             {blockModal.open && blockModal.user && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md shadow-2xl">
-                        <div className="p-5 border-b border-slate-200 dark:border-slate-700 flex items-center gap-3">
+                    <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 w-full max-w-md shadow-2xl">
+                        <div className="p-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3">
                             <div className="w-9 h-9 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                                 <FaBan className="text-red-500 text-sm" />
                             </div>
                             <div className="flex-1">
-                                <h3 className="font-semibold text-slate-900 dark:text-white">Block User</h3>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">{blockModal.user.name} &middot; {blockModal.user.email}</p>
+                                <h3 className="font-medium text-zinc-900 dark:text-white">Block user</h3>
+                                <p className="text-xs text-zinc-500 dark:text-zinc-400">{blockModal.user.name} &middot; {blockModal.user.email}</p>
                             </div>
-                            <button onClick={() => setBlockModal({ open: false, user: null })} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 transition-colors">
+                            <button onClick={() => setBlockModal({ open: false, user: null })} className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-400 hover:text-zinc-600 transition-colors">
                                 <FaTimes />
                             </button>
                         </div>
@@ -699,45 +686,45 @@ const UsersTab = () => {
                                 </p>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
                                     Block reason <span className="text-red-500">*</span>
                                 </label>
                                 <textarea
                                     rows={3}
                                     value={blockReason}
                                     onChange={e => setBlockReason(e.target.value)}
-                                    placeholder="This will be shown to the user when they try to log in…"
-                                    className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-400 resize-none"
+                                    placeholder="This will be shown to the user when they try to log in"
+                                    className="w-full px-3 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-red-400 resize-none"
                                 />
                             </div>
                             {blockModal.user.role === 'instructor' && (
-                                <label className="flex items-start gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl cursor-pointer border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+                                <label className="flex items-start gap-3 p-3 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl cursor-pointer border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
                                     <input
                                         type="checkbox"
                                         checked={hideCourses}
                                         onChange={e => setHideCourses(e.target.checked)}
-                                        className="mt-0.5 w-4 h-4 rounded border-slate-300 text-red-500 focus:ring-red-400"
+                                        className="mt-0.5 w-4 h-4 rounded border-zinc-300 text-red-500 focus:ring-red-400"
                                     />
                                     <div>
-                                        <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Hide instructor's courses</p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Remove all their courses from the marketplace</p>
+                                        <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Hide instructor's courses</p>
+                                        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Remove all their courses from the marketplace</p>
                                     </div>
                                 </label>
                             )}
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setBlockModal({ open: false, user: null })}
-                                    className="flex-1 px-4 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                                    className="flex-1 px-4 py-2.5 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-lg text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleBlock}
                                     disabled={blockLoading}
-                                    className="flex-1 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                                    className="flex-1 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                                 >
                                     <FaBan className="text-xs" />
-                                    {blockLoading ? 'Blocking…' : 'Block User'}
+                                    {blockLoading ? 'Blocking…' : 'Block user'}
                                 </button>
                             </div>
                         </div>
@@ -749,7 +736,7 @@ const UsersTab = () => {
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Impersonate Tab
+   Impersonate tab
 ───────────────────────────────────────────────────────────────────────────── */
 const ImpersonateTab = () => {
     const [email, setEmail] = useState('');
@@ -810,46 +797,46 @@ const ImpersonateTab = () => {
 
     return (
         <div className="space-y-6">
-            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
+            <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
                 <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
                         <FaUserSecret className="text-amber-600 dark:text-amber-400" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Login as User</h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">Enter a user's email to access their account</p>
+                        <h3 className="text-lg font-medium text-zinc-900 dark:text-white">Login as User</h3>
+                        <p className="text-sm text-zinc-500 dark:text-zinc-400">Enter a user's email to access their account</p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSearch} className="flex gap-3 mb-6">
                     <div className="flex-1 relative">
-                        <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm" />
+                        <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm" />
                         <input
                             type="email"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
                             placeholder="Enter user email address"
-                            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                            className="w-full pl-10 pr-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                             required
                         />
                     </div>
                     <button
                         type="submit"
                         disabled={loading || !email.trim()}
-                        className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {loading ? 'Searching…' : 'Find User'}
+                        {loading ? 'Searching…' : 'Find user'}
                     </button>
                 </form>
 
                 {foundUser && (
-                    <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
+                    <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
                                 <Avatar name={foundUser.name} color={foundUser.isBlocked ? 'red' : 'indigo'} size={12} blocked={foundUser.isBlocked} />
                                 <div>
-                                    <p className="font-semibold text-slate-900 dark:text-white text-base">{foundUser.name}</p>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400">{foundUser.email}</p>
+                                    <p className="font-medium text-zinc-900 dark:text-white text-base">{foundUser.name}</p>
+                                    <p className="text-sm text-zinc-500 dark:text-zinc-400">{foundUser.email}</p>
                                     <div className="flex items-center gap-2 mt-1.5">
                                         <Badge variant={foundUser.role === 'instructor' ? 'instructor' : foundUser.role === 'admin' ? 'active' : 'student'}>
                                             {foundUser.role}
@@ -864,7 +851,7 @@ const ImpersonateTab = () => {
                             <button
                                 onClick={handleImpersonate}
                                 disabled={loading}
-                                className="flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-semibold transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-sm"
+                                className="flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                             >
                                 <FaSignInAlt />
                                 {loading ? 'Switching…' : 'Login as this user'}
@@ -959,8 +946,8 @@ const AdminDashboard = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
-                <div className="w-10 h-10 border-[3px] border-slate-200 dark:border-slate-700 border-t-indigo-500 rounded-full animate-spin" />
+            <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center">
+                <div className="w-10 h-10 border-[3px] border-zinc-200 dark:border-zinc-700 border-t-blue-500 rounded-full animate-spin" />
             </div>
         );
     }
@@ -972,25 +959,25 @@ const AdminDashboard = () => {
         { id: 'instructors', label: 'Instructors', icon: FaChalkboardTeacher },
         { id: 'payouts', label: 'Payouts', icon: FaMoneyCheckAlt },
         { id: 'users', label: 'Users', icon: FaShieldAlt },
-        { id: 'impersonate', label: 'Login As', icon: FaUserSecret },
+        { id: 'impersonate', label: 'Login as', icon: FaUserSecret },
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
 
             {/* ── Page Header ──────────────────────────────────────────── */}
             <div className="max-w-7xl mx-auto px-4 pt-8 pb-4 flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Admin Dashboard</h1>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Manage your platform, users & payouts</p>
+                    <h1 className="text-2xl font-semibold text-zinc-900 dark:text-white">Admin dashboard</h1>
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">Manage your platform, users & payouts</p>
                 </div>
-                <span className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 text-xs font-semibold rounded-full border border-indigo-200 dark:border-indigo-800">
-                    <FaShieldAlt className="text-[10px]" /> Admin
+                <span className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-xs font-medium rounded-md border border-blue-200 dark:border-blue-800">
+                    <FaShieldAlt className="text-[11px]" /> Admin
                 </span>
             </div>
 
             {/* ── Tabs ─────────────────────────────────────────────────── */}
-            <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-10">
+            <div className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-10">
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="flex gap-1">
                         {tabs.map(tab => {
@@ -999,14 +986,14 @@ const AdminDashboard = () => {
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-all ${
+                                    className={`flex items-center px-4 py-3 text-sm font-medium border-b-2 transition ${
                                         activeTab === tab.id
-                                            ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                                            : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                                            ? 'border-zinc-900 dark:border-white text-zinc-900 dark:text-white'
+                                            : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200'
                                     }`}
                                 >
                                     <Icon className="text-sm" />
-                                    <span className="hidden sm:inline">{tab.label}</span>
+                                    <TabLabel active={activeTab === tab.id}>{tab.label}</TabLabel>
                                 </button>
                             );
                         })}
@@ -1022,84 +1009,71 @@ const AdminDashboard = () => {
                     <div className="space-y-6">
                         {/* Stats */}
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                            <StatCard icon={FaUsers}           label="Total Users"  value={stats.totalUsers}   color="blue" />
+                            <StatCard icon={FaUsers}           label="Users"  value={stats.totalUsers}   color="blue" />
                             <StatCard icon={FaChalkboardTeacher} label="Instructors" value={stats.totalInstructors} color="purple" />
                             <StatCard icon={FaGraduationCap}   label="Students"     value={stats.totalStudents} color="green" />
-                            <StatCard icon={FaBook}            label="Courses"       value={`${stats.publishedCourses ?? 0}/${stats.totalCourses ?? 0}`} sub="published / total" color="orange" />
+                            <StatCard icon={FaBook}            label="Courses"       value={stats.publishedCourses ?? 0} sub={`published of ${stats.totalCourses ?? 0}`} color="orange" />
                         </div>
 
                         {/* Revenue */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {[
-                                { icon: FaRupeeSign, label: 'Total Revenue', value: formatCurrency(stats.totalRevenue), sub: `${stats.totalSales ?? 0} sales`, bg: 'bg-emerald-500', light: 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-900/30' },
-                                { icon: FaMoneyCheckAlt, label: 'Total Paid Out', value: formatCurrency(stats.totalPaidOut), sub: 'To instructors', bg: 'bg-indigo-500', light: 'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-100 dark:border-indigo-900/30' },
-                                { icon: FaExclamationCircle, label: 'Pending Payout', value: formatCurrency(stats.pendingPayout), sub: 'Owed to instructors', bg: 'bg-amber-500', light: 'bg-amber-50 dark:bg-amber-900/20 border-amber-100 dark:border-amber-900/30' },
-                            ].map(r => (
-                                <div key={r.label} className={`rounded-xl border p-5 flex items-center gap-4 ${r.light}`}>
-                                    <div className={`w-11 h-11 rounded-xl ${r.bg} flex items-center justify-center shrink-0 shadow`}>
-                                        <r.icon className="text-white" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400">{r.label}</p>
-                                        <p className="text-xl font-bold text-slate-900 dark:text-white">{r.value}</p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{r.sub}</p>
-                                    </div>
-                                </div>
-                            ))}
+                            <StatCard label="Total revenue" value={formatCurrency(stats.totalRevenue)} sub={`${stats.totalSales ?? 0} sales`} />
+                            <StatCard label="Paid to instructors" value={formatCurrency(stats.totalPaidOut)} sub="All time" />
+                            <StatCard label="Pending payout" value={formatCurrency(stats.pendingPayout)} sub="Owed to instructors" />
                         </div>
 
                         {/* Recent activity */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             {/* Recent Sales */}
-                            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-                                <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                                    <h2 className="font-semibold text-slate-900 dark:text-white text-sm">Recent Sales</h2>
-                                    <Link to="/admin/activities" className="text-xs text-indigo-500 hover:text-indigo-600 flex items-center gap-1 font-medium">
-                                        View all <FaArrowRight className="text-[10px]" />
+                            <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+                                <div className="px-5 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+                                    <h2 className="text-base font-medium text-zinc-900 dark:text-white">Recent sales</h2>
+                                    <Link to="/admin/activities" className="text-xs text-blue-500 hover:text-blue-600 flex items-center gap-1 font-medium">
+                                        View all <FaArrowRight className="text-[11px]" />
                                     </Link>
                                 </div>
-                                <div className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                                <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
                                     {(dashboard?.recentPurchases || []).slice(0, 5).map(p => (
-                                        <div key={p._id} className="px-5 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                                        <div key={p._id} className="px-5 py-3 flex items-center gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors">
                                             <Avatar name={p.user?.name} color="slate" />
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{p.user?.name}</p>
-                                                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{p.course?.title}</p>
+                                                <p className="text-sm font-medium text-zinc-900 dark:text-white truncate">{p.user?.name}</p>
+                                                <p className="text-xs text-zinc-500 dark:text-zinc-400 truncate">{p.course?.title}</p>
                                             </div>
-                                            <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">+{formatCurrency(p.amount)}</span>
+                                            <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">+{formatCurrency(p.amount)}</span>
                                         </div>
                                     ))}
                                     {(!dashboard?.recentPurchases || dashboard.recentPurchases.length === 0) && (
-                                        <p className="px-5 py-10 text-center text-sm text-slate-400">No sales yet</p>
+                                        <p className="px-5 py-10 text-center text-sm text-zinc-400">No sales yet</p>
                                     )}
                                 </div>
                             </div>
 
                             {/* Recent Payouts */}
-                            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-                                <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                                    <h2 className="font-semibold text-slate-900 dark:text-white text-sm">Recent Payouts</h2>
-                                    <button onClick={() => setActiveTab('payouts')} className="text-xs text-indigo-500 hover:text-indigo-600 flex items-center gap-1 font-medium">
-                                        View all <FaArrowRight className="text-[10px]" />
+                            <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+                                <div className="px-5 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+                                    <h2 className="text-base font-medium text-zinc-900 dark:text-white">Recent payouts</h2>
+                                    <button onClick={() => setActiveTab('payouts')} className="text-xs text-blue-500 hover:text-blue-600 flex items-center gap-1 font-medium">
+                                        View all <FaArrowRight className="text-[11px]" />
                                     </button>
                                 </div>
-                                <div className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                                <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
                                     {(dashboard?.recentPayouts || []).map(p => (
-                                        <div key={p._id} className="px-5 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                                        <div key={p._id} className="px-5 py-3 flex items-center gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors">
                                             <Avatar name={p.instructor?.name} color="indigo" />
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{p.instructor?.name}</p>
-                                                <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">
+                                                <p className="text-sm font-medium text-zinc-900 dark:text-white truncate">{p.instructor?.name}</p>
+                                                <p className="text-xs text-zinc-500 dark:text-zinc-400 capitalize">
                                                     {p.method?.replace('_', ' ')} &middot; {new Date(p.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
                                                 </p>
                                             </div>
-                                            <span className={`text-sm font-semibold ${p.status === 'completed' ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                                            <span className={`text-sm font-medium ${p.status === 'completed' ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
                                                 {formatCurrency(p.amount)}
                                             </span>
                                         </div>
                                     ))}
                                     {(!dashboard?.recentPayouts || dashboard.recentPayouts.length === 0) && (
-                                        <p className="px-5 py-10 text-center text-sm text-slate-400">No payouts yet</p>
+                                        <p className="px-5 py-10 text-center text-sm text-zinc-400">No payouts yet</p>
                                     )}
                                 </div>
                             </div>
@@ -1111,70 +1085,70 @@ const AdminDashboard = () => {
                 {activeTab === 'instructors' && (
                     <div className="space-y-4">
                         <div className="relative max-w-sm">
-                            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
+                            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-xs" />
                             <input
                                 type="text"
-                                placeholder="Search instructors…"
+                                placeholder="Search instructors"
                                 value={instructorSearch}
                                 onChange={e => setInstructorSearch(e.target.value)}
-                                className="w-full pl-8 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full pl-8 pr-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
 
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400">
                             {filteredInstructors.length} instructor{filteredInstructors.length !== 1 ? 's' : ''}
                             {instructorSearch && <> matching &quot;<span className="font-medium">{instructorSearch}</span>&quot;</>}
                         </p>
 
-                        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                        <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-sm">
                                     <thead>
-                                        <tr className="bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-700 text-xs uppercase tracking-wide">
-                                            <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Instructor</th>
-                                            <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Courses</th>
-                                            <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Sales</th>
-                                            <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Earned</th>
-                                            <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Paid</th>
-                                            <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Pending</th>
-                                            <th className="text-left px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Bank</th>
-                                            <th className="text-right px-5 py-3 font-semibold text-slate-500 dark:text-slate-400">Action</th>
+                                        <tr className="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-200 dark:border-zinc-800 text-xs ">
+                                            <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Instructor</th>
+                                            <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Courses</th>
+                                            <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Sales</th>
+                                            <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Earned</th>
+                                            <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Paid</th>
+                                            <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Pending</th>
+                                            <th className="text-left px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Bank</th>
+                                            <th className="text-right px-5 py-3 font-medium text-zinc-500 dark:text-zinc-400">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                                    <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
                                         {pagedInstructors.map(inst => (
-                                            <tr key={inst._id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                                            <tr key={inst._id} className="hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors">
                                                 <td className="px-5 py-4">
                                                     <div className="flex items-center gap-3">
                                                         <Avatar name={inst.name} color="indigo" />
                                                         <div>
-                                                            <p className="font-medium text-slate-900 dark:text-white">{inst.name}</p>
-                                                            <p className="text-xs text-slate-500 dark:text-slate-400">{inst.email}</p>
+                                                            <p className="font-medium text-zinc-900 dark:text-white">{inst.name}</p>
+                                                            <p className="text-xs text-zinc-500 dark:text-zinc-400">{inst.email}</p>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-5 py-4 text-slate-700 dark:text-slate-300 font-medium">{inst.courseCount}</td>
-                                                <td className="px-5 py-4 text-slate-700 dark:text-slate-300">{inst.totalSales}</td>
-                                                <td className="px-5 py-4 font-semibold text-slate-900 dark:text-white">{formatCurrency(inst.totalEarnings)}</td>
+                                                <td className="px-5 py-4 text-zinc-700 dark:text-zinc-300 font-medium">{inst.courseCount}</td>
+                                                <td className="px-5 py-4 text-zinc-700 dark:text-zinc-300">{inst.totalSales}</td>
+                                                <td className="px-5 py-4 font-medium text-zinc-900 dark:text-white">{formatCurrency(inst.totalEarnings)}</td>
                                                 <td className="px-5 py-4 text-emerald-600 dark:text-emerald-400 font-medium">{formatCurrency(inst.totalPaidOut)}</td>
                                                 <td className="px-5 py-4">
-                                                    <span className={`font-semibold ${inst.pendingAmount > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400'}`}>
+                                                    <span className={`font-medium ${inst.pendingAmount > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-zinc-400'}`}>
                                                         {formatCurrency(inst.pendingAmount)}
                                                     </span>
                                                 </td>
                                                 <td className="px-5 py-4">
                                                     {inst.hasBankDetails
-                                                        ? <Badge variant="active"><FaCheckCircle className="text-[9px]" /> Added</Badge>
-                                                        : <span className="text-xs text-slate-400">—</span>
+                                                        ? <Badge variant="active"><FaCheckCircle className="text-[11px]" /> Added</Badge>
+                                                        : <span className="text-xs text-zinc-400">—</span>
                                                     }
                                                 </td>
                                                 <td className="px-5 py-4 text-right">
                                                     {inst.pendingAmount > 0 && (
                                                         <button
                                                             onClick={() => openPayoutModal(inst)}
-                                                            className="px-3.5 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
+                                                            className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors shadow-sm"
                                                         >
-                                                            Pay Now
+                                                            Pay now
                                                         </button>
                                                     )}
                                                 </td>
@@ -1183,8 +1157,8 @@ const AdminDashboard = () => {
                                         {pagedInstructors.length === 0 && (
                                             <tr>
                                                 <td colSpan={8} className="px-5 py-16 text-center">
-                                                    <FaChalkboardTeacher className="text-4xl text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-                                                    <p className="text-slate-500 dark:text-slate-400 font-medium">No instructors found</p>
+                                                    <FaChalkboardTeacher className="text-4xl text-zinc-300 dark:text-zinc-600 mx-auto mb-3" />
+                                                    <p className="text-zinc-500 dark:text-zinc-400 font-medium">No instructors found</p>
                                                 </td>
                                             </tr>
                                         )}
@@ -1210,40 +1184,40 @@ const AdminDashboard = () => {
             {/* ── Payout Modal ─────────────────────────────────────────────── */}
             {showPayoutModal && selectedInstructor && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md shadow-2xl">
-                        <div className="p-5 border-b border-slate-200 dark:border-slate-700 flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-                                <FaMoneyCheckAlt className="text-indigo-500 text-sm" />
+                    <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 w-full max-w-md shadow-2xl">
+                        <div className="p-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                <FaMoneyCheckAlt className="text-zinc-400 text-sm" />
                             </div>
                             <div className="flex-1">
-                                <h3 className="font-semibold text-slate-900 dark:text-white">Record Payout</h3>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">
-                                    {selectedInstructor.name} &middot; Pending: <span className="font-semibold text-amber-500">{formatCurrency(selectedInstructor.pendingAmount)}</span>
+                                <h3 className="font-medium text-zinc-900 dark:text-white">Record payout</h3>
+                                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                    {selectedInstructor.name} &middot; Pending: <span className="font-medium text-amber-500">{formatCurrency(selectedInstructor.pendingAmount)}</span>
                                 </p>
                             </div>
-                            <button onClick={() => setShowPayoutModal(false)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 transition-colors">
+                            <button onClick={() => setShowPayoutModal(false)} className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-400 hover:text-zinc-600 transition-colors">
                                 <FaTimes />
                             </button>
                         </div>
                         <form onSubmit={handlePayout} className="p-5 space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Amount (₹)</label>
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">Amount (₹)</label>
                                 <input
                                     type="number"
                                     value={payoutForm.amount}
                                     onChange={e => setPayoutForm({ ...payoutForm, amount: e.target.value })}
                                     max={selectedInstructor.pendingAmount}
-                                    className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full px-3 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     placeholder="Enter amount"
                                     required
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Method</label>
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">Method</label>
                                 <select
                                     value={payoutForm.method}
                                     onChange={e => setPayoutForm({ ...payoutForm, method: e.target.value })}
-                                    className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full px-3 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 >
                                     <option value="bank_transfer">Bank Transfer</option>
                                     <option value="upi">UPI</option>
@@ -1251,22 +1225,22 @@ const AdminDashboard = () => {
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Transaction ID</label>
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">Transaction ID</label>
                                 <input
                                     type="text"
                                     value={payoutForm.transactionId}
                                     onChange={e => setPayoutForm({ ...payoutForm, transactionId: e.target.value })}
-                                    className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full px-3 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     placeholder="Optional reference ID"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Note</label>
+                                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">Note</label>
                                 <input
                                     type="text"
                                     value={payoutForm.note}
                                     onChange={e => setPayoutForm({ ...payoutForm, note: e.target.value })}
-                                    className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full px-3 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     placeholder="Optional note"
                                 />
                             </div>
@@ -1274,16 +1248,16 @@ const AdminDashboard = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowPayoutModal(false)}
-                                    className="flex-1 px-4 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                                    className="flex-1 px-4 py-2.5 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-lg text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={payoutLoading}
-                                    className="flex-1 px-4 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50"
+                                    className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
                                 >
-                                    {payoutLoading ? 'Processing…' : 'Record Payout'}
+                                    {payoutLoading ? 'Processing…' : 'Record payout'}
                                 </button>
                             </div>
                         </form>

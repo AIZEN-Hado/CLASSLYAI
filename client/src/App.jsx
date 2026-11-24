@@ -5,6 +5,7 @@ import AuthContext, { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+import LearnTabs from './components/layout/LearnTabs';
 import FloatingAIChatButton from './components/ui/FloatingAIChatButton';
 import { Toaster } from 'react-hot-toast';
 import api from './api/axios';
@@ -62,10 +63,10 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Loading spinner component for Suspense fallback
 const PageLoader = () => (
-  <div className="flex h-screen items-center justify-center dark:bg-slate-950">
+  <div className="flex h-screen items-center justify-center dark:bg-zinc-950">
     <div className="flex flex-col items-center gap-3">
-      <div className="w-10 h-10 border-3 border-slate-200 dark:border-slate-700 border-t-slate-600 dark:border-t-slate-400 rounded-full animate-spin"></div>
-      <p className="text-slate-500 dark:text-slate-400 font-medium">Loading...</p>
+      <div className="w-10 h-10 border-3 border-zinc-200 dark:border-zinc-700 border-t-zinc-600 dark:border-t-zinc-400 rounded-full animate-spin"></div>
+      <p className="text-zinc-500 dark:text-zinc-400 font-medium">Loading...</p>
     </div>
   </div>
 );
@@ -156,7 +157,7 @@ function App() {
     <AuthProvider>
       <ThemeProvider>
         <Router>
-          <div className="min-h-screen bg-gray-50 dark:bg-slate-950 text-slate-900 dark:text-white transition-colors duration-300 flex flex-col">
+          <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-white transition-colors duration-300 flex flex-col">
             <Navbar />
             <div className="flex-1">
               <Toaster
@@ -166,8 +167,8 @@ function App() {
                 toastOptions={{
                   duration: 3000,
                   style: {
-                    background: '#1e293b',
-                    color: '#f1f5f9',
+                    background: '#27272a',
+                    color: '#f4f4f5',
                     fontSize: '13.5px',
                     fontWeight: 500,
                     borderRadius: '12px',
@@ -213,12 +214,14 @@ function App() {
 
                   {/* Home - redirects to My Learning if enrolled, otherwise Marketplace */}
                   <Route path="/" element={<HomePage />} />
-                  <Route path="/marketplace" element={<Marketplace />} />
                   <Route path="/marketplace/course/:id" element={<CourseLanding />} />
 
-                  {/* My Learning & My Courses - tabs on StudentDashboard */}
-                  <Route path="/my-learning" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
-                  <Route path="/my-courses" element={<ProtectedRoute><StudentDashboard defaultTab="created" /></ProtectedRoute>} />
+                  {/* Marketplace, My learning, My courses share one tab bar */}
+                  <Route element={<LearnTabs />}>
+                    <Route path="/marketplace" element={<Marketplace />} />
+                    <Route path="/my-learning" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
+                    <Route path="/my-courses" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
+                  </Route>
 
                   <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                   <Route path="/my-activity" element={<ProtectedRoute><MyActivity /></ProtectedRoute>} />

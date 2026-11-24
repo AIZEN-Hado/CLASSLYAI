@@ -33,35 +33,35 @@ const MyPurchases = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-center justify-center">
-                <div className="w-10 h-10 border-3 border-slate-200 dark:border-slate-700 border-t-indigo-500 rounded-full animate-spin"></div>
+            <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center">
+                <div className="w-10 h-10 border-3 border-zinc-200 dark:border-zinc-700 border-t-blue-500 rounded-full animate-spin"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-slate-950 py-8 px-4">
+        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 py-8 px-4">
             <div className="max-w-6xl mx-auto">
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-8">
-                    My Purchases
+                <h1 className="text-2xl font-semibold text-zinc-900 dark:text-white mb-6">
+                    My purchases
                 </h1>
 
                 {purchases.length === 0 ? (
-                    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-12 text-center">
-                        <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <FaBook className="text-2xl text-indigo-500" />
+                    <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-12 text-center">
+                        <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <FaBook className="text-2xl text-zinc-400" />
                         </div>
-                        <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
+                        <h3 className="text-xl font-medium text-zinc-900 dark:text-white mb-2">
                             No purchases yet
                         </h3>
-                        <p className="text-slate-600 dark:text-slate-400 mb-6">
-                            Explore our marketplace and start learning today!
+                        <p className="text-zinc-600 dark:text-zinc-400 mb-6">
+                            Courses you buy will appear here
                         </p>
                         <Link
                             to="/marketplace"
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                         >
-                            Browse Courses
+                            Browse courses
                         </Link>
                     </div>
                 ) : (
@@ -75,24 +75,24 @@ const MyPurchases = () => {
                             return (
                                 <div
                                     key={purchase._id}
-                                    className="group bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-slate-700"
+                                    className="group bg-white dark:bg-zinc-800 rounded-xl shadow-sm transition duration-300 overflow-hidden border border-zinc-200 dark:border-zinc-700"
                                 >
                                     {/* Thumbnail */}
-                                    <Link to={`/course/${course._id}`} className="block relative aspect-video overflow-hidden bg-slate-200 dark:bg-slate-700">
+                                    <Link to={`/course/${course._id}`} className="block relative aspect-video overflow-hidden bg-zinc-200 dark:bg-zinc-700">
                                         {course.thumbnail ? (
                                             <img
                                                 src={course.thumbnail}
                                                 alt={course.title}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                className="w-full h-full object-cover transition-transform duration-300"
                                             />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
-                                                <FaBook className="text-4xl text-slate-400" />
+                                                <FaBook className="text-4xl text-zinc-400" />
                                             </div>
                                         )}
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                             <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center">
-                                                <FaPlay className="text-indigo-500 text-xl ml-1" />
+                                                <FaPlay className="text-zinc-400 text-xl ml-1" />
                                             </div>
                                         </div>
                                     </Link>
@@ -100,18 +100,18 @@ const MyPurchases = () => {
                                     {/* Content */}
                                     <div className="p-4">
                                         <Link to={`/course/${course._id}`}>
-                                            <h3 className="font-semibold text-slate-900 dark:text-white line-clamp-2 mb-2 group-hover:text-indigo-500 transition-colors">
+                                            <h3 className="font-medium text-zinc-900 dark:text-white line-clamp-2 mb-2 group-hover:text-blue-500 transition-colors">
                                                 {course.title}
                                             </h3>
                                         </Link>
 
                                         {purchase.instructor && (
-                                            <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
+                                            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">
                                                 By {purchase.instructor.name}
                                             </p>
                                         )}
 
-                                        <div className="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">
+                                        <div className="flex items-center justify-between text-sm text-zinc-500 dark:text-zinc-400">
                                             <span className="flex items-center gap-1">
                                                 <FaBook />
                                                 {totalLectures} lectures
@@ -126,7 +126,7 @@ const MyPurchases = () => {
                                         {purchase.invoiceNumber && (
                                             <Link
                                                 to={`/invoice/${purchase.invoiceNumber}`}
-                                                className="flex items-center gap-1.5 mt-3 pt-3 border-t border-slate-100 dark:border-slate-700 text-xs font-medium text-indigo-500 hover:text-indigo-600 transition-colors"
+                                                className="flex items-center gap-1.5 mt-3 pt-3 border-t border-zinc-100 dark:border-zinc-700 text-xs font-medium text-blue-500 hover:text-blue-600 transition-colors"
                                             >
                                                 <FaFileInvoice />
                                                 View Invoice ({purchase.invoiceNumber})
