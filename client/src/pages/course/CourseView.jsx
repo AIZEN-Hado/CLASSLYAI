@@ -965,7 +965,7 @@ const CourseView = () => {
 
                                     {/* Status + Navigation */}
                                     <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto">
-                                        <div className="flex-1 sm:flex-initial">
+                                        <div className="flex-1 min-w-0 sm:flex-initial">
                                             <StatusSelector
                                                 status={progressMap[selectedLecture._id]?.status || 'Not Started'}
                                                 onChange={(newStatus) => handleUpdateProgress(newStatus)}
@@ -978,7 +978,7 @@ const CourseView = () => {
                                             <button
                                                 onClick={handleToggleRevision}
                                                 title={progressMap[selectedLecture._id]?.markedForRevision ? 'Remove from revision list' : 'Mark for revision'}
-                                                className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border transition ${
+                                                className={`shrink-0 flex h-9 items-center gap-1.5 px-3 rounded-lg text-xs font-semibold border transition ${
                                                     progressMap[selectedLecture._id]?.markedForRevision
                                                         ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-300 dark:border-amber-700 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/40'
                                                         : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:border-amber-300 dark:hover:border-amber-700 hover:text-amber-600 dark:hover:text-amber-400'
@@ -995,7 +995,7 @@ const CourseView = () => {
                                             <button
                                                 onClick={handlePrevLecture}
                                                 disabled={getFlattenedLectures().findIndex(l => l._id === selectedLecture._id) === 0}
-                                                className="group flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-600 disabled:opacity-20 disabled:cursor-not-allowed transition"
+                                                className="group flex h-9 items-center gap-2 px-3 sm:px-4 rounded-lg text-sm font-semibold border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-600 disabled:opacity-20 disabled:cursor-not-allowed transition"
                                             >
                                                 <FaStepBackward className="transition-transform text-xs" />
                                                 <span className="hidden sm:inline">Previous</span>
@@ -1003,7 +1003,7 @@ const CourseView = () => {
                                             <button
                                                 onClick={handleNextLecture}
                                                 disabled={getFlattenedLectures().findIndex(l => l._id === selectedLecture._id) === getFlattenedLectures().length - 1}
-                                                className="group flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white active:scale-[0.98] disabled:opacity-20 disabled:scale-100 disabled:cursor-not-allowed transition"
+                                                className="group flex h-9 items-center gap-2 px-4 sm:px-5 rounded-lg text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white active:scale-[0.98] disabled:opacity-20 disabled:scale-100 disabled:cursor-not-allowed transition"
                                             >
                                                 <span>Next</span>
                                                 <FaStepForward className="transition-transform text-xs" />

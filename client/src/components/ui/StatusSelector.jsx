@@ -164,18 +164,18 @@ const StatusSelector = ({ status, onChange, disabled, customStatuses = [], progr
     };
 
     return (
-        <div className="relative inline-block text-left" ref={dropdownRef}>
+        <div className="relative block sm:inline-block text-left" ref={dropdownRef}>
             <button
                 type="button"
-                className={`group relative inline-flex items-center justify-between gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition duration-200 shadow-sm ${highlight && !disabled ? HIGHLIGHT_CLASS : ''}`}
+                className={`group relative inline-flex w-full sm:w-auto h-9 items-center justify-between gap-2 px-3 sm:px-4 text-sm font-medium whitespace-nowrap rounded-lg border transition duration-200 shadow-sm ${highlight && !disabled ? HIGHLIGHT_CLASS : ''}`}
                 style={getButtonStyle()}
                 onClick={() => !disabled && setIsOpen(!isOpen)}
                 disabled={disabled}
             >
                 {highlight && !disabled && <PulseRing />}
-                <div className="flex items-center gap-2">
-                    {highlight && !disabled ? <FaRegCircle /> : currentOption.icon}
-                    <span>{currentOption.label}</span>
+                <div className="flex items-center gap-2 min-w-0">
+                    <span className="shrink-0">{highlight && !disabled ? <FaRegCircle /> : currentOption.icon}</span>
+                    <span className="truncate">{currentOption.label}</span>
                 </div>
                 {!disabled && (
                     <FaChevronDown className={`w-3 h-3 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''} opacity-50`} />
