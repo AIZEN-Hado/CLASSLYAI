@@ -1,9 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import { FaCheckCircle, FaPlayCircle, FaRegCircle, FaChevronDown, FaCheck } from 'react-icons/fa';
 
-// Pulse ring drawn around the status button to draw attention
+// Attention state: amber ring + two staggered pulses + "!" badge (matches the warning toast)
+const HIGHLIGHT_CLASS = 'border-amber-500 text-amber-600 dark:text-amber-400 bg-amber-500/15 ring-[3px] ring-amber-500/25';
+
 const PulseRing = () => (
-    <span aria-hidden="true" className="pointer-events-none absolute -inset-px rounded-lg border-2 border-blue-600 motion-safe:animate-status-pulse" />
+    <span aria-hidden="true">
+        <span className="pointer-events-none absolute -inset-px rounded-lg border-2 border-amber-500 opacity-0 motion-safe:animate-status-pulse" />
+        <span className="pointer-events-none absolute -inset-px rounded-lg border-2 border-amber-500 opacity-0 motion-safe:animate-status-pulse [animation-delay:700ms]" />
+        <span className="absolute -top-2 -right-2 grid place-items-center w-[18px] h-[18px] rounded-full bg-amber-500 text-zinc-900 text-xs font-bold ring-2 ring-white dark:ring-zinc-950 motion-safe:animate-status-pop">!</span>
+    </span>
 );
 
 const StatusSelector = ({ status, onChange, disabled, customStatuses = [], progressData = null, highlight = false }) => {
@@ -80,10 +86,10 @@ const StatusSelector = ({ status, onChange, disabled, customStatuses = [], progr
                         {/* Current Lecture Status Button */}
                         <button
                             type="button"
-                            className="group relative flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold rounded-lg border transition duration-200 shadow-sm shrink-0"
-                            style={{
+                            className={`group relative flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold rounded-lg border transition duration-200 shadow-sm shrink-0 ${highlight && !disabled ? HIGHLIGHT_CLASS : ''}`}
+                            style={highlight && !disabled ? { cursor: 'pointer' } : {
                                 backgroundColor: disabled ? '#f3f4f6' : `${currentOption.color}15`,
-                                borderColor: disabled ? '#e5e7eb' : highlight ? '#2563eb' : `${currentOption.color}40`,
+                                borderColor: disabled ? '#e5e7eb' : `${currentOption.color}40`,
                                 color: disabled ? '#9ca3af' : currentOption.color,
                                 opacity: disabled ? 0.5 : 1,
                                 cursor: disabled ? 'not-allowed' : 'pointer'
@@ -92,7 +98,7 @@ const StatusSelector = ({ status, onChange, disabled, customStatuses = [], progr
                             disabled={disabled}
                         >
                             {highlight && !disabled && <PulseRing />}
-                            <span className="text-xs sm:text-sm">{currentOption.icon}</span>
+                            <span className="text-xs sm:text-sm">{highlight && !disabled ? <FaRegCircle /> : currentOption.icon}</span>
                             <span className="hidden sm:inline">{currentOption.label}</span>
                             {!disabled && (
                                 <FaChevronDown className={`w-2.5 h-2.5 sm:w-3 sm:h-3 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''} opacity-50`} />
@@ -147,9 +153,12 @@ const StatusSelector = ({ status, onChange, disabled, customStatuses = [], progr
     const getButtonStyle = () => {
         if (disabled) return { opacity: 0.5, cursor: 'not-allowed' };
 
+        // Highlight colors come from HIGHLIGHT_CLASS so they can follow the theme
+        if (highlight) return {};
+
         return {
             backgroundColor: `${currentOption.color}15`,
-            borderColor: highlight ? '#2563eb' : `${currentOption.color}30`,
+            borderColor: `${currentOption.color}30`,
             color: currentOption.color
         };
     };
@@ -158,14 +167,14 @@ const StatusSelector = ({ status, onChange, disabled, customStatuses = [], progr
         <div className="relative inline-block text-left" ref={dropdownRef}>
             <button
                 type="button"
-                className={`group relative inline-flex items-center justify-between gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition duration-200 shadow-sm`}
+                className={`group relative inline-flex items-center justify-between gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition duration-200 shadow-sm ${highlight && !disabled ? HIGHLIGHT_CLASS : ''}`}
                 style={getButtonStyle()}
                 onClick={() => !disabled && setIsOpen(!isOpen)}
                 disabled={disabled}
             >
                 {highlight && !disabled && <PulseRing />}
                 <div className="flex items-center gap-2">
-                    {currentOption.icon}
+                    {highlight && !disabled ? <FaRegCircle /> : currentOption.icon}
                     <span>{currentOption.label}</span>
                 </div>
                 {!disabled && (

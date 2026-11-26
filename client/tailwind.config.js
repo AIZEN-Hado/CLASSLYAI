@@ -32,13 +32,18 @@ export default {
           to: { opacity: '1', transform: 'none' },
         },
         'status-pulse': {
-          from: { opacity: '0.7', transform: 'scale(1)' },
-          to: { opacity: '0', transform: 'scale(1.15, 1.6)' },
+          from: { opacity: '1', transform: 'scale(1)' },
+          to: { opacity: '0', transform: 'scale(1.2, 1.9)' },
+        },
+        'status-pop': {
+          '0%, 30%, 100%': { transform: 'scale(1)' },
+          '15%': { transform: 'scale(1.3)' },
         },
       },
       animation: {
         'fade-in': 'fade-in 200ms cubic-bezier(0.22, 1, 0.36, 1)',
-        'status-pulse': 'status-pulse 1.6s cubic-bezier(0.22, 1, 0.36, 1) infinite',
+        'status-pulse': 'status-pulse 1.4s cubic-bezier(0.22, 1, 0.36, 1) infinite',
+        'status-pop': 'status-pop 1.4s cubic-bezier(0.22, 1, 0.36, 1) infinite',
       }
     },
   },
