@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
+import LinkifiedText from '../../components/ui/LinkifiedText';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     FaPlay, FaCheck, FaLock, FaUnlock, FaUsers, FaClock, FaGlobe,
@@ -202,7 +203,7 @@ const CourseLanding = () => {
                                 {course.title}
                             </h1>
                             <p className="text-zinc-300 text-lg mb-6 line-clamp-3">
-                                {course.description}
+                                <LinkifiedText text={course.description} linkClassName="font-medium text-white underline underline-offset-2 decoration-white/40 hover:decoration-white break-all" />
                             </p>
 
                             {/* Rating & Stats */}

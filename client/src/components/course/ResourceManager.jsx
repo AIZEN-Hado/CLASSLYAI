@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import LinkifiedText from '../ui/LinkifiedText';
 import api from '../../api/axios';
 import { FaUpload, FaTrash, FaDownload, FaFilePdf, FaImage, FaFileAlt, FaLink, FaToggleOn, FaToggleOff, FaTimes, FaCloudUploadAlt, FaUserGraduate, FaChalkboardTeacher, FaEye, FaPaperclip, FaBook, FaEdit } from 'react-icons/fa';
 import { showSuccess, showError } from '../../utils/toast';
@@ -629,7 +630,7 @@ const ResourceManager = ({ courseId, isTeacher = false, userId = null, sections 
                                                 )}
                                             </div>
                                             {resource.description && (
-                                                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 max-w-[80vw] whitespace-pre-wrap">{resource.description}</p>
+                                                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 max-w-[80vw] whitespace-pre-wrap"><LinkifiedText text={resource.description} /></p>
                                             )}
                                             <div className="flex items-center gap-3 mt-1.5 text-[11px] text-zinc-400">
                                                 <span>{resource.uploadedBy?.name || 'Unknown'}</span>

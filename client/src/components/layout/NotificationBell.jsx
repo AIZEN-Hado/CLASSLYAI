@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import LinkifiedText from '../ui/LinkifiedText';
 import { useNavigate } from 'react-router-dom';
 import { FaBell, FaCheck, FaCheckDouble, FaTimes, FaRobot, FaBullhorn, FaBook, FaClipboardList, FaClock, FaTrophy, FaPaperPlane } from 'react-icons/fa';
 import api from '../../api/axios';
@@ -194,7 +195,7 @@ const NotificationBell = () => {
                                                 </button>
                                             </div>
                                             {notif.message && (
-                                                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-0.5">{notif.message}</p>
+                                                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-0.5"><LinkifiedText text={notif.message} /></p>
                                             )}
                                             <div className="flex items-center gap-2 mt-1">
                                                 <span className="text-[11px] text-zinc-400 dark:text-zinc-500">{timeAgo(notif.createdAt)}</span>

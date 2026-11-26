@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext, useRef } from 'react';
+import LinkifiedText from '../../components/ui/LinkifiedText';
 import TabLabel from '../../components/ui/TabLabel';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
@@ -34,6 +35,7 @@ const CourseView = () => {
     const [selectedLecture, setSelectedLecture] = useState(null);
     const [progressMap, setProgressMap] = useState({});
     const [isEnrolled, setIsEnrolled] = useState(false);
+    const [statusPulse, setStatusPulse] = useState(false);
 
     // Comments state
     const [comments, setComments] = useState([]);
@@ -183,6 +185,10 @@ const CourseView = () => {
             const defaultStatus = course?.lectureStatuses?.[0]?.label || 'Not Started';
             if (!status || status === defaultStatus) {
                 showWarning('Don\'t forget to update your lecture status!');
+                // Pulse the status button for a few seconds alongside the toast
+                setStatusPulse(true);
+                const timer = setTimeout(() => setStatusPulse(false), 8000);
+                return () => { clearTimeout(timer); setStatusPulse(false); };
             }
         }
     }, [selectedLecture?._id]);
@@ -965,6 +971,7 @@ const CourseView = () => {
                                                 onChange={(newStatus) => handleUpdateProgress(newStatus)}
                                                 disabled={false}
                                                 customStatuses={course?.lectureStatuses}
+                                                highlight={statusPulse && (progressMap[selectedLecture._id]?.status || 'Not Started') === (course?.lectureStatuses?.[0]?.label || 'Not Started')}
                                             />
                                         </div>
                                         {isEnrolled && (
@@ -1040,7 +1047,7 @@ const CourseView = () => {
                                 {activeTab === 'overview' && (
                                     <div>
                                         {selectedLecture.description ? (
-                                            <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">{selectedLecture.description}</p>
+                                            <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-line break-words"><LinkifiedText text={selectedLecture.description} /></p>
                                         ) : (
                                             <p className="text-sm text-zinc-400 dark:text-zinc-500">No description for this lecture.</p>
                                         )}
@@ -1077,7 +1084,7 @@ const CourseView = () => {
                                                             <div className="flex-1 min-w-0">
                                                                 <h4 className="text-sm font-medium text-zinc-800 dark:text-white truncate">{resource.title}</h4>
                                                                 {resource.description && (
-                                                                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 line-clamp-2">{resource.description}</p>
+                                                                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 line-clamp-2"><LinkifiedText text={resource.description} /></p>
                                                                 )}
                                                                 <div className="flex items-center gap-3 mt-1.5 text-[11px] text-zinc-400">
                                                                     <span>{resource.uploadedBy?.name || 'Unknown'}</span>
@@ -1193,7 +1200,7 @@ const CourseView = () => {
                                                                     </span>
                                                                     <span className="text-[11px] text-zinc-400">{new Date(comment.createdAt).toLocaleDateString()}</span>
                                                                 </div>
-                                                                <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed break-words">{comment.details}</p>
+                                                                <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed break-words whitespace-pre-line"><LinkifiedText text={comment.details} /></p>
                                                             </div>
                                                         </div>
                                                     ))}

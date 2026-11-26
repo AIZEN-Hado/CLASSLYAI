@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { FaBullhorn, FaPlus, FaEdit, FaTrash, FaToggleOn, FaToggleOff, FaSearch, FaTimes } from 'react-icons/fa';
 import Modal from '../ui/Modal';
+import LinkifiedText from '../ui/LinkifiedText';
 import Pagination from '../ui/Pagination';
 import { showSuccess, showError } from '../../utils/toast';
 import api from '../../api/axios';
@@ -241,24 +242,9 @@ const BroadcastList = ({
                                         )}
                                     </div>
 
-                                    {/* Message - with truncated URLs */}
+                                    {/* Message */}
                                     <p className="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-2 mb-3 pl-[18px]">
-                                        {broadcast.message.split(/(\bhttps?:\/\/\S+)/g).map((part, i) => {
-                                            if (/^https?:\/\//.test(part)) {
-                                                // Extract a friendly label from the URL
-                                                let label;
-                                                try {
-                                                    const urlObj = new URL(part);
-                                                    const path = urlObj.pathname.replace(/\/$/, '');
-                                                    const lastSegment = path.split('/').filter(Boolean).pop();
-                                                    label = lastSegment ? `${urlObj.hostname}/…/${decodeURIComponent(lastSegment).substring(0, 30)}` : urlObj.hostname;
-                                                } catch {
-                                                    label = part.substring(0, 40) + '…';
-                                                }
-                                                return <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-blue-500 hover:text-blue-400 hover:underline font-medium" onClick={e => e.stopPropagation()}>{label}</a>;
-                                            }
-                                            return part;
-                                        })}
+                                        <LinkifiedText text={broadcast.message} />
                                     </p>
 
                                     {/* Footer - inline */}

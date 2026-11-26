@@ -31,9 +31,14 @@ export default {
           from: { opacity: '0', transform: 'translateY(4px)' },
           to: { opacity: '1', transform: 'none' },
         },
+        'status-pulse': {
+          from: { opacity: '0.7', transform: 'scale(1)' },
+          to: { opacity: '0', transform: 'scale(1.15, 1.6)' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 200ms cubic-bezier(0.22, 1, 0.36, 1)',
+        'status-pulse': 'status-pulse 1.6s cubic-bezier(0.22, 1, 0.36, 1) infinite',
       }
     },
   },
