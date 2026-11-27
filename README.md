@@ -2,6 +2,8 @@
 
 A full-stack online learning and course marketplace platform. Supports multiple user roles (Student, Instructor, Admin) with course creation, AI-powered tools, Stripe payments, progress tracking, quizzes, broadcasts, and comprehensive admin controls.
 
+The **ClasslyAI** rebuild is planned in the [delivery roadmap](docs/classlyai/roadmap.md). To resume work in a fresh session, start with the [session handoff](docs/classlyai/handoff.md).
+
 **Live Demo**: [study-portal-frontend.onrender.com](https://study-portal-frontend.onrender.com)
 
 ---
