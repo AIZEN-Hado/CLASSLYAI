@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import LinkifiedText from '../components/ui/LinkifiedText';
+import ExpandableText from '../components/ui/ExpandableText';
 import { useNavigate } from 'react-router-dom';
 import { FaBell, FaCheck, FaCheckDouble, FaRobot, FaBullhorn, FaBook, FaClipboardList, FaClock, FaTrophy, FaPaperPlane, FaTrash, FaArrowLeft } from 'react-icons/fa';
 import api from '../api/axios';
@@ -175,7 +176,7 @@ const NotificationsPage = () => {
                                                 {notif.title}
                                             </p>
                                             {notif.message && (
-                                                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2"><LinkifiedText text={notif.message} /></p>
+                                                <ExpandableText className="text-xs text-zinc-500 dark:text-zinc-400 mt-1"><LinkifiedText text={notif.message} /></ExpandableText>
                                             )}
                                             <div className="flex items-center gap-2 mt-2 flex-wrap">
                                                 <span className={`text-[11px] font-medium px-2 py-0.5 rounded-md ${config.bg} ${config.color}`}>{config.label}</span>

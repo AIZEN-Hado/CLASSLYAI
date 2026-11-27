@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { FaBullhorn, FaPlus, FaEdit, FaTrash, FaToggleOn, FaToggleOff, FaSearch, FaTimes } from 'react-icons/fa';
 import Modal from '../ui/Modal';
 import LinkifiedText from '../ui/LinkifiedText';
+import ExpandableText from '../ui/ExpandableText';
 import Pagination from '../ui/Pagination';
 import { showSuccess, showError } from '../../utils/toast';
 import api from '../../api/axios';
@@ -243,9 +244,9 @@ const BroadcastList = ({
                                     </div>
 
                                     {/* Message */}
-                                    <p className="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-2 mb-3 pl-[18px]">
+                                    <ExpandableText className="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed mb-3 pl-[18px]">
                                         <LinkifiedText text={broadcast.message} />
-                                    </p>
+                                    </ExpandableText>
 
                                     {/* Footer - inline */}
                                     <div className="flex items-center justify-between pl-[18px]">
