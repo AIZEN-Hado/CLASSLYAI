@@ -1,5 +1,7 @@
 const { once } = require('node:events');
+const { existsSync } = require('node:fs');
 const { createServer } = require('node:http');
+const { join } = require('node:path');
 const { createPostgresPool } = require('../db/postgres');
 const { createApp } = require('./app');
 
@@ -31,10 +33,12 @@ async function main() {
     const { host, port, origin } = readConfig();
     const pool = createPostgresPool();
     pool.on('error', error => console.error('ClasslyAI PostgreSQL connection failed.', error.code ?? error.name));
-    const server = createServer(createApp({ pool, origin }));
+    const clientBuild = join(__dirname, '../../client/dist');
+    const clientDirectory = existsSync(join(clientBuild, 'index.html')) ? clientBuild : undefined;
+    const server = createServer(createApp({ pool, origin, clientDirectory }));
 
     try {
-        await pool.query('SELECT 1 FROM classlyai.users LIMIT 1');
+        await pool.query('SELECT 1 FROM classlyai.ingestion_jobs LIMIT 1');
         server.listen(port, host);
         await once(server, 'listening');
     } catch (error) {

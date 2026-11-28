@@ -1,8 +1,11 @@
 const express = require('express');
+const { extname, join } = require('node:path');
 const { createCoursesRouter } = require('./courses');
+const { createLessonEditorRouter } = require('./lesson-editor');
 const { createSessions } = require('./session');
+const { createTutorRouter } = require('./tutor');
 
-function createApp({ pool, origin }) {
+function createApp({ pool, origin, clientDirectory }) {
     const app = express();
     const sessions = createSessions(pool, { secure: origin.startsWith('https://') });
 
@@ -14,13 +17,22 @@ function createApp({ pool, origin }) {
         }
         next();
     });
-    app.use('/api', express.json({ limit: '16kb' }));
+    app.use('/api', express.json({ limit: '32kb' }));
 
     app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
     app.post('/api/auth/login', sessions.limitLogin, sessions.login);
     app.post('/api/auth/logout', sessions.logout);
     app.get('/api/auth/me', sessions.requireSession, (req, res) => res.json({ user: req.user }));
-    app.use('/api/courses', sessions.requireSession, createCoursesRouter(pool));
+    app.use('/api/courses', sessions.requireSession, createCoursesRouter(pool), createLessonEditorRouter(pool), createTutorRouter(pool));
+
+    app.use('/api', (_req, res) => res.status(404).json({ message: 'Route not found.' }));
+    if (clientDirectory) {
+        app.use(express.static(clientDirectory, { index: false }));
+        app.get('/{*path}', (req, res, next) => {
+            if (extname(req.path) || !req.accepts('html')) return next();
+            res.sendFile(join(clientDirectory, 'index.html'));
+        });
+    }
 
     app.use((_req, res) => res.status(404).json({ message: 'Route not found.' }));
     app.use((error, _req, res, next) => {

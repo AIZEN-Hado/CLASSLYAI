@@ -7,7 +7,12 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "db:check": "node --env-file-if-exists=.env db/check.js",
-    "db:migrate": "node --env-file-if-exists=.env db/migrate.js"
+    "db:migrate": "node --env-file-if-exists=.env db/migrate.js",
+    "db:seed": "node --env-file-if-exists=.env db/seed.js",
+    "classlyai:start": "node --env-file-if-exists=.env classlyai/index.js",
+    "classlyai:worker": "node --env-file-if-exists=.env classlyai/worker.js",
+    "test:classlyai": "node --test 'classlyai/**/*.test.js'",
+    "eval:classlyai": "node --env-file-if-exists=.env classlyai/eval/run.js"
   },
   "keywords": [],
   "author": "",

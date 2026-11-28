@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useContext, useState, useEffect, lazy, Suspense } from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import AuthContext, { AuthProvider } from './context/AuthContext';
@@ -9,6 +9,8 @@ import LearnTabs from './components/layout/LearnTabs';
 import FloatingAIChatButton from './components/ui/FloatingAIChatButton';
 import { Toaster } from 'react-hot-toast';
 import api from './api/axios';
+
+const Router = window.location.pathname.endsWith('/legacy.html') ? HashRouter : BrowserRouter;
 
 // Lazy load all pages for better performance (code splitting)
 // Auth
