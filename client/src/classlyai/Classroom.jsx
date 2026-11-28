@@ -7,6 +7,7 @@ import Editor from './Editor.jsx'
 import Markdown from './Markdown.jsx'
 import PracticeQuiz from './PracticeQuiz.jsx'
 import ShortAnswerPractice from './ShortAnswerPractice.jsx'
+import SignInScene from './SignInScene.jsx'
 import Tutor from './Tutor.jsx'
 
 function SignIn({ onSignIn }) {
@@ -35,7 +36,7 @@ function SignIn({ onSignIn }) {
       <div className="sign-in-content">
         <Brand />
         <div className="sign-in-main">
-          <h1>Welcome to your classroom.</h1>
+          <h1>Welcome to your <em>classroom.</em></h1>
           <p>Read your lessons and ask questions grounded in your course material.</p>
           <form onSubmit={signIn} className="sign-in-form">
             <label htmlFor="email">Email address</label>
@@ -47,14 +48,7 @@ function SignIn({ onSignIn }) {
           </form>
         </div>
       </div>
-      <div className="sign-in-art" aria-hidden="true">
-        <div className="art-orbit" />
-        <div className="art-page">
-          <span className="art-rule" /><span className="art-rule" /><span className="art-rule" /><span className="art-rule" />
-          <span className="art-marker" />
-        </div>
-        <div className="art-source"><FiBookOpen /><span /><span /></div>
-      </div>
+      <SignInScene />
     </main>
   )
 }
@@ -283,7 +277,7 @@ function Classroom() {
     return (
       <main className="session-state">
         <Brand />
-        <ResourceFeedback resource={session} label="Opening your classroom…" />
+        <ResourceFeedback resource={session} label="Opening your classroom…" orbSize={132} />
       </main>
     )
   }
