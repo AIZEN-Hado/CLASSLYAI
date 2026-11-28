@@ -43,7 +43,19 @@ A client can lose the response after the server commits. Use an idempotency key 
 
 ## Isolation
 
-Verify concurrency behavior with two database sessions. Start both operations before either finishes and check the persisted outcome after both return.`
+Verify concurrency behavior with two database sessions. Start both operations before either finishes and check the persisted outcome after both return.
+
+## Connection budgets
+
+Divide the database connection budget across the API and worker processes. Measure how long requests wait to borrow a connection before increasing the pool size.
+
+## Queue leases
+
+A worker claims a job with a lease. If the process stops before returning a result, the lease expires and another worker can take the job.
+
+## Indexing costs
+
+Indexes let a database locate records efficiently. Each extra index also adds work when the database writes a record. Measure query latency and write overhead before creating an index.`
         }
     },
     {
@@ -67,7 +79,19 @@ Filter candidate passages by course membership before ranking. Include a highly 
 
 ## Unsupported questions
 
-Include questions that the course material cannot answer. Record whether the tutor says evidence is insufficient and inspect any citations it returns.`
+Include questions that the course material cannot answer. Record whether the tutor says evidence is insufficient and inspect any citations it returns.
+
+## Latency logging
+
+Time embedding, retrieval, and response generation separately. Record a request identifier and stage timings so an engineer can investigate a slow response.
+
+## Passage length
+
+Split lesson text at section boundaries. If sections are long, preserve the original offsets while making each passage short enough to retrieve independently.
+
+## Synthetic corpora
+
+Include several passages about related topics in the fixture corpus. They make a search benchmark harder because the first result can sound relevant while discussing a different concept.`
         }
     }
 ];
