@@ -9,7 +9,7 @@ ClasslyAI is a course workspace with a tutor that shows its sources. The first r
 | React and Vite | Instructor lesson editor, student reader, tutor, and citation navigation. |
 | Express API | Sessions, course policy, lesson publishing, tutor requests, and citation resolution. Serve the client and API on one origin for the demo. |
 | Indexing worker | Claim durable jobs, split Markdown into passages, batch embedding requests, and activate indexed revisions. Run it as a separate process from the same repo. |
-| Neon PostgreSQL | Course membership, immutable revisions, search passages, jobs, sessions, and minimal operational metadata. Use full-text search and `pgvector` in the same database. |
+| Neon PostgreSQL | Course membership, immutable revisions, search passages, jobs, sessions, and minimal operational metadata. Use full-text search and exact `pgvector` similarity when the extension is installed. PostgreSQL array similarity supports local fixture runs. |
 | One model provider | Embeddings and structured answer generation behind a small interface. Use a deterministic test adapter for local checks and a live provider for the recorded demo. |
 
 Use Node.js 24, versioned SQL migrations, and `pg` from Express and the worker. Keep migrations on a direct Neon connection and give the API and worker runtime roles the privileges they need. Use Markdown for the first demo. Enable private object storage in a later phase when the app handles file uploads.

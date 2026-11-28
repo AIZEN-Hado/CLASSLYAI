@@ -9,20 +9,20 @@ Use this file as the current checkpoint. It contains the context a fresh session
 | Product | ClasslyAI, a course workspace with an evidence-backed tutor. |
 | Scope | Seeded overnight demo, with React and Express retained and Neon replacing MongoDB for the new workflow. |
 | Baseline | Legacy Skill Path source at `a4f7d02`. Use `server/classlyai/index.js` for the PostgreSQL-backed ClasslyAI API. |
-| Completed | PostgreSQL migrations, classroom tables, demo seed, and Express endpoints for sessions, course lists, published lessons, and instructor overviews. |
-| Active phase | Phase 1. Check in authorization regression tests next, then start lesson publishing. |
-| Verification so far | Real HTTP requests against local PostgreSQL 16 covered startup and shutdown, origin checks, login throttling, cookie attributes, session hashing, rotation, expiry, logout, cross-course access, instructor access, and draft, withdrawal, and revocation handling. The earlier migration and seed checks passed. The legacy frontend builds and its baseline lint reported 96 errors and 36 warnings. |
-| Environment | The database tooling was tested locally. Live Neon and model provider credentials are still unverified. PostgreSQL is the only Neon service needed for this scope. |
+| Completed | Seeded portfolio demo with PostgreSQL sessions, versioned publishing, durable indexing, scoped hybrid retrieval, cited tutor, evidence viewer, and an evaluation suite. |
+| Active phase | Phase 4 demo packaged. Phase 5 covers live environment validation and expansion. |
+| Verification so far | Six tests passed against local PostgreSQL 16. Fresh migration, seed, worker, scoped frontend lint, and production build succeeded. Chromium verified citations and focus on mobile, and instructor publishing on desktop. The fixture benchmark cited the expected section in 9/9 cases, abstained in 3/3 cases, and passed both isolation checks. |
+| Environment | Fixture mode was verified locally using PostgreSQL array similarity. Live Neon, the pgvector execution path, and OpenAI generation require a live environment check. |
 | Data | Use seeded courses. Existing MongoDB data and production cutover are outside the demo boundary. |
 | Git checkpoints | The user runs the staging, commit, and push commands supplied by the assistant after each completed step. |
-| GitHub repository | The dedicated ClasslyAI repo has yet to be created. The existing `origin` is the legacy Learning Management System repo. |
+| GitHub repository | The `classlyai` remote is configured and `main` tracks `classlyai/main`. |
 
 ## Resume from here
 
 1. Run `git status --short --branch` and `git log -8 --oneline` in the checkout. On another machine, clone the dedicated ClasslyAI repo once it is available and check out the branch with the checkpoint commits.
 2. Read the [delivery plan](roadmap.md) and [architecture](architecture.md). Follow the active phase and update this checkpoint once its next action changes.
-3. **Next action.** Add checked-in `node:test` coverage for the ClasslyAI API. Build on `createApp({ pool, origin })` in `server/classlyai/app.js`. Cover student-to-student course isolation, instructor-only access, draft and withdrawal filtering, revoked memberships, logout, and disallowed origins. Run real database tests against an isolated fixture database. Then continue to Phase 2 in the roadmap.
-4. **Neon verification.** Set up `server/.env` using `server/.env.example`. Run `npm run db:migrate --prefix server` and `npm run db:check --prefix server`. Keep existing migration files intact and put schema changes in a new numbered SQL file.
+3. **Next action.** Follow the [demo quick start](../../README.md#run-the-demo-locally) with the Neon development branch. Run the fixture evaluation before publishing demo edits. To verify live inference, configure the same live key and model settings for the API and worker, let the worker index both seeded lessons, and run `npm run eval:classlyai --prefix server -- --live`.
+4. Use the roadmap for Phase 5 expansion. Keep applied migration files intact and put schema changes in a new numbered SQL file.
 
 ## Connect the GitHub repository
 
@@ -42,7 +42,8 @@ The ClasslyAI database commands use the PostgreSQL variables below. The legacy a
 | `DATABASE_URL_DIRECT` | Direct connection string for that branch, with connection pooling turned off in **Connect**. Use it for migrations. |
 | `CLASSLYAI_ORIGIN` | The origin from which the app makes API requests. Local default is `http://localhost:5001`. Production requires an HTTPS origin. |
 | `CLASSLYAI_PORT` | Optional API port. Defaults to the host-provided `PORT` or `5001`. |
-| AI provider credential and model IDs | Choose one provider when implementing live indexing. Document its exact variable names in `server/.env.example` at that point. Use a deterministic fixture adapter for tests. |
+| `CLASSLYAI_OPENAI_API_KEY` | Optional live provider credential. `CLASSLYAI_AI_MODE=fixture` forces deterministic behavior. The embedding and answer model overrides are in `server/.env.example`. |
+| `CLASSLYAI_TEST_DATABASE_URL` | Isolated PostgreSQL server where the caller can create test databases. Required for the database-backed tests. |
 
 Keep values in the ignored `server/.env` or the deployment secret store. A fresh machine needs its own copy from the secret store. Verify the configured Git author before the first commit on another machine if the intended GitHub attribution changes.
 
@@ -56,11 +57,11 @@ After migrating an isolated development database, add three distinct passwords t
 | `student-a@classlyai.example` | `CLASSLYAI_DEMO_STUDENT_A_PASSWORD` | Reliable Backend Systems |
 | `student-b@classlyai.example` | `CLASSLYAI_DEMO_STUDENT_B_PASSWORD` | Evaluating Search Systems |
 
-Use passwords of at least 12 characters and at most 72 UTF-8 bytes. From the repository root, run `node --env-file-if-exists=server/.env server/db/seed.js`. Re-running the seed preserves existing demo credentials, revoked memberships, and withdrawn revisions.
+Use passwords of at least 12 characters and at most 72 UTF-8 bytes. Run `npm run db:seed --prefix server`. Rerunning the seed preserves existing demo credentials, revoked memberships, and withdrawn revisions.
 
 ## Start the ClasslyAI API
 
-From the repository root, run `node --env-file-if-exists=server/.env server/classlyai/index.js`. The API checks the classroom schema before listening. `GET /api/health` reports availability. `POST /api/auth/login` accepts JSON `email` and `password` and sets a session cookie. `GET /api/auth/me` returns the signed-in user, and `POST /api/auth/logout` revokes the current session. For manual POST requests, send the `Origin` header matching `CLASSLYAI_ORIGIN`.
+Run `npm run classlyai:worker --prefix server` in one terminal and `npm run classlyai:start --prefix server` in another. The API serves the built UI when `client/dist/index.html` exists. `GET /api/health` reports availability. `POST /api/auth/login` accepts JSON `email` and `password` and sets a session cookie. `GET /api/auth/me` returns the signed-in user, and `POST /api/auth/logout` revokes the current session. For manual POST requests, send the `Origin` header matching `CLASSLYAI_ORIGIN`.
 
 Use `GET /api/courses` to list the signed-in user’s courses, `GET /api/courses/:courseSlug` for published lesson links, and `GET /api/courses/:courseSlug/lessons/:lessonSlug` for lesson content. `GET /api/courses/:courseSlug/instructor` returns revision pointers for that course’s instructors.
 

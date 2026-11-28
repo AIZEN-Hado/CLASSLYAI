@@ -1,8 +1,50 @@
-# Skill Path — Online Learning Platform
+# ClasslyAI
 
-A full-stack online learning and course marketplace platform. Supports multiple user roles (Student, Instructor, Admin) with course creation, AI-powered tools, Stripe payments, progress tracking, quizzes, broadcasts, and comprehensive admin controls.
+ClasslyAI is a course workspace with a tutor that shows its evidence. An instructor publishes a Markdown lesson. A student can ask a question, open the exact source passage, and inspect how the tutor retrieved it. Enrollment governs both search and citation access.
 
-The **ClasslyAI** rebuild is planned in the [delivery roadmap](docs/classlyai/roadmap.md). To resume work in a fresh session, start with the [session handoff](docs/classlyai/handoff.md).
+## Run the demo locally
+
+Use Node.js 24 and an isolated PostgreSQL database, such as a Neon development branch. Install both packages and create the server environment file.
+
+```bash
+npm ci --prefix server
+npm ci --prefix client
+test -e server/.env || cp server/.env.example server/.env
+```
+
+Fill in the pooled `DATABASE_URL`, direct `DATABASE_URL_DIRECT`, and three distinct seed passwords in `server/.env`. Leave the model key empty for deterministic embeddings and extractive answers. Set `CLASSLYAI_OPENAI_API_KEY` to use live embeddings and generation. Keep the API and indexing worker on the same provider configuration.
+
+```bash
+npm run db:migrate --prefix server
+npm run db:seed --prefix server
+npm run build --prefix client
+npm run classlyai:worker --prefix server
+```
+
+Start the API in a second terminal with `npm run classlyai:start --prefix server`. Open `http://localhost:5001`. It serves the built client and API on one origin. For Vite development, set `CLASSLYAI_ORIGIN=http://localhost:5173` and run `npm run dev --prefix client`.
+
+### Walk through the demo
+
+1. Sign in as `student-a@classlyai.example` with the password you set. Open **Reliable Backend Systems** and **Transactions and retries**. Ask “What does an idempotency key do?” Open its citation and inspect the retrieval details.
+2. Ask “What is the orbital velocity of Mercury?” The fixture tutor reports insufficient evidence. This student’s course list contains only the course they are enrolled in.
+3. Sign in as `instructor@classlyai.example`. Open the editor, save a correction, and publish. The worker indexes the new revision in the background. Return to the student view once the editor shows **Available to students**.
+
+### Verification
+
+Run `npm run eval:classlyai --prefix server` after indexing the original seed in a fresh demo database. It compares keyword, vector, and hybrid retrieval on the same questions and reports ranking, latency, citations, abstention, and isolation. To index without a continuous worker, use `npm run classlyai:worker --prefix server -- --once` first. For a live benchmark, index with the live provider and pass `-- --live` to the evaluation command.
+
+On the local fixture with 12 passages across two courses, all three strategies reached 100% Recall@5 across nine labeled questions. Top-1 accuracy was 100% for keyword and hybrid and 89% for vector. The tutor cited all nine expected sections, abstained on all three unsupported questions, and passed both cross-course checks. This small fixture establishes a regression baseline. It measures deterministic embeddings and extractive answers.
+
+Set `CLASSLYAI_TEST_DATABASE_URL` to an isolated PostgreSQL server where the role can create databases, then run `npm run test:classlyai --prefix server`. The suite creates and cleans up its own test database. GitHub Actions runs the checks against an isolated PostgreSQL service.
+
+[Architecture](docs/classlyai/architecture.md) · [Delivery roadmap](docs/classlyai/roadmap.md) · [Session handoff](docs/classlyai/handoff.md)
+
+<details>
+<summary>Legacy Skill Path documentation</summary>
+
+## Skill Path legacy app
+
+Skill Path is the original MongoDB-backed learning platform. The legacy client is available at `/legacy.html` in Vite development. Build it into `client/dist/legacy` with `npm run build --prefix client -- --mode legacy`. Use the legacy server commands in this section for that client.
 
 **Live Demo**: [study-portal-frontend.onrender.com](https://study-portal-frontend.onrender.com)
 
@@ -601,3 +643,5 @@ Educational project. All rights reserved.
 ---
 
 Built by **Ayush Kumar Singh** · [GitHub](https://github.com/trex-ayush)
+
+</details>

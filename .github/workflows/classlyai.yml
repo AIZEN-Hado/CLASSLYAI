@@ -1,0 +1,59 @@
+name: ClasslyAI checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: fixture
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      CLASSLYAI_TEST_DATABASE_URL: postgresql://postgres:fixture@localhost:5432/postgres
+      CLASSLYAI_AI_MODE: fixture
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            server/package-lock.json
+            client/package-lock.json
+      - run: npm ci --prefix server
+      - run: npm ci --prefix client
+      - name: Check ClasslyAI client
+        working-directory: client
+        run: |
+          npm exec --offline -- eslint src/classlyai
+          npm run build
+      - run: npm run test:classlyai --prefix server
+      - name: Index and evaluate the demo corpus
+        env:
+          DATABASE_URL: postgresql://postgres:fixture@localhost:5432/postgres
+          DATABASE_URL_DIRECT: postgresql://postgres:fixture@localhost:5432/postgres
+          CLASSLYAI_DEMO_INSTRUCTOR_PASSWORD: fixture-instructor-password
+          CLASSLYAI_DEMO_STUDENT_A_PASSWORD: fixture-student-a-password
+          CLASSLYAI_DEMO_STUDENT_B_PASSWORD: fixture-student-b-password
+        run: |
+          npm run db:migrate --prefix server
+          npm run db:seed --prefix server
+          npm run classlyai:worker --prefix server -- --once
+          npm run eval:classlyai --prefix server
