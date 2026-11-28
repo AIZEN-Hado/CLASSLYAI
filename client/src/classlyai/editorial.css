@@ -383,3 +383,23 @@ h1, h2 { font-optical-sizing: auto; font-variation-settings: "SOFT" 40, "WONK" 0
   .course-card { padding-left: 1.1rem; }
 }
 .published-label:empty { padding: 0; background: none; }
+
+/* Accounts, joining and course administration */
+.field-hint { margin-left: .4rem; color: var(--muted); font-weight: 400; }
+.switch-mode { margin-top: 1.1rem; min-height: 2.6rem; }
+.library-actions { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem 2rem; max-width: 60rem; margin-top: 2rem; }
+.join-course, .add-lesson { display: grid; gap: .4rem; flex: 1 1 22rem; max-width: 28rem; }
+.join-course label, .add-lesson label { color: var(--muted); font: 500 .72rem var(--mono); }
+.join-row { display: flex; gap: .6rem; }
+.join-row input { flex: 1; min-width: 0; min-height: 2.9rem; padding: .5rem .8rem; border: 1px solid var(--paper-300); border-bottom-color: var(--ink); border-radius: 2px; background: var(--paper-50); color: var(--ink); font: 500 1rem var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+.add-lesson .join-row input { font: 400 1rem var(--sans); letter-spacing: 0; text-transform: none; }
+.join-row input:focus { outline: none; border-color: var(--signal); box-shadow: 0 0 0 3px #c8452a26; }
+.add-lesson { margin-top: 2rem; max-width: 36rem; }
+.members-panel { max-width: 40rem; margin-top: 2.6rem; padding: 1.2rem 1.4rem 1.4rem; background: var(--slate-wash); border-left: 3px solid var(--slate); }
+.members-panel h2 { font: 560 1.45rem var(--serif); letter-spacing: -.03em; }
+.join-code { display: flex; flex-wrap: wrap; align-items: baseline; gap: .6rem 1.2rem; margin-top: .9rem; padding: .9rem 1rem; background: var(--paper-50); border: 1px solid var(--paper-300); }
+.join-code strong { font: 600 1.6rem var(--mono); letter-spacing: .14em; font-variant-numeric: tabular-nums; }
+.member-list { display: grid; margin: 1rem 0 0; padding: 0; list-style: none; }
+.member-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto 2.6rem; align-items: center; gap: .6rem; padding: .6rem 0; border-top: 1px solid var(--paper-300); }
+.member-list small { display: block; color: var(--muted); font: 450 .72rem var(--mono); overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 560px) { .join-row { flex-direction: column; } .join-code strong { font-size: 1.35rem; } }

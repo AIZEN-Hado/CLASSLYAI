@@ -52,6 +52,10 @@ function createSessions(pool, { secure }) {
             return res.status(401).json({ message: 'Invalid email or password.' });
         }
 
+        res.json({ user: await startSession(req, res, account) });
+    }
+
+    async function startSession(req, res, account) {
         const token = randomBytes(32).toString('base64url');
         await pool.query(`
             WITH previous_session AS (
@@ -64,7 +68,44 @@ function createSessions(pool, { secure }) {
         `, [hashToken(token), account.id, sessionSeconds, readTokenHash(req)]);
 
         res.cookie(cookieName, token, { ...cookieOptions, maxAge: sessionSeconds * 1000 });
-        res.json({ user: { id: account.id, email: account.email, displayName: account.displayName } });
+        return { id: account.id, email: account.email, displayName: account.displayName };
+    }
+
+    const limitRegister = rateLimit({
+        windowMs: 60 * 60 * 1000,
+        limit: 10,
+        standardHeaders: 'draft-8',
+        legacyHeaders: false,
+        message: { message: 'Too many accounts were created from this address. Try again later.' }
+    });
+
+    async function register(req, res) {
+        if (!req.is('application/json')) {
+            return res.status(415).json({ message: 'Send the account details as JSON.' });
+        }
+
+        const { email, password, displayName } = req.body ?? {};
+        const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+        const name = typeof displayName === 'string' ? displayName.trim().replace(/\s+/g, ' ') : '';
+        if (normalizedEmail.length > 254 || normalizedEmail.includes('\0') || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+            return res.status(400).json({ message: 'Enter a valid email address.' });
+        }
+        if (!name || name.length > 80 || name.includes('\0')) {
+            return res.status(400).json({ message: 'Enter your name, up to 80 characters.' });
+        }
+        if (typeof password !== 'string' || Array.from(password).length < 12 || bcrypt.truncates(password)) {
+            return res.status(400).json({ message: 'Use a password of at least 12 characters and at most 72 bytes.' });
+        }
+
+        const { rows: [account] } = await pool.query(`
+            INSERT INTO classlyai.users (email, display_name, password_hash)
+            VALUES ($1, $2, $3)
+            ON CONFLICT (email) DO NOTHING
+            RETURNING id, email, display_name AS "displayName"
+        `, [normalizedEmail, name, await bcrypt.hash(password, 12)]);
+        if (!account) return res.status(409).json({ message: 'An account with that email already exists. Sign in instead.' });
+
+        res.status(201).json({ user: await startSession(req, res, account) });
     }
 
     async function logout(req, res) {
@@ -102,7 +143,7 @@ function createSessions(pool, { secure }) {
         next();
     }
 
-    return { login, logout, requireSession, limitLogin };
+    return { login, logout, register, requireSession, limitLogin, limitRegister };
 }
 
 module.exports = { createSessions };

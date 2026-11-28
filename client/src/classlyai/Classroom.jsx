@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { PiArrowLeft, PiArrowRight, PiBookOpen, PiCheck, PiPencilSimple, PiFileText, PiSquaresFour, PiSignOut } from 'react-icons/pi'
+import { PiArrowLeft, PiArrowRight, PiBookOpen, PiCheck, PiPencilSimple, PiFileText, PiPlus, PiSquaresFour, PiSignOut } from 'react-icons/pi'
 import { Link, NavLink, Route, Routes, useParams } from 'react-router-dom'
 import { request, useResource } from './api.js'
 import { Brand, ResourceFeedback } from './components.jsx'
 import { AssignmentList, AssignmentPage, NewAssignment } from './Assignments.jsx'
+import { AddLesson, JoinCourse, MembersPanel, NewCourse } from './Courses.jsx'
 import Editor from './Editor.jsx'
 import Markdown from './Markdown.jsx'
 import PracticeQuiz from './PracticeQuiz.jsx'
@@ -12,18 +13,24 @@ import SignInScene from './SignInScene.jsx'
 import Tutor from './Tutor.jsx'
 
 function SignIn({ onSignIn }) {
+  const [mode, setMode] = useState('signin')
+  const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
   const [pending, setPending] = useState(false)
+  const creating = mode === 'register'
 
-  async function signIn(event) {
+  async function submit(event) {
     event.preventDefault()
     if (pending) return
     setPending(true)
     setError(null)
     try {
-      const { user } = await request('/auth/login', { method: 'POST', body: { email, password } })
+      const { user } = await request(creating ? '/auth/register' : '/auth/login', {
+        method: 'POST',
+        body: creating ? { email, password, displayName } : { email, password },
+      })
       onSignIn(user)
     } catch (failure) {
       setError(failure.message)
@@ -37,16 +44,23 @@ function SignIn({ onSignIn }) {
       <div className="sign-in-content">
         <Brand />
         <div className="sign-in-main">
-          <h1>Welcome to your <em>classroom.</em></h1>
-          <p>Read your lessons and ask questions grounded in your course material.</p>
-          <form onSubmit={signIn} className="sign-in-form">
+          <h1>{creating ? <>Start your <em>course.</em></> : <>Welcome to your <em>classroom.</em></>}</h1>
+          <p>{creating ? 'Create an account to join a course with a code, or to teach your own.' : 'Read your lessons and ask questions grounded in your course material.'}</p>
+          <form onSubmit={submit} className="sign-in-form">
+            {creating && <>
+              <label htmlFor="name">Your name</label>
+              <input id="name" name="name" autoComplete="name" value={displayName} maxLength={80} onChange={event => setDisplayName(event.target.value)} required />
+            </>}
             <label htmlFor="email">Email address</label>
             <input id="email" type="email" name="email" autoComplete="username" value={email} onChange={event => setEmail(event.target.value)} required />
-            <label htmlFor="password">Password</label>
-            <input id="password" type="password" name="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required />
+            <label htmlFor="password">Password{creating && <span className="field-hint"> at least 12 characters</span>}</label>
+            <input id="password" type="password" name="password" autoComplete={creating ? 'new-password' : 'current-password'} minLength={creating ? 12 : undefined} value={password} onChange={event => setPassword(event.target.value)} required />
             {error && <p className="form-error" role="alert">{error}</p>}
-            <button className="primary-button" type="submit" disabled={pending}>{pending ? 'Signing in…' : 'Sign in'}<PiArrowRight aria-hidden="true" /></button>
+            <button className="primary-button" type="submit" disabled={pending}>{pending ? (creating ? 'Creating account…' : 'Signing in…') : (creating ? 'Create account' : 'Sign in')}<PiArrowRight aria-hidden="true" /></button>
           </form>
+          <button type="button" className="text-button switch-mode" onClick={() => { setMode(creating ? 'signin' : 'register'); setError(null) }}>
+            {creating ? 'Have an account? Sign in' : 'New here? Create an account'}
+          </button>
         </div>
       </div>
       <SignInScene />
@@ -57,7 +71,7 @@ function SignIn({ onSignIn }) {
 // Each course keeps one of four tones, so the list reads as distinct places and not one repeated card.
 const tone = slug => [...slug].reduce((total, character) => total + character.charCodeAt(0), 0) % 4
 
-function CourseList({ resource, name }) {
+function CourseList({ resource, name, onChanged }) {
   const resume = resource.data?.courses.filter(course => course.resume)
     .sort((left, right) => Date.parse(right.resume.lastViewedAt) - Date.parse(left.resume.lastViewedAt))[0]
 
@@ -67,7 +81,13 @@ function CourseList({ resource, name }) {
       <h1>{name ? `${name.trim().split(/\s+/)[0]}’s courses` : 'My courses'}</h1>
       {resource.data && <p className="page-description">{resource.data.courses.length} {resource.data.courses.length === 1 ? 'course' : 'courses'}{resume ? ' · one lesson in progress' : ''}</p>}
       <ResourceFeedback resource={resource} label="Loading your courses…" />
-      {resource.data?.courses.length === 0 && <p className="muted">Your course list is empty. Ask an instructor for access.</p>}
+      {resource.data?.courses.length === 0 && <p className="muted">Your course list is empty. Join a course with a code from your instructor, or create your own.</p>}
+      {resource.data && (
+        <div className="library-actions">
+          <JoinCourse onJoined={onChanged} />
+          <Link className="secondary-button" to="/courses/new"><PiPlus aria-hidden="true" /> Create a course</Link>
+        </div>
+      )}
       {resume && (
         <Link viewTransition className="course-card resume-lesson" to={`/courses/${encodeURIComponent(resume.slug)}/lessons/${encodeURIComponent(resume.resume.lessonSlug)}`}>
           <span className="course-icon"><PiBookOpen aria-hidden="true" /></span>
@@ -212,7 +232,7 @@ function CoursePage({ onProgressChange }) {
                 <>
                 <div className="lesson-list">
                   <h2>Lessons</h2>
-                  {course.lessons.length === 0 && <p className="muted">Lessons will appear here once they’re published.</p>}
+                  {course.lessons.length === 0 && <p className="muted">{course.role === 'instructor' ? 'No lessons are published yet. Add one below, write it, then publish it.' : 'Lessons will appear here once they’re published.'}</p>}
                   {course.lessons.map(item => (
                     <Link viewTransition key={item.id} className="lesson-row" to={`${coursePath}/lessons/${encodeURIComponent(item.slug)}`}>
                       <span className="lesson-icon"><PiFileText aria-hidden="true" /></span>
@@ -224,6 +244,7 @@ function CoursePage({ onProgressChange }) {
                   ))}
                 </div>
                 <AssignmentList key={courseSlug} courseSlug={courseSlug} />
+                {course.role === 'instructor' && <><AddLesson courseSlug={courseSlug} /><MembersPanel courseSlug={courseSlug} /></>}
                 </>
               )}
             </div>
@@ -275,7 +296,8 @@ function Workspace({ user, onSignOut }) {
         </nav>
         <main id="workspace-content" className="workspace-main" tabIndex="-1">
           <Routes>
-            <Route path="/" element={<CourseList resource={courses} name={user.displayName} />} />
+            <Route path="/" element={<CourseList resource={courses} name={user.displayName} onChanged={courses.retry} />} />
+            <Route path="/courses/new" element={<NewCourse onCreated={courses.retry} />} />
             <Route path="/courses/:courseSlug" element={<CoursePage onProgressChange={courses.retry} />} />
             <Route path="/courses/:courseSlug/lessons/:lessonSlug" element={<CoursePage onProgressChange={courses.retry} />} />
             <Route path="/courses/:courseSlug/assignments/new" element={<NewAssignment />} />

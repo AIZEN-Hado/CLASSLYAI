@@ -11,7 +11,7 @@ This is one project: the original Classly learning platform, being rebuilt as an
 | ClasslyAI app, the active product | `server/classlyai`, `client/src/classlyai`, `client/index.html` | Evidence-backed tutor, saved chats, quiz builder, study notes, assignments, progress, PDF results |
 | Neural models and their data | `server/classlyai/ml` (training, serving, evaluation, labelled-example export) | Fine-tuned grader and tutor reranker, local quiz and notes drafting, local answer checker. See its [README](server/classlyai/ml/README.md) |
 | Database | `server/db` (numbered SQL migrations 001–010, seed) | PostgreSQL on Neon; applied migrations are never edited |
-| Original Classly (MongoDB) | `server/{controllers,models,routes,services,middleware,config,utils}`, `server/index.js`, `client/src/{pages,components,context,api,lib,utils,config}`, `client/legacy.html` | Kept as is and reachable at `/legacy.html` in development. Not yet ported: marketplace, coupons, reviews, payouts, notifications, broadcasts, course analytics |
+| Original Classly (MongoDB) | `server/{controllers,models,routes,services,middleware,config,utils}`, `server/index.js`, `client/src/{pages,components,context,api,lib,utils,config}`, `client/legacy.html` | Kept as is and reachable at `/legacy.html` in development. Ported to ClasslyAI: quizzes, AI drafting, tutor chats, assignments, registration, course creation and join codes. Not yet ported: marketplace, coupons, reviews, payouts, notifications, broadcasts, course analytics, co-teachers |
 
 Two folders are easy to confuse: `server/models` holds the original app's Mongoose schemas, and `server/classlyai/ml` holds the neural-network code. Nothing in ClasslyAI imports the original app, and the original imports nothing from ClasslyAI.
 

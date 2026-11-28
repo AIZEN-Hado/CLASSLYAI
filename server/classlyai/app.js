@@ -1,5 +1,6 @@
 const express = require('express');
 const { extname, join } = require('node:path');
+const { createCourseAdminRouter } = require('./course-admin');
 const { createCoursesRouter } = require('./courses');
 const { createLessonEditorRouter } = require('./lesson-editor');
 const { createSessions } = require('./session');
@@ -23,9 +24,10 @@ function createApp({ pool, origin, clientDirectory }) {
 
     app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
     app.post('/api/auth/login', sessions.limitLogin, sessions.login);
+    app.post('/api/auth/register', sessions.limitRegister, sessions.register);
     app.post('/api/auth/logout', sessions.logout);
     app.get('/api/auth/me', sessions.requireSession, (req, res) => res.json({ user: req.user }));
-    app.use('/api/courses', sessions.requireSession, createCoursesRouter(pool), createLessonEditorRouter(pool),
+    app.use('/api/courses', sessions.requireSession, createCourseAdminRouter(pool), createCoursesRouter(pool), createLessonEditorRouter(pool),
         createTutorRouter(pool), createShortAnswerRouter(pool), createAssignmentsRouter(pool));
 
     app.use('/api', (_req, res) => res.status(404).json({ message: 'Route not found.' }));
