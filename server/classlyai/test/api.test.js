@@ -25,7 +25,6 @@ describe('ClasslyAI API on PostgreSQL', { skip: !adminUrl }, () => {
     let base;
 
     before(async () => {
-        process.env.CLASSLYAI_AI_MODE = 'fixture';
         const url = new URL(adminUrl);
         admin = new Client({ connectionString: url.toString(), connectionTimeoutMillis: 5000 });
         await admin.connect();

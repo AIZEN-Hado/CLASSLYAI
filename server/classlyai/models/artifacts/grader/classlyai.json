@@ -1,0 +1,29 @@
+{
+  "task": "grader",
+  "base": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+  "points": [
+    "The answer says the client resends the original idempotency key on retry.",
+    "The answer says the server returns the recorded result without applying the purchase again."
+  ],
+  "threshold": 0.5,
+  "epochs": 12,
+  "cvExactScore": {
+    "4": 0.5675675675675675,
+    "8": 0.6216216216216216,
+    "12": 0.6351351351351351
+  },
+  "trainRows": 74,
+  "trainSha256": "af521dc54cbcc161dfa05470ab4c13303ae931da3b753cb6b78e2f87ad9aecb8",
+  "heldoutSha256": "d38e1226b74023531529d81316b366ded1f3eda37a3b6de19cc74c39b2355dfa",
+  "blindSha256NotRead": "c9d7704282299732a24876a4c44957a2b3fc9046fe63f2d1e0e1f41a5b70b8ff",
+  "dtype": "q8",
+  "onnxVariant": "int8-default",
+  "variantParity": {
+    "int8-default": {
+      "meanAbsDiff": 0.018343915099588534,
+      "decisionAgreement": 1.0,
+      "bytes": 23040384
+    }
+  },
+  "onnxSha256": "5a705c7647fb3a51a395a6ba210e1b1c440100ec522cf78becb3d2f724cbfe4e"
+}

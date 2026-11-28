@@ -4,7 +4,7 @@ const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
 const { test } = require('node:test');
 const { promisify } = require('node:util');
-const { gradeAnswer, predictRubricScores } = require('./short-answer-grader');
+const { baselineGrade, gradeAnswer, predictRubricScores } = require('./short-answer-grader');
 
 const run = promisify(execFile);
 
@@ -33,7 +33,7 @@ print(json.dumps([predict(answer) for answer in json.loads(sys.argv[1])]))
     assert.equal(predictions.length, answers.length);
     for (const [index, answer] of answers.entries()) {
         const [marks, scores] = predictions[index];
-        const actual = gradeAnswer(answer);
+        const actual = baselineGrade(answer);
         assert.deepEqual(actual.points.map(point => Number(point.awarded)), marks, answer);
         assert.equal(actual.score, marks.reduce((sum, mark) => sum + mark, 0), answer);
         assert.equal(actual.maxScore, marks.length, answer);
@@ -41,4 +41,13 @@ print(json.dumps([predict(answer) for answer in json.loads(sys.argv[1])]))
             assert.ok(Math.abs(score - scores[point]) < 1e-12, answer);
         }
     }
+});
+
+test('the fine-tuned encoder marks each rubric point independently', async () => {
+    const full = await gradeAnswer('Resend the same idempotency key, and the server returns the saved result without charging again.');
+    assert.deepEqual(full.points.map(point => point.awarded), [true, true]);
+    assert.equal(full.score, 2);
+    const keyOnly = await gradeAnswer('Send the original idempotency key again so the server knows it is a retry.');
+    assert.deepEqual(keyOnly.points.map(point => point.awarded), [true, false]);
+    assert.equal((await gradeAnswer('Cancel the purchase and ask the customer to start over.')).score, 0);
 });

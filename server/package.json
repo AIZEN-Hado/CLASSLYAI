@@ -12,13 +12,15 @@
     "classlyai:start": "node --env-file-if-exists=.env classlyai/index.js",
     "classlyai:worker": "node --env-file-if-exists=.env classlyai/worker.js",
     "test:classlyai": "node --test 'classlyai/**/*.test.js'",
-    "eval:classlyai": "node --env-file-if-exists=.env classlyai/eval/run.js"
+    "eval:classlyai": "node --env-file-if-exists=.env classlyai/eval/run.js",
+    "eval:models": "node classlyai/eval/models.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@huggingface/transformers": "^3.7.6",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",

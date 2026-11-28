@@ -1,0 +1,445 @@
+{
+ "version": 1,
+ "note": "Synthetic lessons authored for this experiment. Splits are assigned per lesson before any paraphrase was written. The two seeded demo lessons are added as extra test lessons by the scripts.",
+ "lessons": [
+  {
+   "id": "http-caching",
+   "split": "train",
+   "sections": [
+    {
+     "h": "Cache-Control",
+     "t": "The Cache-Control header tells browsers and proxies how long a response stays fresh. A max-age of 3600 means the stored copy may be reused for one hour without asking the server.",
+     "q": "What does max-age in Cache-Control specify?",
+     "p": "For how long may a browser reuse a stored response before checking with the server?"
+    },
+    {
+     "h": "Validation with ETags",
+     "t": "An ETag identifies one version of a resource. The client sends it back in If-None-Match, and the server answers 304 Not Modified when the version is unchanged.",
+     "q": "What does a 304 Not Modified response mean?",
+     "p": "When the stored version of a resource is still current, how does the server tell the client?"
+    },
+    {
+     "h": "Private and shared caches",
+     "t": "A private directive limits storage to the user's own browser. Shared proxies must not store responses marked private, which protects personalized pages.",
+     "q": "Why mark a personalized response as private?",
+     "p": "How do we keep proxies from storing a page that differs for each user?"
+    },
+    {
+     "h": "Cache busting",
+     "t": "Static assets can carry a content hash in the filename. A changed file gets a new URL, so long-lived caching never serves stale code.",
+     "q": "How does a content hash in a filename help caching?",
+     "p": "What lets us cache scripts for a year yet still ship updates immediately?"
+    }
+   ]
+  },
+  {
+   "id": "database-indexing",
+   "split": "train",
+   "sections": [
+    {
+     "h": "B-tree lookups",
+     "t": "A B-tree index keeps keys in sorted order so the database can find a row in logarithmic time. Without the index the database scans every row in the table.",
+     "q": "Why is a B-tree lookup faster than a table scan?",
+     "p": "How can a database find one row without reading the whole table?"
+    },
+    {
+     "h": "Composite indexes",
+     "t": "A composite index on two columns is sorted by the first column, then the second. A query that filters only on the second column cannot use it efficiently.",
+     "q": "When can a composite index not be used efficiently?",
+     "p": "If an index covers columns A and B, why does a filter on B alone struggle?"
+    },
+    {
+     "h": "Covering indexes",
+     "t": "A covering index contains every column a query needs. The database answers from the index alone and skips fetching table rows.",
+     "q": "What is a covering index?",
+     "p": "Which kind of index lets a query avoid touching the table entirely?"
+    },
+    {
+     "h": "Reading query plans",
+     "t": "EXPLAIN shows the plan the database chose, including scan types and estimated row counts. A large gap between estimated and actual rows suggests stale statistics.",
+     "q": "What does a gap between estimated and actual rows suggest?",
+     "p": "How do we spot that the planner is working from outdated statistics?"
+    }
+   ]
+  },
+  {
+   "id": "git-branching",
+   "split": "train",
+   "sections": [
+    {
+     "h": "Feature branches",
+     "t": "A feature branch isolates work from the main line until it is ready. Reviewers compare the branch against main before it merges.",
+     "q": "Why develop on a feature branch?",
+     "p": "How do we keep unfinished work away from the main line?"
+    },
+    {
+     "h": "Merge versus rebase",
+     "t": "A merge commit joins two histories and preserves both. A rebase replays commits on top of another branch, producing a linear history but new commit hashes.",
+     "q": "How does a rebase change commit hashes?",
+     "p": "What is the cost of getting a linear history by replaying commits?"
+    },
+    {
+     "h": "Resolving conflicts",
+     "t": "A conflict appears when both branches edit the same lines. Edit the file to keep the intended result, stage it, and continue the merge.",
+     "q": "What causes a merge conflict?",
+     "p": "When does git stop and ask us to fix files by hand?"
+    },
+    {
+     "h": "Tagging releases",
+     "t": "A tag names one commit permanently, such as v1.2.0. Release builds check out the tag so the shipped code can be rebuilt later.",
+     "q": "What does a git tag mark?",
+     "p": "How can we rebuild exactly the code that shipped in a release?"
+    }
+   ]
+  },
+  {
+   "id": "rate-limiting",
+   "split": "train",
+   "sections": [
+    {
+     "h": "Fixed windows",
+     "t": "A fixed window counts requests in each clock interval and resets at the boundary. A client can send a burst at the end of one window and another at the start of the next.",
+     "q": "What weakness does a fixed window counter have?",
+     "p": "How can a client double its allowed traffic around a window boundary?"
+    },
+    {
+     "h": "Token buckets",
+     "t": "A token bucket refills at a steady rate and each request spends a token. The bucket size sets the largest burst a client may send.",
+     "q": "What sets the maximum burst in a token bucket?",
+     "p": "Which parameter limits how many requests can arrive at once?"
+    },
+    {
+     "h": "Signalling limits",
+     "t": "Respond with status 429 when a client exceeds its limit. Include a Retry-After header so well-behaved clients know when to try again.",
+     "q": "Which status code reports an exceeded rate limit?",
+     "p": "How does a server tell a client when to retry after throttling it?"
+    },
+    {
+     "h": "Choosing the key",
+     "t": "Limit by authenticated user rather than IP address when possible. Many users can share one address behind a corporate network.",
+     "q": "Why limit by user instead of IP address?",
+     "p": "What goes wrong when many people share one network address and we throttle by address?"
+    }
+   ]
+  },
+  {
+   "id": "unit-testing",
+   "split": "train",
+   "sections": [
+    {
+     "h": "Arrange, act, assert",
+     "t": "Structure a test in three steps: set up inputs, call the code, and check the result. One clear assertion per behavior makes failures easy to read.",
+     "q": "What are the three steps of a well-structured test?",
+     "p": "How should a single test be organized from setup to verification?"
+    },
+    {
+     "h": "Test doubles",
+     "t": "A stub returns canned data and a mock records how it was called. Replace slow or unreliable dependencies such as the network with doubles.",
+     "q": "What is the difference between a stub and a mock?",
+     "p": "Which test double verifies how a dependency was called?"
+    },
+    {
+     "h": "Flaky tests",
+     "t": "A flaky test passes and fails without code changes. Common causes are shared state, real clocks, and unordered results.",
+     "q": "What commonly causes a flaky test?",
+     "p": "Why might a test pass on one run and fail on the next with the same code?"
+    },
+    {
+     "h": "Coverage limits",
+     "t": "Line coverage reports which lines ran, not whether behavior was verified. A test without assertions can raise coverage while checking nothing.",
+     "q": "Why can high line coverage be misleading?",
+     "p": "Does executing a line prove that its behavior was checked?"
+    }
+   ]
+  },
+  {
+   "id": "docker-images",
+   "split": "train",
+   "sections": [
+    {
+     "h": "Layers",
+     "t": "Each instruction in a Dockerfile creates a read-only layer. Unchanged layers come from the build cache, so order instructions from least to most frequently changed.",
+     "q": "How should Dockerfile instructions be ordered for caching?",
+     "p": "What ordering lets a rebuild reuse the most cached layers?"
+    },
+    {
+     "h": "Multi-stage builds",
+     "t": "A multi-stage build compiles in one image and copies only the artifacts into a small final image. Build tools never reach production.",
+     "q": "What does a multi-stage build keep out of the final image?",
+     "p": "How can compilers be used during a build without shipping them?"
+    },
+    {
+     "h": "Running as non-root",
+     "t": "Containers run as root by default. Create an unprivileged user and switch to it so a compromised process has fewer rights.",
+     "q": "Why switch a container to an unprivileged user?",
+     "p": "How do we limit what an attacker can do inside a compromised container?"
+    },
+    {
+     "h": "Image tags",
+     "t": "The latest tag moves whenever someone pushes. Pin a specific version or digest to get repeatable deployments.",
+     "q": "Why avoid the latest tag in deployments?",
+     "p": "What makes a deployment reproducible with respect to its base image?"
+    }
+   ]
+  },
+  {
+   "id": "password-storage",
+   "split": "train",
+   "sections": [
+    {
+     "h": "Hashing",
+     "t": "Store a one-way hash of each password rather than the password. A database leak then reveals hashes instead of the passwords themselves.",
+     "q": "Why store a hash instead of the password?",
+     "p": "What limits the damage when a user table is leaked?"
+    },
+    {
+     "h": "Salting",
+     "t": "A salt is a random value stored beside each hash and mixed into it. Two users with the same password get different hashes, which defeats precomputed tables.",
+     "q": "What does a salt prevent?",
+     "p": "Why do identical passwords produce different stored values?"
+    },
+    {
+     "h": "Slow hash functions",
+     "t": "Use a deliberately slow algorithm such as bcrypt or Argon2. The delay is negligible for one login but makes guessing millions of passwords expensive.",
+     "q": "Why use a deliberately slow hash for passwords?",
+     "p": "How does bcrypt make offline guessing costly?"
+    },
+    {
+     "h": "Login error messages",
+     "t": "Return the same message whether the email or the password was wrong. Different messages let an attacker discover which emails have accounts.",
+     "q": "Why should login errors be identical for wrong email and wrong password?",
+     "p": "How can error text reveal which accounts exist?"
+    }
+   ]
+  },
+  {
+   "id": "pagination",
+   "split": "train",
+   "sections": [
+    {
+     "h": "Offset pagination",
+     "t": "Offset pagination skips a number of rows with OFFSET. Deep pages get slower because the database still walks past every skipped row.",
+     "q": "Why do deep pages get slow with OFFSET?",
+     "p": "What makes page 5000 more expensive than page 1 when skipping rows?"
+    },
+    {
+     "h": "Cursor pagination",
+     "t": "A cursor records the last item seen, such as its id, and the next query asks for rows after it. Pages stay fast and stable while new rows arrive.",
+     "q": "How does cursor pagination find the next page?",
+     "p": "What does the client send to continue after the last item it saw?"
+    },
+    {
+     "h": "Stable ordering",
+     "t": "Always sort by a unique column, adding the id as a tie-breaker. Without it, rows with equal values can repeat or vanish between pages.",
+     "q": "Why add the id as a tie-breaker when sorting?",
+     "p": "How do we stop duplicate or missing rows across pages?"
+    },
+    {
+     "h": "Page size limits",
+     "t": "Cap the page size on the server. An unbounded limit parameter lets one request pull the whole table.",
+     "q": "Why cap page size on the server?",
+     "p": "What prevents one request from reading an entire table through a limit parameter?"
+    }
+   ]
+  },
+  {
+   "id": "logging-levels",
+   "split": "dev",
+   "sections": [
+    {
+     "h": "Choosing a level",
+     "t": "Use error for failures that need action and warn for recoverable surprises. Info records normal milestones, and debug is for detail turned on while investigating.",
+     "q": "When should code log at error level?",
+     "p": "Which level is for failures that someone must act on?"
+    },
+    {
+     "h": "Structured logs",
+     "t": "Write logs as JSON objects with named fields. Fields such as requestId can be filtered and counted by a log search tool.",
+     "q": "Why write logs as JSON objects?",
+     "p": "How do named fields make logs easier to search?"
+    },
+    {
+     "h": "Sensitive data",
+     "t": "Never log passwords, tokens, or full card numbers. Redact them before they reach the logger because logs are copied to many systems.",
+     "q": "What must never be written to logs?",
+     "p": "Why redact secrets before logging instead of cleaning logs later?"
+    },
+    {
+     "h": "Correlation ids",
+     "t": "Attach one request id to every log line a request produces. An engineer can then follow the request across services.",
+     "q": "What is a request id used for in logs?",
+     "p": "How can we trace one request through several services?"
+    }
+   ]
+  },
+  {
+   "id": "cron-scheduling",
+   "split": "dev",
+   "sections": [
+    {
+     "h": "Cron syntax",
+     "t": "A cron expression has five fields for minute, hour, day of month, month, and day of week. The expression 0 2 * * * runs at 02:00 every day.",
+     "q": "What do the five fields of a cron expression represent?",
+     "p": "How is a daily run at two in the morning written in cron?"
+    },
+    {
+     "h": "Overlapping runs",
+     "t": "If a job takes longer than its interval, a second copy can start. Take a lock at the start so the later run exits immediately.",
+     "q": "How do we stop two copies of a scheduled job overlapping?",
+     "p": "What happens when a job runs longer than its schedule interval?"
+    },
+    {
+     "h": "Time zones",
+     "t": "Cron uses the server time zone unless told otherwise. Daylight saving changes can skip or repeat a local hour, so schedule critical jobs in UTC.",
+     "q": "Why schedule critical jobs in UTC?",
+     "p": "How can daylight saving cause a job to skip or repeat?"
+    },
+    {
+     "h": "Monitoring jobs",
+     "t": "A job that fails silently is worse than one that fails loudly. Send a heartbeat after each success and alert when it goes missing.",
+     "q": "How can we detect a scheduled job that stopped running?",
+     "p": "What alerts us when a cron job fails without any error?"
+    }
+   ]
+  },
+  {
+   "id": "oauth-login",
+   "split": "test",
+   "sections": [
+    {
+     "h": "Authorization code flow",
+     "t": "The app redirects the user to the provider, which returns a short-lived code to the app's callback. The server exchanges that code for tokens over a back channel.",
+     "q": "How does the authorization code flow deliver tokens to the app?",
+     "p": "What does the provider send to the callback, and what happens to it afterward?"
+    },
+    {
+     "h": "State parameter",
+     "t": "The app generates a random state value before redirecting and checks it on return. A mismatch means the response did not come from the login the app started.",
+     "q": "What is the state parameter for in OAuth login?",
+     "p": "How does the app detect a forged callback request?"
+    },
+    {
+     "h": "Scopes",
+     "t": "A scope names a permission the app requests, such as reading the profile. Ask only for the scopes the feature needs so users grant less.",
+     "q": "What does an OAuth scope describe?",
+     "p": "Why should an app request the narrowest set of permissions?"
+    },
+    {
+     "h": "Refresh tokens",
+     "t": "An access token expires quickly, while a refresh token obtains new ones. Store refresh tokens server-side because a stolen one grants long-lived access.",
+     "q": "What is a refresh token used for?",
+     "p": "How does an app keep a user signed in after the access token expires?"
+    }
+   ]
+  },
+  {
+   "id": "message-queues",
+   "split": "test",
+   "sections": [
+    {
+     "h": "Decoupling producers",
+     "t": "A producer puts a message on the queue and moves on. Consumers process it later, so a slow consumer does not block the producer.",
+     "q": "How does a queue decouple producers from consumers?",
+     "p": "Why does a slow consumer not hold up the service that sent the message?"
+    },
+    {
+     "h": "Acknowledgements",
+     "t": "A consumer acknowledges a message only after finishing the work. If it crashes first, the broker redelivers the message to another consumer.",
+     "q": "When should a consumer acknowledge a message?",
+     "p": "What makes the broker redeliver a message after a consumer crash?"
+    },
+    {
+     "h": "Dead-letter queues",
+     "t": "A message that fails repeatedly moves to a dead-letter queue after a retry limit. Engineers inspect it there instead of letting it block the main queue.",
+     "q": "What is a dead-letter queue for?",
+     "p": "Where do messages go after exhausting their retries?"
+    },
+    {
+     "h": "Duplicate delivery",
+     "t": "Brokers usually guarantee at-least-once delivery, so a message may arrive twice. Make handlers idempotent by recording processed message ids.",
+     "q": "Why must queue handlers tolerate duplicate messages?",
+     "p": "How can a handler safely process a message that arrives twice?"
+    }
+   ]
+  }
+ ],
+ "unsupported": {
+  "train": [
+   "What is the boiling point of nitrogen?",
+   "Who painted the Mona Lisa?",
+   "How many players are on a cricket team?",
+   "What is the capital of Australia?",
+   "How do vaccines train the immune system?",
+   "Which planet has the most moons?",
+   "How is cheese aged in caves?",
+   "What is the speed of light in a vacuum?"
+  ],
+  "dev": [
+   "How tall is Mount Kilimanjaro?",
+   "What year did the Berlin Wall fall?",
+   "How do bees make honey?",
+   "What is the chemical formula of table salt?"
+  ],
+  "test": [
+   "What is the plot of Hamlet?",
+   "How do tides relate to the moon?",
+   "What is the population of Brazil?",
+   "How does photosynthesis produce oxygen?"
+  ]
+ },
+ "seeded": {
+  "note": "Seeded lessons join the test pool with the labeled questions from classlyai/eval/run.js; these were not used for training or threshold selection.",
+  "unsupported": [
+   "How many milliseconds does a client keep an idempotency key before expiration?",
+   "What is the orbital velocity of Mercury?",
+   "How do mitochondria regulate cellular respiration?"
+  ],
+  "questions": [
+   {
+    "lesson": "transactions-and-retries",
+    "section": "Atomic writes",
+    "q": "What does rolling back a transaction discard?"
+   },
+   {
+    "lesson": "transactions-and-retries",
+    "section": "Atomic writes",
+    "p": "Why keep an enrollment and a receipt together when a course purchase fails?"
+   },
+   {
+    "lesson": "transactions-and-retries",
+    "section": "Retrying a request",
+    "q": "What does an idempotency key do?"
+   },
+   {
+    "lesson": "transactions-and-retries",
+    "section": "Retrying a request",
+    "p": "How can the client recover the result after losing the server response?"
+   },
+   {
+    "lesson": "transactions-and-retries",
+    "section": "Isolation",
+    "q": "How do two database sessions verify concurrency behavior?"
+   },
+   {
+    "lesson": "retrieval-benchmarks",
+    "section": "Retrieval recall",
+    "q": "What is recall at five?"
+   },
+   {
+    "lesson": "retrieval-benchmarks",
+    "section": "Retrieval recall",
+    "p": "How do we keep a benchmark comparison of ranking methods fair?"
+   },
+   {
+    "lesson": "retrieval-benchmarks",
+    "section": "Isolation",
+    "q": "Why filter candidate passages by course membership before ranking?"
+   },
+   {
+    "lesson": "retrieval-benchmarks",
+    "section": "Unsupported questions",
+    "p": "How should we measure whether the tutor detects insufficient evidence?"
+   }
+  ]
+ }
+}

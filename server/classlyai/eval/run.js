@@ -54,10 +54,7 @@ async function runRanking(tutor, strategy, labeled) {
 }
 
 async function main() {
-    const live = process.argv.includes('--live');
-    const env = live ? process.env : { ...process.env, CLASSLYAI_AI_MODE: 'fixture' };
-    const embeddings = createEmbeddingProvider(env);
-    if (live && embeddings.mode !== 'openai') throw new Error('The live benchmark needs an OpenAI key and live AI mode.');
+    const embeddings = createEmbeddingProvider();
     const pool = createPostgresPool();
 
     try {
@@ -72,7 +69,7 @@ async function main() {
             throw new Error('Index both seeded lesson revisions with the worker and the selected provider before running the benchmark.');
         }
 
-        const tutor = createTutor(pool, { env, embeddings });
+        const tutor = createTutor(pool, { embeddings });
         const labeled = questions.filter(question => question.section);
         const report = { corpus: 'seeded-classroom-v1', mode: embeddings.mode, fingerprint: embeddings.fingerprint, passagesPerRevision: fixture, retrieval: [] };
         if (fixture.some(revision => revision.passages <= 5)) report.note = 'Use top-1 and MRR for this small corpus because Recall@5 can saturate.';
@@ -95,7 +92,6 @@ async function main() {
             expectedAbstentions: unsupported.length,
             correctAbstentions: unsupported.filter(run => run.status === run.expectedStatus).length,
             correctSectionCitations: answerChecks.filter(run => run.expectedStatus === 'answered' && run.expectedCitation).length,
-            fixtureFallbacks: answerChecks.filter(run => run.mode === 'fixture-fallback').length,
             totalMs: { p50: percentile(answerChecks.map(run => run.timingMs), 0.5), p95: percentile(answerChecks.map(run => run.timingMs), 0.95) },
             cases: answerChecks
         };
@@ -110,7 +106,7 @@ async function main() {
             mismatchedCitationDenied: crossCourseCitation === null
         };
         console.log(JSON.stringify(report, null, 2));
-        const fixtureQualityPassed = live || report.answers.correctSectionCitations === labeled.length;
+        const fixtureQualityPassed = report.answers.correctSectionCitations === labeled.length;
         if (!fixtureQualityPassed || report.answers.correctAbstentions !== report.answers.expectedAbstentions
             || !Object.values(report.isolation).every(Boolean)) {
             process.exitCode = 1;

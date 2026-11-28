@@ -1,0 +1,40 @@
+{"answer":"On retry the client resends the same idempotency key, and the server hands back the receipt it already stored instead of charging a second time.","points":[1,1]}
+{"answer":"Attach the first attempt's key again. The backend looks it up and replays the saved outcome with no new purchase.","points":[1,1]}
+{"answer":"The retry carries the identical request identifier; the service answers with the earlier stored response and does not execute the order again.","points":[1,1]}
+{"answer":"Keep using the key generated for the original call. The server finds the completed record and returns that result without repeating the payment.","points":[1,1]}
+{"answer":"Same key as before. If the server already committed, it returns the saved reply and skips applying the purchase.","points":[1,1]}
+{"answer":"Resubmit with the original key, and the server responds with the previously recorded result rather than processing the purchase a second time.","points":[1,1]}
+{"answer":"The client should repeat the exact idempotency token from attempt one; the server then serves the cached outcome and nothing is charged twice.","points":[1,1]}
+{"answer":"Send the unchanged key. The API detects it has seen this request, so it gives back the stored response and the purchase stays applied only once.","points":[1,1]}
+{"answer":"Reuse the same key on the retry; the endpoint returns the first response from its records without redoing the transaction.","points":[1,1]}
+{"answer":"Retry with the key from the first request, and the server replays the original result, never running the purchase again.","points":[1,1]}
+{"answer":"Send the original idempotency key again so the server knows it is a retry.","points":[1,0]}
+{"answer":"The client reuses the same request key on the retry.","points":[1,0]}
+{"answer":"Resend the identical key from the first attempt and wait for the response.","points":[1,0]}
+{"answer":"Use the key from the first call again, which prevents duplicate charges.","points":[1,0]}
+{"answer":"Copy the first request's idempotency key into the retry. The server will probably be fine.","points":[1,0]}
+{"answer":"Include the same unique token as before; that way the request is recognizable as a repeat.","points":[1,0]}
+{"answer":"Retry with the original key and let the server deal with it.","points":[1,0]}
+{"answer":"The retry must reuse the first idempotency key, otherwise it looks like a different purchase.","points":[1,0]}
+{"answer":"Send the same key. The server should avoid a double charge.","points":[1,0]}
+{"answer":"Keep the original idempotency key when retrying the purchase.","points":[1,0]}
+{"answer":"The server returns the saved result and does not apply the purchase again.","points":[0,1]}
+{"answer":"It should look up the earlier outcome and replay that stored response without charging twice.","points":[0,1]}
+{"answer":"The backend answers with the recorded receipt from the first attempt and never repeats the transaction.","points":[0,1]}
+{"answer":"Respond with the cached original response, skipping the purchase logic the second time.","points":[0,1]}
+{"answer":"On a retry the service gives back what it stored before and does not run the order again.","points":[0,1]}
+{"answer":"The server must return the previously saved result, not process the payment twice.","points":[0,1]}
+{"answer":"Return the first response from storage so the client sees the same receipt, with no second debit.","points":[0,1]}
+{"answer":"The retry is answered from the saved record. A fresh identifier is fine as long as the server remembers the outcome.","points":[0,1]}
+{"answer":"Replay the stored result without performing the purchase again.","points":[0,1]}
+{"answer":"The server returns the stored reply and avoids applying the charge a second time.","points":[0,1]}
+{"answer":"The client should wait a few seconds and send the request again.","points":[0,0]}
+{"answer":"Generate a brand new key and run the purchase again so it definitely goes through.","points":[0,0]}
+{"answer":"Use a different request identifier and have the server process it as a fresh order.","points":[0,0]}
+{"answer":"Cancel the purchase and ask the customer to start over.","points":[0,0]}
+{"answer":"Do not reuse the original key, and do not return the stored result; treat the retry as brand new.","points":[0,0]}
+{"answer":"Encrypt the request body with TLS and send it again.","points":[0,0]}
+{"answer":"Increase the timeout and log the failure for later review.","points":[0,0]}
+{"answer":"The server should charge again to be safe and return a new receipt.","points":[0,0]}
+{"answer":"Send a new random key every time; the server then applies the purchase again and returns the new result.","points":[0,0]}
+{"answer":"I am not sure, maybe check the database.","points":[0,0]}

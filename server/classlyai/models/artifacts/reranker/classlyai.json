@@ -1,0 +1,35 @@
+{
+  "task": "reranker",
+  "base": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+  "threshold": 0.35,
+  "epochs": 1,
+  "dev": {
+    "1": {
+      "top1": 0.9375,
+      "devAccuracy": 0.95,
+      "threshold": 0.35
+    },
+    "2": {
+      "top1": 0.9375,
+      "devAccuracy": 0.95,
+      "threshold": 0.44
+    },
+    "3": {
+      "top1": 0.9375,
+      "devAccuracy": 0.95,
+      "threshold": 0.37
+    }
+  },
+  "trainPairs": 671,
+  "corpusSha256": "3acfb89a376428fe022af006dc3563a4290fbe62e0c1642d32a555b4de1c018a",
+  "dtype": "q8",
+  "onnxVariant": "int8-default",
+  "variantParity": {
+    "int8-default": {
+      "meanAbsDiff": 0.005276580977728429,
+      "decisionAgreement": 0.9921875,
+      "bytes": 23040384
+    }
+  },
+  "onnxSha256": "5e4df02251065906d3bafb77e3cc97e3d7f067b7ee171b674a0401d5953f6e2a"
+}

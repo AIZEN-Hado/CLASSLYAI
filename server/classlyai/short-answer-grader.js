@@ -1,4 +1,5 @@
 const model = require('./grader/model.json');
+const { metadata, score } = require('./models/runtime');
 
 if (model.version !== 1) throw new Error('Unsupported ClasslyAI short-answer model version.');
 
@@ -23,10 +24,18 @@ function predictRubricScores(answer) {
     });
 }
 
-function gradeAnswer(answer) {
+// The earlier standard-library network, kept as a comparison baseline for the fine-tuned encoder.
+function baselineGrade(answer) {
     const scores = predictRubricScores(answer);
     const points = model.points.map((point, index) => ({ ...point, awarded: scores[index] >= model.threshold }));
     return { score: points.filter(point => point.awarded).length, maxScore: points.length, points };
 }
 
-module.exports = { gradeAnswer, predictRubricScores, question: model.question };
+async function gradeAnswer(answer) {
+    const { points: criteria, threshold } = await metadata('grader');
+    const scores = await score('grader', criteria.map(criterion => [criterion, answer]));
+    const points = model.points.map((point, index) => ({ ...point, awarded: scores[index] >= threshold }));
+    return { score: points.filter(point => point.awarded).length, maxScore: points.length, points };
+}
+
+module.exports = { baselineGrade, gradeAnswer, predictRubricScores, question: model.question };

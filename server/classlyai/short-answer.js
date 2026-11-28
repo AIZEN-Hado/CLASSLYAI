@@ -30,13 +30,13 @@ function createShortAnswerRouter(pool) {
         res.json({ practice: { revisionId: lesson.revisionId, prompt: question, maxLength } });
     });
 
-    router.post(path, requireActiveSeedRevision, (req, res) => {
+    router.post(path, requireActiveSeedRevision, async (req, res) => {
         const { revisionId, answer } = req.body || {};
         if (revisionId !== lesson.revisionId) return res.status(404).json({ message: unavailable });
         if (typeof answer !== 'string' || answer.length > maxLength || !answer.trim()) {
             return res.status(400).json({ message: `Write an answer of up to ${maxLength} characters.` });
         }
-        res.json(gradeAnswer(answer));
+        res.json(await gradeAnswer(answer));
     });
 
     return router;

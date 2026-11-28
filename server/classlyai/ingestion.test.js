@@ -22,12 +22,11 @@ test('Markdown chunks preserve exact Unicode and CRLF source spans', () => {
 });
 
 test('fixture embeddings are normalized, ordered, and deterministic', async () => {
-    const provider = createEmbeddingProvider({ CLASSLYAI_AI_MODE: 'fixture', OPENAI_API_KEY: 'unused-in-fixtures' });
+    const provider = createEmbeddingProvider();
     const texts = ['Rerun an indexing job.', 'Read a published lesson.'];
     const vectors = await provider.embed(texts);
     assert.equal(provider.mode, 'fixture');
     assert.deepEqual(await provider.embed([...texts].reverse()), [...vectors].reverse());
     assert.notDeepEqual(...vectors);
     for (const vector of vectors) assert.ok(Math.abs(Math.hypot(...vector) - 1) < 1e-12);
-    assert.throws(() => createEmbeddingProvider({ CLASSLYAI_AI_MODE: 'openai' }), /CLASSLYAI_OPENAI_API_KEY/);
 });

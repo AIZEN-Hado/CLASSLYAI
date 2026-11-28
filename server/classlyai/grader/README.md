@@ -1,5 +1,7 @@
 # Local short-answer grader experiment
 
+> This is the earlier standard-library network, kept as a baseline. The served grader is the fine-tuned encoder described in [../models/README.md](../models/README.md).
+
 This experiment scores one question from the seeded Reliable Backend Systems course.
 
 > A purchase commits, but the client loses the response. What should the client send on retry, and how should the server respond?
