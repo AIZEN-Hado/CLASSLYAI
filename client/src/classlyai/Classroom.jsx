@@ -3,6 +3,7 @@ import { FiArrowLeft, FiArrowRight, FiBookOpen, FiCheck, FiEdit3, FiFileText, Fi
 import { Link, NavLink, Route, Routes, useParams } from 'react-router-dom'
 import { request, useResource } from './api.js'
 import { Brand, ResourceFeedback } from './components.jsx'
+import { AssignmentList, AssignmentPage, NewAssignment } from './Assignments.jsx'
 import Editor from './Editor.jsx'
 import Markdown from './Markdown.jsx'
 import PracticeQuiz from './PracticeQuiz.jsx'
@@ -176,6 +177,14 @@ function CoursePage({ onProgressChange }) {
                 <>
                   <ResourceFeedback resource={content} label="Loading lesson…" />
                   {lesson && <article><Markdown text={lesson.markdown} /></article>}
+                  {lesson?.notes?.length > 0 && (
+                    <section className="study-notes" aria-labelledby="study-notes-heading">
+                      <h2 id="study-notes-heading">Study notes</h2>
+                      <ol>
+                        {lesson.notes.map(note => <li key={note.heading}><h3>{note.heading}</h3><p>{note.body}</p></li>)}
+                      </ol>
+                    </section>
+                  )}
                   {lesson && course.role === 'student' && <LessonProgress
                     key={lesson.id}
                     path={`${lessonPath}/progress`}
@@ -197,6 +206,7 @@ function CoursePage({ onProgressChange }) {
                   <Link to={coursePath} className="back-link reader-back"><FiArrowLeft aria-hidden="true" /> All lessons</Link>
                 </>
               ) : (
+                <>
                 <div className="lesson-list">
                   <h2>Lessons</h2>
                   {course.lessons.length === 0 && <p className="muted">Lessons will appear here once they’re published.</p>}
@@ -210,6 +220,8 @@ function CoursePage({ onProgressChange }) {
                     </Link>
                   ))}
                 </div>
+                <AssignmentList key={courseSlug} courseSlug={courseSlug} />
+                </>
               )}
             </div>
             <Tutor key={courseSlug} courseSlug={courseSlug} topics={course.lessons?.map(item => item.title)} />
@@ -263,6 +275,8 @@ function Workspace({ user, onSignOut }) {
             <Route path="/" element={<CourseList resource={courses} name={user.displayName} />} />
             <Route path="/courses/:courseSlug" element={<CoursePage onProgressChange={courses.retry} />} />
             <Route path="/courses/:courseSlug/lessons/:lessonSlug" element={<CoursePage onProgressChange={courses.retry} />} />
+            <Route path="/courses/:courseSlug/assignments/new" element={<NewAssignment />} />
+            <Route path="/courses/:courseSlug/assignments/:assignmentId" element={<AssignmentPage />} />
             <Route path="/courses/:courseSlug/editor" element={<Editor />} />
             <Route path="/courses/:courseSlug/lessons/:lessonSlug/editor" element={<Editor />} />
             <Route path="*" element={<section className="content-page"><h1>Page not found</h1><Link className="back-link" to="/"><FiArrowLeft aria-hidden="true" /> Back to your courses</Link></section>} />

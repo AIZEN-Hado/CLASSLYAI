@@ -27,3 +27,7 @@ Thumbs.db
 
 # Local model cache (downloaded on first use)
 server/.cache
+
+# Python bytecode
+__pycache__/
+*.pyc

@@ -217,3 +217,47 @@ a:hover { color: var(--signal); text-decoration-color: currentColor; }
 .tutor-history .text-button { min-height: 2.4rem; justify-content: flex-start; overflow: hidden; text-align: left; text-overflow: ellipsis; white-space: nowrap; font-weight: 520; }
 .exchange { display: grid; gap: .8rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
 .exchange:last-of-type { border-bottom: 0; }
+
+/* Study notes */
+.study-notes { max-width: 64ch; margin-top: 2.4rem; padding: 1.4rem 1.5rem 1.6rem; background: var(--plate); border-left: 3px solid var(--signal); }
+.study-notes h2 { font-size: 1.5rem; }
+.study-notes ol { display: grid; gap: 1.1rem; margin: 1.1rem 0 0; padding: 0; list-style: none; counter-reset: note; }
+.study-notes li { counter-increment: note; display: grid; grid-template-columns: 2rem minmax(0, 1fr); column-gap: .5rem; }
+.study-notes li::before { grid-row: span 2; padding-top: .3rem; color: var(--muted); font: 450 .72rem var(--mono); content: counter(note, decimal-leading-zero); }
+.study-notes h3 { font: 560 1.05rem var(--serif); letter-spacing: -.01em; }
+.study-notes p { margin-top: .25rem; color: #2b2924; font: 400 1rem/1.6 var(--serif); }
+.quiz-question textarea { width: 100%; padding: .55rem .2rem; border: 0; border-bottom: 1px solid var(--ink); background: transparent; color: var(--ink); font: inherit; resize: vertical; }
+.quiz-question textarea:focus { outline: none; border-bottom-color: var(--signal); box-shadow: 0 1px 0 var(--signal); }
+
+/* Assignments */
+.assignment-list { counter-reset: lesson; margin-top: 2.6rem; }
+.assignment-list-header { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: .8rem; }
+.assignment-list-header h2 { font: 560 1.65rem var(--serif); letter-spacing: -.04em; }
+.assignment-page { max-width: 52rem; }
+.assignment-prompt { max-width: 62ch; margin-top: 1.2rem; font: 400 1.12rem/1.65 var(--serif); }
+.assignment-subhead { margin: 2.2rem 0 .5rem; font: 560 1.4rem var(--serif); letter-spacing: -.03em; }
+.assignment-rubric { max-width: 62ch; margin: .6rem 0 0; padding-left: 1.3rem; color: var(--muted); line-height: 1.6; }
+.assignment-rubric li { padding-left: .3rem; }
+.assignment-form { display: grid; gap: .6rem; margin-top: 2rem; max-width: 62ch; }
+.assignment-form label { color: var(--muted); font: 500 .72rem var(--mono); }
+.assignment-form textarea { width: 100%; padding: .8rem .9rem; border: 1px solid var(--ink); border-radius: 2px; background: transparent; color: var(--ink); font: 400 1rem/1.6 var(--serif); resize: vertical; }
+.assignment-form textarea:focus { outline: none; border-color: var(--signal); box-shadow: 0 0 0 3px #c8452a26; }
+.assignment-result { max-width: 62ch; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--rule); }
+.assignment-marks, .review-marks { display: grid; gap: .1rem; margin: .8rem 0 0; padding: 0; list-style: none; }
+.assignment-marks li { display: grid; grid-template-columns: 5.2rem minmax(0, 1fr); gap: .8rem; padding: .6rem 0; border-top: 1px solid var(--line); }
+.mark-state { font: 600 .72rem var(--mono); text-transform: uppercase; letter-spacing: .04em; }
+.assignment-marks li[data-met="true"] .mark-state { color: #3f6b4f; }
+.assignment-marks li[data-met="false"] .mark-state { color: var(--signal); }
+.assignment-score { margin-top: .8rem; font: 500 .8rem var(--mono); }
+.review-card { display: grid; gap: .8rem; max-width: 62ch; margin-top: 1rem; padding: 1.1rem 1.2rem; border: 1px solid var(--line); border-left: 3px solid var(--signal); }
+.review-card[data-reviewed="true"] { border-left-color: var(--ink); }
+.review-card header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .4rem 1rem; }
+.review-card h3 { font: 560 1.2rem var(--serif); }
+.review-answer { padding: .7rem .9rem; background: var(--plate); font: 400 1rem/1.6 var(--serif); white-space: pre-wrap; overflow-wrap: anywhere; }
+.review-marks li { display: grid; gap: .15rem; padding: .55rem .6rem; border-top: 1px solid var(--line); }
+.review-marks li[data-flagged="true"] { background: #c8452a14; border-left: 2px solid var(--signal); }
+.review-marks label { display: flex; align-items: flex-start; gap: .6rem; cursor: pointer; }
+.review-marks input { margin-top: .25rem; accent-color: var(--ink); }
+.review-note { padding-left: 1.6rem; color: var(--muted); font: 450 .72rem var(--mono); }
+.review-marks li[data-flagged="true"] .review-note { color: var(--signal); }
+.rubric-inputs li { grid-template-columns: 1.4rem minmax(0, 1fr) auto; }

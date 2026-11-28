@@ -15,7 +15,6 @@ const example = [
 ];
 
 let generator;
-let busy = false;
 
 function loadGenerator() {
     generator ??= import('@huggingface/transformers').then(({ pipeline, env }) => {
@@ -24,6 +23,29 @@ function loadGenerator() {
     });
     generator.catch(() => { generator = undefined; });
     return generator;
+}
+
+// One CPU model serves quizzes, notes and answer checks, so jobs run one at a time.
+// Drafting refuses to start while anything else is running; checking waits its turn.
+let tail = Promise.resolve();
+let pending = 0;
+
+function queued(task) {
+    pending++;
+    const run = tail.then(task);
+    tail = run.then(() => {}, () => {}).then(() => { pending--; });
+    return run;
+}
+
+function exclusive(task) {
+    if (pending > 0) return Promise.reject(Object.assign(new Error('Another draft is being written. Try again in a minute.'), { status: 429 }));
+    return queued(task);
+}
+
+async function chat(messages, maxTokens) {
+    const model = await loadGenerator();
+    const output = await model(messages, { max_new_tokens: maxTokens, do_sample: false });
+    return output[0].generated_text.at(-1).content;
 }
 
 const normalize = text => text.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
@@ -89,42 +111,36 @@ function shuffled(options, correctText, seed) {
 }
 
 // Draft up to `count` reviewable questions. Nothing is saved; the instructor edits and publishes.
-async function generateQuiz(markdown, { count = 3, generate } = {}) {
-    if (busy) throw Object.assign(new Error('A quiz is already being drafted. Try again in a minute.'), { status: 429 });
-    busy = true;
-    try {
-        const run = generate ?? (async (section, sentence) => {
-            const model = await loadGenerator();
-            const output = await model([{ role: 'system', content: system }, ...example, { role: 'user', content: `Section: ${section}\nSentence: ${sentence}` }], { max_new_tokens: 110, do_sample: false });
-            return output[0].generated_text.at(-1).content;
-        });
-        const { threshold } = await metadata('reranker');
-        const drafts = [];
-        const pool = candidates(markdown);
-        for (const item of pool) {
-            if (drafts.length >= count + 3) break;
-            const draft = parseDraft(await run(item.section, item.sentence));
-            if (!acceptable(draft, item.sentence)) continue;
-            const [relevance] = await score('reranker', [[draft.question, `${item.section}. ${item.passage}`]]);
-            if (relevance >= threshold) drafts.push({ ...draft, relevance, sentence: item.sentence });
-        }
-
-        const questions = [];
-        for (const draft of drafts) {
-            if (questions.length >= count) break;
-            const wrong = new Set();
-            for (const candidate of draft.distractors) {
-                const key = normalize(candidate);
-                if (key && key !== normalize(draft.answer) && !normalize(draft.sentence).includes(key) && distinct(candidate, draft.answer) && !wrong.has(candidate)) wrong.add(candidate);
-                if (wrong.size === 2) break;
-            }
-            if (wrong.size < 2) continue;
-            questions.push({ prompt: draft.question, ...shuffled([draft.answer, ...wrong], draft.answer, draft.question), source: 'generated', relevance: Number(draft.relevance.toFixed(3)) });
-        }
-        return questions;
-    } finally {
-        busy = false;
-    }
+function generateQuiz(markdown, options) {
+    return exclusive(() => draftQuiz(markdown, options));
 }
 
-module.exports = { generateQuiz, candidates, parseDraft, acceptable, modelId };
+async function draftQuiz(markdown, { count = 3, generate } = {}) {
+    const run = generate ?? ((section, sentence) => chat([{ role: 'system', content: system }, ...example, { role: 'user', content: `Section: ${section}\nSentence: ${sentence}` }], 110));
+    const { threshold } = await metadata('reranker');
+    const drafts = [];
+    const pool = candidates(markdown);
+    for (const item of pool) {
+        if (drafts.length >= count + 3) break;
+        const draft = parseDraft(await run(item.section, item.sentence));
+        if (!acceptable(draft, item.sentence)) continue;
+        const [relevance] = await score('reranker', [[draft.question, `${item.section}. ${item.passage}`]]);
+        if (relevance >= threshold) drafts.push({ ...draft, relevance, sentence: item.sentence });
+    }
+
+    const questions = [];
+    for (const draft of drafts) {
+        if (questions.length >= count) break;
+        const wrong = new Set();
+        for (const candidate of draft.distractors) {
+            const key = normalize(candidate);
+            if (key && key !== normalize(draft.answer) && !normalize(draft.sentence).includes(key) && distinct(candidate, draft.answer) && !wrong.has(candidate)) wrong.add(candidate);
+            if (wrong.size === 2) break;
+        }
+        if (wrong.size < 2) continue;
+        questions.push({ prompt: draft.question, ...shuffled([draft.answer, ...wrong], draft.answer, draft.question), source: 'generated', relevance: Number(draft.relevance.toFixed(3)) });
+    }
+    return questions;
+}
+
+module.exports = { generateQuiz, candidates, parseDraft, acceptable, modelId, exclusive, queued, chat, normalize };

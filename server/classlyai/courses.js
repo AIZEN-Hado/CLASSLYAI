@@ -1,6 +1,7 @@
 const { Router } = require('express');
 
 const { loadQuiz } = require('./practice-quizzes');
+const { loadNotes } = require('./lesson-notes');
 const { createQuizResultPdf } = require('./quiz-result-pdf');
 
 const courseColumns = 'course.id, course.slug, course.title, course.summary, membership.role';
@@ -95,7 +96,7 @@ function createCoursesRouter(pool) {
         const { role, score, ...content } = lesson;
         const questions = role === 'student' && await loadQuiz(pool, lesson.revisionId);
         const quiz = questions ? { questions: questions.map(({ prompt, options }) => ({ prompt, options })), score } : null;
-        res.json({ lesson: { ...content, quiz } });
+        res.json({ lesson: { ...content, quiz, notes: await loadNotes(pool, lesson.revisionId) } });
     });
 
     router.post('/:courseSlug/lessons/:lessonSlug/quiz', async (req, res) => {

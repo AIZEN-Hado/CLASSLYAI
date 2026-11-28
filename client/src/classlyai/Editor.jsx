@@ -105,6 +105,7 @@ function EditorForm({ path, lesson }) {
       </div>
     </form>
     <QuizEditor key={record.revisionId} path={path} />
+    <NotesEditor key={`notes-${record.revisionId}`} path={path} />
     </>
   )
 }
@@ -198,6 +199,80 @@ function QuizEditor({ path }) {
     <>
       <ResourceFeedback resource={resource} label="Loading quiz…" />
       {resource.data?.quiz && <QuizForm key={resource.data.quiz.revisionId} path={path} quiz={resource.data.quiz} />}
+    </>
+  )
+}
+
+function NotesForm({ path, notes }) {
+  const [items, setItems] = useState(notes.items.length ? notes.items : [{ heading: '', body: '', source: 'manual' }])
+  const [state, setState] = useState({ pending: false, error: null, saved: false })
+  const locked = notes.locked
+
+  const edit = (index, change) => {
+    setItems(previous => previous.map((item, i) => (i === index ? { ...item, ...change } : item)))
+    setState({ pending: false, error: null, saved: false })
+  }
+
+  async function draft() {
+    setState({ pending: true, error: null, saved: false, drafting: true })
+    try {
+      const { items: generated } = await request(path + '/notes/generate', { method: 'POST', body: {} })
+      setItems(generated)
+      setState({ pending: false, error: null, saved: false })
+    } catch (failure) {
+      setState({ pending: false, error: failure.message, saved: false })
+    }
+  }
+
+  async function save(event) {
+    event.preventDefault()
+    setState({ pending: true, error: null, saved: false })
+    try {
+      await request(path + '/notes', { method: 'PUT', body: { revisionId: notes.revisionId, items } })
+      setState({ pending: false, error: null, saved: true })
+    } catch (failure) {
+      setState({ pending: false, error: failure.message, saved: false })
+    }
+  }
+
+  return (
+    <form className="quiz-editor" onSubmit={save}>
+      <h2>Study notes</h2>
+      <p className="muted">
+        {locked
+          ? 'This revision is published, so its notes are locked. Save a new lesson revision above to write new notes; they start from these.'
+          : 'Short notes students read under the lesson. Drafting replaces the list below, so review every note before saving.'}
+      </p>
+      {items.map((item, index) => (
+        <fieldset key={index} className="quiz-question" disabled={locked || state.pending}>
+          <legend>Note {index + 1}{item.source === 'generated' && <span className="quiz-source"> · drafted by the local model, review before publishing</span>}</legend>
+          <label htmlFor={`note-heading-${index}`}>Heading</label>
+          <input id={`note-heading-${index}`} value={item.heading} maxLength={120} required onChange={event => edit(index, { heading: event.target.value })} />
+          <label htmlFor={`note-body-${index}`}>Note</label>
+          <textarea id={`note-body-${index}`} rows="3" value={item.body} maxLength={600} required onChange={event => edit(index, { body: event.target.value })} />
+          {items.length > 1 && <div className="quiz-question-actions"><button type="button" className="text-button" onClick={() => { setItems(previous => previous.filter((_, i) => i !== index)); setState({ pending: false, error: null, saved: false }) }}>Remove note</button></div>}
+        </fieldset>
+      ))}
+      {!locked && (
+        <div className="editor-actions">
+          {items.length < 12 && <button type="button" className="secondary-button" disabled={state.pending} onClick={() => setItems(previous => [...previous, { heading: '', body: '', source: 'manual' }])}><FiPlus aria-hidden="true" /> Add note</button>}
+          <button type="button" className="secondary-button" disabled={state.pending} onClick={draft}>Draft with the local model</button>
+          <button className="primary-button" type="submit" disabled={state.pending}>{state.pending ? 'Saving…' : 'Save notes'}</button>
+          <p role="status" className="muted">{state.saved && 'Notes saved.'}</p>
+        </div>
+      )}
+      {state.drafting && state.pending && <div className="loading-state" role="status"><OrbLoader size={44} /><span>Drafting notes from the lesson. This can take a minute.</span></div>}
+      {state.error && <p className="form-error" role="alert">{state.error}</p>}
+    </form>
+  )
+}
+
+function NotesEditor({ path }) {
+  const resource = useResource(path + '/notes')
+  return (
+    <>
+      <ResourceFeedback resource={resource} label="Loading notes…" />
+      {resource.data?.notes && <NotesForm key={resource.data.notes.revisionId} path={path} notes={resource.data.notes} />}
     </>
   )
 }

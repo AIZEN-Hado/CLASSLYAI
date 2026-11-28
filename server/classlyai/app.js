@@ -5,6 +5,7 @@ const { createLessonEditorRouter } = require('./lesson-editor');
 const { createSessions } = require('./session');
 const { createShortAnswerRouter } = require('./short-answer');
 const { createTutorRouter } = require('./tutor');
+const { createAssignmentsRouter } = require('./assignments');
 
 function createApp({ pool, origin, clientDirectory }) {
     const app = express();
@@ -25,7 +26,7 @@ function createApp({ pool, origin, clientDirectory }) {
     app.post('/api/auth/logout', sessions.logout);
     app.get('/api/auth/me', sessions.requireSession, (req, res) => res.json({ user: req.user }));
     app.use('/api/courses', sessions.requireSession, createCoursesRouter(pool), createLessonEditorRouter(pool),
-        createTutorRouter(pool), createShortAnswerRouter(pool));
+        createTutorRouter(pool), createShortAnswerRouter(pool), createAssignmentsRouter(pool));
 
     app.use('/api', (_req, res) => res.status(404).json({ message: 'Route not found.' }));
     if (clientDirectory) {

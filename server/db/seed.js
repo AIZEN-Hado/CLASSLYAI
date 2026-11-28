@@ -72,6 +72,14 @@ async function seedClassroom(client, passwordHashes) {
                 ON CONFLICT DO NOTHING
             `, [lesson.revisionId, index + 1, prompt, options, correct]);
         }
+
+        for (const [index, { heading, body }] of lesson.notes.entries()) {
+            await client.query(`
+                INSERT INTO classlyai.lesson_notes (revision_id, ordinal, heading, body)
+                VALUES ($1, $2, $3, $4)
+                ON CONFLICT DO NOTHING
+            `, [lesson.revisionId, index + 1, heading, body]);
+        }
     }
 }
 

@@ -13,7 +13,8 @@
     "classlyai:worker": "node --env-file-if-exists=.env classlyai/worker.js",
     "test:classlyai": "node --test 'classlyai/**/*.test.js'",
     "eval:classlyai": "node --env-file-if-exists=.env classlyai/eval/run.js",
-    "eval:models": "node classlyai/eval/models.js"
+    "eval:models": "node classlyai/eval/models.js",
+    "export:labels": "node --env-file-if-exists=.env classlyai/models/export-labels.js"
   },
   "keywords": [],
   "author": "",

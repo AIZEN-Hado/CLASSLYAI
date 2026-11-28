@@ -49,3 +49,23 @@ In the tutor the reranker filters and orders the retrieved passages; the extract
 ## Limits
 
 Synthetic, English-only data authored by one author; 12 lessons and a 20-passage test pool are small, and the author could see the test lessons when writing the corpus. The `corpusSha256` in `artifacts/reranker/classlyai.json` hashes the file before the seeded test questions were appended; train and dev content is unchanged. The `.onnx` files are 23 MB each.
+
+## Drafting and checking for the ported Classly features
+
+A pretrained Qwen2.5-1.5B-Instruct (ONNX, int4, not fine-tuned) runs locally through the same Transformers.js runtime. It downloads about 1.5 GB into the git-ignored `server/.cache/models` on first use, and one CPU job runs at a time.
+
+- **Quiz drafting** (`quiz-generator.js`, `node classlyai/eval/models.js quiz`). Each draft must quote its answer from the lesson sentence, must not contain its answer or a dangling pronoun, must not use near-synonym distractors, and must be confirmed against the source passage by the reranker. On the six held-out lessons it drafted 8 of 12 requested questions, with 2 of 4 lessons getting a full three. The first, looser filter gave 12 of 12 but with visibly worse questions. Roughly 75 to 115 s per quiz. Nothing is published without an instructor.
+- **Notes drafting** (`notes-generator.js`). One note per section, kept only if most content words appear in the section, otherwise the section's first sentence. One live run: 66 s for six sections, a mix of good notes and fallbacks. Unmeasured beyond that.
+- **Answer checking for assignments** (`checker.js`, `node classlyai/eval/models.js checker`). The local model judges each rubric point yes or no; the fine-tuned encoder is a second opinion; a disagreement is flagged for the instructor. On 48 synthetic answers to four criteria the encoder never saw (24 meeting the criterion, authored by the assistant):
+
+| Method | Accuracy | False credit | Missed credit |
+| --- | ---: | ---: | ---: |
+| Word overlap | 0.65 | 1 | 16 |
+| Fine-tuned encoder, no new training | 0.90 | 3 | 2 |
+| Local judge | 0.98 | 1 | 0 |
+
+When judge and encoder agreed (42 of 48), all 42 marks were correct. The six disagreements were flagged and contained the judge's only error. In a live submission the judge awarded a point the answer never made, and the encoder disagreement flagged it for review. Marks stay advisory until an instructor confirms them. These are small synthetic sets, so read them as a signal, not an accuracy guarantee. A single submission takes about 30 s for three points.
+
+### Learning from instructor decisions
+
+Each time an instructor reviews a submission, the confirmed or overridden marks are kept. `npm run export:labels --prefix server > labels.jsonl` writes them as `{criterion, answer, label, changed}` lines. Retrain on a GPU or CPU pod with `python3 train.py grader OUT_DIR labels.jsonl`, which adds the reviewed marks to the final fit only. Ship the new model only if it does at least as well as the current one on the blind set (35 of 40 exact) and on `eval:models checker`. Nothing retrains or changes by itself, and no retraining run has happened yet because there are no real instructor labels.

@@ -1,6 +1,8 @@
 const { Router } = require('express');
 const { loadQuiz, replaceQuiz, validateQuestions } = require('./practice-quizzes');
 const { generateQuiz } = require('./models/quiz-generator');
+const { generateNotes } = require('./models/notes-generator');
+const { loadNotes, replaceNotes, validateNotes } = require('./lesson-notes');
 
 const maxMarkdownBytes = 12_000;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -94,6 +96,10 @@ function createLessonEditorRouter(pool) {
                     INSERT INTO classlyai.quiz_questions (revision_id, ordinal, prompt, options, correct, source)
                     SELECT $1, ordinal, prompt, options, correct, source FROM classlyai.quiz_questions WHERE revision_id = $2
                 `, [created.id, current.revisionId]);
+                await client.query(`
+                    INSERT INTO classlyai.lesson_notes (revision_id, ordinal, heading, body, source)
+                    SELECT $1, ordinal, heading, body, source FROM classlyai.lesson_notes WHERE revision_id = $2
+                `, [created.id, current.revisionId]);
             }
             return readLesson(client, ...scope);
         });
@@ -169,6 +175,45 @@ function createLessonEditorRouter(pool) {
         if (result === 'locked') return res.status(409).json({ message: 'This revision is published. Save a new lesson revision to write a new quiz.' });
         if (!result) return notFound(res);
         res.json({ quiz: { revisionId: req.body.revisionId.toLowerCase(), locked: false, questions } });
+    });
+
+    router.get(`${path}/notes`, async (req, res) => {
+        const lesson = await readLesson(pool, ...lessonScope(req));
+        if (!lesson) return notFound(res);
+        const { rows: [revision] } = await pool.query('SELECT published_at IS NOT NULL AS locked FROM classlyai.lesson_revisions WHERE id = $1', [lesson.revisionId]);
+        res.json({ notes: { revisionId: lesson.revisionId, locked: revision.locked, items: await loadNotes(pool, lesson.revisionId) } });
+    });
+
+    // Drafts only: nothing is stored until the instructor reviews the notes and saves them with PUT.
+    router.post(`${path}/notes/generate`, async (req, res) => {
+        const lesson = await readLesson(pool, ...lessonScope(req));
+        if (!lesson) return notFound(res);
+        try {
+            res.json({ items: (await generateNotes(lesson.markdown)).map(({ heading, body, source }) => ({ heading, body, source })) });
+        } catch (error) {
+            if (error.status !== 429) throw error;
+            res.status(429).json({ message: error.message });
+        }
+    });
+
+    router.put(`${path}/notes`, async (req, res) => {
+        const items = validateNotes(req.body?.items);
+        if (!items) return res.status(400).json({ message: 'Write 1 to 12 notes, each with a heading up to 120 characters and text up to 600 characters.' });
+        if (typeof req.body.revisionId !== 'string' || !uuidPattern.test(req.body.revisionId)) {
+            return res.status(400).json({ message: 'Save a lesson revision before writing its notes.' });
+        }
+
+        const result = await withLesson(pool, req, async (client, current) => {
+            if (current.revisionId !== req.body.revisionId.toLowerCase()) return 'stale';
+            const { rows: [revision] } = await client.query('SELECT published_at IS NOT NULL AS locked FROM classlyai.lesson_revisions WHERE id = $1 FOR SHARE', [current.revisionId]);
+            if (revision.locked) return 'locked';
+            await replaceNotes(client, current.revisionId, items);
+            return 'saved';
+        });
+        if (result === 'stale') return res.status(409).json({ message: 'Reload the editor and edit the latest revision.' });
+        if (result === 'locked') return res.status(409).json({ message: 'This revision is published. Save a new lesson revision to write new notes.' });
+        if (!result) return notFound(res);
+        res.json({ notes: { revisionId: req.body.revisionId.toLowerCase(), locked: false, items } });
     });
 
     return router;

@@ -158,10 +158,52 @@ async function draftQuizzes() {
     return report;
 }
 
+// Can a checker mark rubric points it was never trained on? Four unseen criteria, 12 synthetic answers each.
+async function checkUnseenCriteria() {
+    const { chat } = require('../models/quiz-generator');
+    const rows = readFileSync(join(models, 'checker-eval.jsonl'), 'utf8').trim().split('\n').map(line => JSON.parse(line));
+    const stem = text => questionTerms(text).filter(term => term.length >= 4).map(term => term.slice(0, 5));
+    const methods = {
+        wordOverlap: async ({ criterion, answer }) => {
+            const need = [...new Set(stem(criterion.replace(/^The answer says /, '')))];
+            const have = new Set(stem(answer));
+            return need.filter(term => have.has(term)).length / need.length >= 0.5;
+        },
+        fineTunedEncoder: async ({ criterion, answer }) => (await score('grader', [[criterion, answer]]))[0] >= 0.5,
+        localJudge: async ({ criterion, answer }) => /^yes/i.test((await chat([
+            { role: 'system', content: 'You mark one rubric point on a student answer. Reply with one word: yes if the answer clearly states what the rubric point requires, otherwise no. A related but different statement is no.' },
+            { role: 'user', content: `Rubric point: ${criterion}\nStudent answer: ${answer}` }
+        ], 3)).trim())
+    };
+    const report = { rows: rows.length, positives: rows.filter(row => row.label === 1).length, labelSource: 'synthetic, authored by the assistant' };
+    const all = {};
+    for (const [name, predict] of Object.entries(methods)) {
+        const predictions = [];
+        for (const row of rows) predictions.push(Number(await predict(row)));
+        all[name] = predictions;
+        report[name] = {
+            accuracy: round(predictions.filter((value, index) => value === rows[index].label).length / rows.length),
+            falseCredit: predictions.filter((value, index) => value === 1 && rows[index].label === 0).length,
+            missedCredit: predictions.filter((value, index) => value === 0 && rows[index].label === 1).length
+        };
+    }
+    // The judge decides each mark; the encoder is a second opinion, and a disagreement is flagged for the instructor.
+    const agree = rows.map((_, index) => all.localJudge[index] === all.fineTunedEncoder[index]);
+    const correct = index => all.localJudge[index] === rows[index].label;
+    report.judgeWithEncoderCheck = {
+        agreed: agree.filter(Boolean).length,
+        accuracyWhenAgreed: round(rows.filter((_, index) => agree[index] && correct(index)).length / agree.filter(Boolean).length),
+        flaggedForReview: agree.filter(value => !value).length,
+        judgeErrorsAmongFlagged: rows.filter((_, index) => !agree[index] && !correct(index)).length,
+        judgeErrorsAmongAgreed: rows.filter((_, index) => agree[index] && !correct(index)).length
+    };
+    return report;
+}
+
 async function main() {
     const task = process.argv[2];
-    if (!['grader', 'reranker', 'quiz'].includes(task)) throw new Error('Usage: node classlyai/eval/models.js grader|reranker|quiz');
-    const run = { grader: gradeBlindSet, reranker: rankTestLessons, quiz: draftQuizzes }[task];
+    if (!['grader', 'reranker', 'quiz', 'checker'].includes(task)) throw new Error('Usage: node classlyai/eval/models.js grader|reranker|quiz|checker');
+    const run = { grader: gradeBlindSet, reranker: rankTestLessons, quiz: draftQuizzes, checker: checkUnseenCriteria }[task];
     console.log(JSON.stringify(await run(), null, 2));
 }
 

@@ -96,7 +96,7 @@ def export(model, directory, meta, probe):
     print(json.dumps(meta, indent=2))
 
 
-def grader(out):
+def grader(out, extra=None):
     rows = [json.loads(line) for name in ('train', 'heldout') for line in (GRADER / f'{name}.jsonl').read_text().splitlines()]
     pairs = [(point, row['answer']) for row in rows for point in POINTS]
     labels = [row['points'][i] for row in rows for i in range(2)]
@@ -115,9 +115,13 @@ def grader(out):
         cv[epochs] = exact / len(rows)
         print('cv exact score', epochs, cv[epochs], flush=True)
     best = max(cv, key=cv.get)
-    export(fit(pairs, labels, best), out, {
+    # Instructor-reviewed marks exported by export-labels.js join the final fit only; cross-validation stays on the original rows.
+    extra_rows = [json.loads(line) for line in Path(extra).read_text().splitlines() if line.strip()] if extra else []
+    final_pairs = pairs + [(row['criterion'], row['answer']) for row in extra_rows]
+    final_labels = labels + [row['label'] for row in extra_rows]
+    export(fit(final_pairs, final_labels, best), out, {
         'task': 'grader', 'base': BASE, 'points': POINTS, 'threshold': .5, 'epochs': best, 'cvExactScore': cv,
-        'trainRows': len(rows), 'trainSha256': sha(GRADER / 'train.jsonl'), 'heldoutSha256': sha(GRADER / 'heldout.jsonl'),
+        'trainRows': len(rows), 'extraReviewedMarks': len(extra_rows), 'trainSha256': sha(GRADER / 'train.jsonl'), 'heldoutSha256': sha(GRADER / 'heldout.jsonl'),
         'blindSha256NotRead': (HERE / 'blind.sha256').read_text().split()[0]}, pairs[:60])
 
 
@@ -161,4 +165,4 @@ def reranker(out):
 
 
 if __name__ == '__main__':
-    {'grader': grader, 'reranker': reranker}[sys.argv[1]](sys.argv[2])
+    {'grader': grader, 'reranker': reranker}[sys.argv[1]](*sys.argv[2:4])

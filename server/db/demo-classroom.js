@@ -39,6 +39,11 @@ const courses = [
                 { prompt: 'A client loses the response after a purchase commits. How should it retry?',
                     options: ['Create a new purchase ID.', 'Reuse the original idempotency key.', 'Increase the connection pool size.'], correct: 1 }
             ],
+            notes: [
+                { heading: 'Atomic writes', body: 'A transaction commits its writes together. If a purchase fails partway, rolling back discards both the enrollment and the receipt.' },
+                { heading: 'Retrying a request', body: 'A client can lose the response after the server commits. An idempotency key lets the server recognize the retry and return the original result.' },
+                { heading: 'Queue leases', body: 'A worker claims a job with a lease. If the worker stops, the lease expires and another worker can take the job.' }
+            ],
             markdown: `## Atomic writes
 
 A transaction commits its writes together. Rolling back a transaction discards its writes. If a course purchase creates an enrollment and a receipt in one transaction, a failure rolls back both records.
@@ -80,6 +85,11 @@ Indexes let a database locate records efficiently. Each extra index also adds wo
                     options: ['After generating the answer.', 'Only when opening a citation.', 'Before ranking candidate passages.'], correct: 2 },
                 { prompt: 'Three of four relevant passages appear in the first five results. What is recall at five?',
                     options: ['60%', '75%', '80%'], correct: 1 }
+            ],
+            notes: [
+                { heading: 'Retrieval recall', body: 'Recall at five is the fraction of relevant passages found in the first five results. Label the relevant passages first and compare methods on the same questions.' },
+                { heading: 'Isolation', body: 'Filter candidate passages by course membership before ranking, so a similar passage from another course never appears in results or citations.' },
+                { heading: 'Unsupported questions', body: 'Test questions the course cannot answer, and record whether the tutor says the evidence is insufficient.' }
             ],
             markdown: `## Retrieval recall
 
