@@ -33,6 +33,12 @@ const courses = [
             revisionId: 'c1a55000-0000-4000-8000-000000000301',
             slug: 'transactions-and-retries',
             title: 'Transactions and retries',
+            quiz: [
+                { prompt: 'A purchase transaction rolls back. What happens to the enrollment and receipt it created?',
+                    options: ['Both writes are discarded.', 'Only the receipt is discarded.', 'Both writes are committed.'], correct: 0 },
+                { prompt: 'A client loses the response after a purchase commits. How should it retry?',
+                    options: ['Create a new purchase ID.', 'Reuse the original idempotency key.', 'Increase the connection pool size.'], correct: 1 }
+            ],
             markdown: `## Atomic writes
 
 A transaction commits its writes together. Rolling back a transaction discards its writes. If a course purchase creates an enrollment and a receipt in one transaction, a failure rolls back both records.
@@ -69,6 +75,12 @@ Indexes let a database locate records efficiently. Each extra index also adds wo
             revisionId: 'c1a55000-0000-4000-8000-000000000302',
             slug: 'retrieval-benchmarks',
             title: 'Retrieval benchmarks and isolation',
+            quiz: [
+                { prompt: 'When should retrieval filter passages by course membership?',
+                    options: ['After generating the answer.', 'Only when opening a citation.', 'Before ranking candidate passages.'], correct: 2 },
+                { prompt: 'Three of four relevant passages appear in the first five results. What is recall at five?',
+                    options: ['60%', '75%', '80%'], correct: 1 }
+            ],
             markdown: `## Retrieval recall
 
 Recall at five is the fraction of relevant passages that appear in the first five results. Label relevant passages before running the benchmark. Compare ranking methods using the same questions and document corpus.

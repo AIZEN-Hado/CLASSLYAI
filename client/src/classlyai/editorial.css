@@ -169,3 +169,51 @@ a:hover { color: var(--signal); text-decoration-color: currentColor; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; }
 }
+
+/* Orientation: date eyebrow, course progress, lesson index, tutor starters */
+.eyebrow { margin-bottom: .9rem; color: var(--muted); font: 450 .74rem var(--mono); letter-spacing: .02em; text-transform: uppercase; }
+.send-button { color: var(--paper); }
+.send-button svg { color: var(--paper); }
+.send-button:disabled { background: var(--muted); opacity: .45; }
+.course-progress { display: grid; gap: .5rem; width: min(100%, 22rem); margin-top: 1.4rem; }
+.progress-segments { display: flex; gap: 3px; }
+.progress-segments i { flex: 1; height: .38rem; background: var(--line); }
+.progress-segments i[data-done="true"] { background: var(--ink); }
+.lesson-list { counter-reset: lesson; }
+.lesson-row { counter-increment: lesson; grid-template-columns: 2.4rem minmax(0, 1fr) auto; min-height: 3.6rem; }
+.lesson-row .lesson-icon { display: none; }
+.lesson-row::before { color: var(--muted); font: 450 .74rem var(--mono); content: counter(lesson, decimal-leading-zero); }
+.lesson-row > span:nth-child(2) { font-family: var(--serif); font-size: 1.15rem; letter-spacing: -.015em; }
+.lesson-status { display: inline-flex; align-items: center; gap: .5rem; color: var(--muted); font: 450 .72rem var(--mono); }
+.lesson-row:hover .lesson-status { color: var(--signal); }
+.tutor-starters { display: grid; gap: .45rem; margin-top: .4rem; }
+.starter { padding: .6rem .75rem; border: 1px solid var(--line); border-radius: 2px; background: transparent; color: var(--ink); font: 400 .86rem/1.4 var(--serif); text-align: left; transition: border-color 160ms, background-color 160ms, transform 120ms; }
+.starter:hover { border-color: var(--ink); background: var(--plate); }
+.starter:active { transform: translateY(1px); }
+
+/* Instructor quiz editor */
+.quiz-editor { display: grid; gap: 1rem; margin-top: 2.4rem; padding-top: 1.6rem; border-top: 1px solid var(--rule); max-width: 46rem; }
+.quiz-editor h2 { font-size: 1.7rem; }
+.quiz-question { display: grid; gap: .5rem; min-inline-size: 0; margin: 0; padding: 1rem 1.1rem 1.1rem; border: 1px solid var(--line); border-left: 3px solid var(--ink); border-radius: 0; }
+.quiz-question legend { padding: 0 .4rem; font: 500 .74rem var(--mono); color: var(--muted); }
+.quiz-source { color: var(--signal); }
+.quiz-question label { color: var(--muted); font: 500 .72rem var(--mono); }
+.quiz-question input:not([type="radio"]) { width: 100%; min-height: 2.6rem; padding: .5rem .2rem; border: 0; border-bottom: 1px solid var(--ink); background: transparent; color: var(--ink); font: inherit; }
+.quiz-question input:not([type="radio"]):focus { outline: none; border-bottom-color: var(--signal); box-shadow: 0 1px 0 var(--signal); }
+.quiz-options { display: grid; gap: .35rem; margin: .4rem 0 0; padding: 0; list-style: none; }
+.quiz-options li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: .6rem; }
+.quiz-options input[type="radio"] { accent-color: var(--signal); width: 1.1rem; height: 1.1rem; margin: 0; }
+.quiz-question-actions { display: flex; flex-wrap: wrap; gap: 1.2rem; }
+.quiz-question:disabled { opacity: .8; }
+
+/* Saved tutor chats */
+.tutor-heading { flex-wrap: wrap; }
+.new-chat { margin-left: auto; font-size: .78rem; }
+.tutor-history { padding: .7rem 0; border-bottom: 1px solid var(--line); font-size: .86rem; }
+.tutor-history summary { width: fit-content; color: var(--muted); font: 500 .72rem var(--mono); cursor: pointer; }
+.tutor-history ul { display: grid; gap: .1rem; margin: .5rem 0 0; padding: 0; list-style: none; }
+.tutor-history li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .3rem; }
+.tutor-history li[aria-current] .text-button { color: var(--signal); }
+.tutor-history .text-button { min-height: 2.4rem; justify-content: flex-start; overflow: hidden; text-align: left; text-overflow: ellipsis; white-space: nowrap; font-weight: 520; }
+.exchange { display: grid; gap: .8rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+.exchange:last-of-type { border-bottom: 0; }

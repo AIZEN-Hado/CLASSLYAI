@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { FiArrowLeft, FiCheck, FiFileText } from 'react-icons/fi'
+import { FiArrowLeft, FiCheck, FiFileText, FiPlus, FiTrash2 } from 'react-icons/fi'
 import { Link, useParams } from 'react-router-dom'
 import { request, useResource } from './api.js'
 import { ResourceFeedback } from './components.jsx'
+import OrbLoader from './OrbLoader.jsx'
 
 const statusLabels = {
   draft: 'Draft',
@@ -78,6 +79,7 @@ function EditorForm({ path, lesson }) {
   }
 
   return (
+    <>
     <form className="editor-form" onSubmit={save}>
       <div className="editor-fields">
         <label htmlFor="lesson-title">Lesson title</label>
@@ -102,6 +104,101 @@ function EditorForm({ path, lesson }) {
         </div>
       </div>
     </form>
+    <QuizEditor key={record.revisionId} path={path} />
+    </>
+  )
+}
+
+const blankQuestion = () => ({ prompt: '', options: ['', ''], correct: 0, source: 'manual' })
+
+function QuizForm({ path, quiz }) {
+  const [questions, setQuestions] = useState(quiz.questions.length ? quiz.questions : [blankQuestion()])
+  const [state, setState] = useState({ pending: false, error: null, saved: false })
+  const locked = quiz.locked
+
+  const edit = (index, change) => {
+    setQuestions(previous => previous.map((question, i) => (i === index ? { ...question, ...change } : question)))
+    setState({ pending: false, error: null, saved: false })
+  }
+
+  function removeOption(index, optionIndex) {
+    const question = questions[index]
+    const options = question.options.filter((_, i) => i !== optionIndex)
+    const correct = question.correct === optionIndex ? 0 : question.correct > optionIndex ? question.correct - 1 : question.correct
+    edit(index, { options, correct })
+  }
+
+  async function draft() {
+    setState({ pending: true, error: null, saved: false, drafting: true })
+    try {
+      const { questions: generated } = await request(path + '/quiz/generate', { method: 'POST', body: {} })
+      setQuestions(previous => [...previous.filter(question => question.prompt.trim()), ...generated.map(({ prompt, options, correct, source }) => ({ prompt, options, correct, source }))].slice(0, 10))
+      setState({ pending: false, error: null, saved: false })
+    } catch (failure) {
+      setState({ pending: false, error: failure.message, saved: false })
+    }
+  }
+
+  async function save(event) {
+    event.preventDefault()
+    setState({ pending: true, error: null, saved: false })
+    try {
+      await request(path + '/quiz', { method: 'PUT', body: { revisionId: quiz.revisionId, questions } })
+      setState({ pending: false, error: null, saved: true })
+    } catch (failure) {
+      setState({ pending: false, error: failure.message, saved: false })
+    }
+  }
+
+  return (
+    <form className="quiz-editor" onSubmit={save}>
+      <h2>Practice quiz</h2>
+      <p className="muted">
+        {locked
+          ? 'This revision is published, so its quiz is locked. Save a new lesson revision above to write a new quiz; it starts from these questions.'
+          : 'Students take this quiz once the revision is published. Mark the correct option for each question.'}
+      </p>
+      {questions.map((question, index) => (
+        <fieldset key={index} className="quiz-question" disabled={locked || state.pending}>
+          <legend>Question {index + 1}{question.source === 'generated' && <span className="quiz-source"> · drafted by the local model, review before publishing</span>}</legend>
+          <label htmlFor={`prompt-${index}`}>Prompt</label>
+          <input id={`prompt-${index}`} value={question.prompt} maxLength={300} required onChange={event => edit(index, { prompt: event.target.value })} />
+          <ul className="quiz-options">
+            {question.options.map((option, optionIndex) => (
+              <li key={optionIndex}>
+                <input type="radio" name={`correct-${index}`} checked={question.correct === optionIndex} onChange={() => edit(index, { correct: optionIndex })} aria-label={`Option ${optionIndex + 1} is correct`} />
+                <input value={option} maxLength={200} required aria-label={`Option ${optionIndex + 1}`} onChange={event => edit(index, { options: question.options.map((value, i) => (i === optionIndex ? event.target.value : value)) })} />
+                {question.options.length > 2 && <button type="button" className="icon-button" aria-label={`Remove option ${optionIndex + 1}`} onClick={() => removeOption(index, optionIndex)}><FiTrash2 aria-hidden="true" /></button>}
+              </li>
+            ))}
+          </ul>
+          <div className="quiz-question-actions">
+            {question.options.length < 6 && <button type="button" className="text-button" onClick={() => edit(index, { options: [...question.options, ''] })}><FiPlus aria-hidden="true" /> Add option</button>}
+            {questions.length > 1 && <button type="button" className="text-button" onClick={() => { setQuestions(previous => previous.filter((_, i) => i !== index)); setState({ pending: false, error: null, saved: false }) }}>Remove question</button>}
+          </div>
+        </fieldset>
+      ))}
+      {!locked && (
+        <div className="editor-actions">
+          {questions.length < 10 && <button type="button" className="secondary-button" disabled={state.pending} onClick={() => setQuestions(previous => [...previous, blankQuestion()])}><FiPlus aria-hidden="true" /> Add question</button>}
+          {questions.length < 10 && <button type="button" className="secondary-button" disabled={state.pending} onClick={draft}>Draft with the local model</button>}
+          <button className="primary-button" type="submit" disabled={state.pending}>{state.pending ? 'Saving…' : 'Save quiz'}</button>
+          <p role="status" className="muted">{state.saved && 'Quiz saved.'}</p>
+        </div>
+      )}
+      {state.drafting && state.pending && <div className="loading-state" role="status"><OrbLoader size={44} /><span>Drafting questions from the lesson. This can take a minute.</span></div>}
+      {state.error && <p className="form-error" role="alert">{state.error}</p>}
+    </form>
+  )
+}
+
+function QuizEditor({ path }) {
+  const resource = useResource(path + '/quiz')
+  return (
+    <>
+      <ResourceFeedback resource={resource} label="Loading quiz…" />
+      {resource.data?.quiz && <QuizForm key={resource.data.quiz.revisionId} path={path} quiz={resource.data.quiz} />}
+    </>
   )
 }
 

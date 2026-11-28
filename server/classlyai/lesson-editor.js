@@ -1,4 +1,6 @@
 const { Router } = require('express');
+const { loadQuiz, replaceQuiz, validateQuestions } = require('./practice-quizzes');
+const { generateQuiz } = require('./models/quiz-generator');
 
 const maxMarkdownBytes = 12_000;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -82,10 +84,17 @@ function createLessonEditorRouter(pool) {
 
         const lesson = await withLesson(pool, req, async (client, current, scope) => {
             if (current.title === title && current.markdown === markdown) return current;
-            await client.query(`
+            const { rows: [created] } = await client.query(`
                 INSERT INTO classlyai.lesson_revisions (lesson_id, revision_number, authored_by, title, markdown)
-                VALUES ($1, $2, $3, $4, $5)
+                VALUES ($1, $2, $3, $4, $5) RETURNING id
             `, [current.id, (current.revisionNumber ?? 0) + 1, req.user.id, title, markdown]);
+            // The new revision starts from the previous questions; the instructor reviews them before publishing.
+            if (current.revisionId) {
+                await client.query(`
+                    INSERT INTO classlyai.quiz_questions (revision_id, ordinal, prompt, options, correct, source)
+                    SELECT $1, ordinal, prompt, options, correct, source FROM classlyai.quiz_questions WHERE revision_id = $2
+                `, [created.id, current.revisionId]);
+            }
             return readLesson(client, ...scope);
         });
         if (!lesson) return notFound(res);
@@ -115,6 +124,51 @@ function createLessonEditorRouter(pool) {
         if (lesson === false) return res.status(409).json({ message: 'Reload the editor and publish the latest revision.' });
         if (!lesson) return notFound(res);
         res.json({ lesson });
+    });
+
+    router.get(`${path}/quiz`, async (req, res) => {
+        const lesson = await readLesson(pool, ...lessonScope(req));
+        if (!lesson) return notFound(res);
+        const { rows: [revision] } = await pool.query('SELECT published_at IS NOT NULL AS locked FROM classlyai.lesson_revisions WHERE id = $1', [lesson.revisionId]);
+        res.json({ quiz: { revisionId: lesson.revisionId, locked: revision.locked, questions: (await loadQuiz(pool, lesson.revisionId)) ?? [] } });
+    });
+
+    // Drafts only: nothing is stored until the instructor reviews the questions and saves them with PUT.
+    router.post(`${path}/quiz/generate`, async (req, res) => {
+        const lesson = await readLesson(pool, ...lessonScope(req));
+        if (!lesson) return notFound(res);
+        try {
+            const questions = await generateQuiz(lesson.markdown);
+            if (!questions.length) {
+                return res.status(422).json({ message: 'The local model could not draft grounded questions from this lesson. Write them by hand or add more detail.' });
+            }
+            res.json({ questions });
+        } catch (error) {
+            if (error.status !== 429) throw error;
+            res.status(429).json({ message: error.message });
+        }
+    });
+
+    router.put(`${path}/quiz`, async (req, res) => {
+        const questions = validateQuestions(req.body?.questions);
+        if (!questions) {
+            return res.status(400).json({ message: 'Write 1 to 10 questions, each with a prompt up to 300 characters, 2 to 6 different options, and one marked answer.' });
+        }
+        if (typeof req.body.revisionId !== 'string' || !uuidPattern.test(req.body.revisionId)) {
+            return res.status(400).json({ message: 'Save a lesson revision before writing its quiz.' });
+        }
+
+        const result = await withLesson(pool, req, async (client, current) => {
+            if (current.revisionId !== req.body.revisionId.toLowerCase()) return 'stale';
+            const { rows: [revision] } = await client.query('SELECT published_at IS NOT NULL AS locked FROM classlyai.lesson_revisions WHERE id = $1 FOR SHARE', [current.revisionId]);
+            if (revision.locked) return 'locked';
+            await replaceQuiz(client, current.revisionId, questions);
+            return 'saved';
+        });
+        if (result === 'stale') return res.status(409).json({ message: 'Reload the editor and edit the latest revision.' });
+        if (result === 'locked') return res.status(409).json({ message: 'This revision is published. Save a new lesson revision to write a new quiz.' });
+        if (!result) return notFound(res);
+        res.json({ quiz: { revisionId: req.body.revisionId.toLowerCase(), locked: false, questions } });
     });
 
     return router;

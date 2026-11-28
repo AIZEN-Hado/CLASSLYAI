@@ -53,13 +53,15 @@ function SignIn({ onSignIn }) {
   )
 }
 
-function CourseList({ resource }) {
+function CourseList({ resource, name }) {
   const resume = resource.data?.courses.filter(course => course.resume)
     .sort((left, right) => Date.parse(right.resume.lastViewedAt) - Date.parse(left.resume.lastViewedAt))[0]
 
   return (
     <section className="content-page course-library">
-      <h1>My courses</h1>
+      <p className="eyebrow">{new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+      <h1>{name ? `${name.trim().split(/\s+/)[0]}’s courses` : 'My courses'}</h1>
+      {resource.data && <p className="page-description">{resource.data.courses.length} {resource.data.courses.length === 1 ? 'course' : 'courses'}{resume ? ' · one lesson in progress' : ''}</p>}
       <ResourceFeedback resource={resource} label="Loading your courses…" />
       {resource.data?.courses.length === 0 && <p className="muted">Your course list is empty. Ask an instructor for access.</p>}
       {resume && (
@@ -153,6 +155,15 @@ function CoursePage({ onProgressChange }) {
             <div>
               <h1>{lessonSlug ? lesson?.title || 'Lesson' : course.title}</h1>
               {!lessonSlug && course.summary && <p className="page-description">{course.summary}</p>}
+              {!lessonSlug && course.role === 'student' && course.lessons.length > 0 && (() => {
+                const done = course.lessons.filter(item => completionOverrides[item.id] ?? item.completed).length
+                return (
+                  <div className="course-progress" role="img" aria-label={`${done} of ${course.lessons.length} lessons complete`}>
+                    <span className="small-label">{done} of {course.lessons.length} complete</span>
+                    <span className="progress-segments">{course.lessons.map(item => <i key={item.id} data-done={Boolean(completionOverrides[item.id] ?? item.completed)} />)}</span>
+                  </div>
+                )
+              })()}
             </div>
             <div className="course-actions">
               {course.role === 'instructor' && <Link className="secondary-button" to={`${lessonPath || coursePath}/editor`}><FiEdit3 aria-hidden="true" /> Edit lesson</Link>}
@@ -195,13 +206,13 @@ function CoursePage({ onProgressChange }) {
                       <span>{item.title}</span>
                       {(completionOverrides[item.id] ?? item.completed)
                         ? <span className="published-label"><FiCheck aria-hidden="true" /> Complete</span>
-                        : <FiArrowRight aria-hidden="true" />}
+                        : <span className="lesson-status">Not started <FiArrowRight aria-hidden="true" /></span>}
                     </Link>
                   ))}
                 </div>
               )}
             </div>
-            <Tutor key={courseSlug} courseSlug={courseSlug} />
+            <Tutor key={courseSlug} courseSlug={courseSlug} topics={course.lessons?.map(item => item.title)} />
           </div>
         </>
       )}
@@ -249,7 +260,7 @@ function Workspace({ user, onSignOut }) {
         </nav>
         <main id="workspace-content" className="workspace-main" tabIndex="-1">
           <Routes>
-            <Route path="/" element={<CourseList resource={courses} />} />
+            <Route path="/" element={<CourseList resource={courses} name={user.displayName} />} />
             <Route path="/courses/:courseSlug" element={<CoursePage onProgressChange={courses.retry} />} />
             <Route path="/courses/:courseSlug/lessons/:lessonSlug" element={<CoursePage onProgressChange={courses.retry} />} />
             <Route path="/courses/:courseSlug/editor" element={<Editor />} />

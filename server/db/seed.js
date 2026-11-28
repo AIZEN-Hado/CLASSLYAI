@@ -53,17 +53,25 @@ async function seedClassroom(client, passwordHashes) {
             ON CONFLICT (id) DO NOTHING
         `, [lesson.id, id, lesson.slug]);
 
-        if (rowCount === 0) continue;
+        if (rowCount > 0) {
+            await client.query(`
+                INSERT INTO classlyai.lesson_revisions (id, lesson_id, revision_number, authored_by, title, markdown, published_at)
+                VALUES ($1, $2, 1, $3, $4, $5, now())
+            `, [lesson.revisionId, lesson.id, instructorId, lesson.title, lesson.markdown]);
 
-        await client.query(`
-            INSERT INTO classlyai.lesson_revisions (id, lesson_id, revision_number, authored_by, title, markdown, published_at)
-            VALUES ($1, $2, 1, $3, $4, $5, now())
-        `, [lesson.revisionId, lesson.id, instructorId, lesson.title, lesson.markdown]);
+            await client.query(`
+                UPDATE classlyai.lessons SET active_revision_id = $1, requested_revision_id = $1 WHERE id = $2
+            `, [lesson.revisionId, lesson.id]);
+            await client.query('INSERT INTO classlyai.ingestion_jobs (revision_id) VALUES ($1)', [lesson.revisionId]);
+        }
 
-        await client.query(`
-            UPDATE classlyai.lessons SET active_revision_id = $1, requested_revision_id = $1 WHERE id = $2
-        `, [lesson.revisionId, lesson.id]);
-        await client.query('INSERT INTO classlyai.ingestion_jobs (revision_id) VALUES ($1)', [lesson.revisionId]);
+        for (const [index, { prompt, options, correct }] of lesson.quiz.entries()) {
+            await client.query(`
+                INSERT INTO classlyai.quiz_questions (revision_id, ordinal, prompt, options, correct)
+                VALUES ($1, $2, $3, $4, $5)
+                ON CONFLICT DO NOTHING
+            `, [lesson.revisionId, index + 1, prompt, options, correct]);
+        }
     }
 }
 

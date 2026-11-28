@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { FiArrowRight, FiBookOpen, FiSend, FiX } from 'react-icons/fi'
+import { FiArrowRight, FiBookOpen, FiSend, FiTrash2, FiX } from 'react-icons/fi'
 import { request, useResource } from './api.js'
 
 function RetrievalDetails({ trace }) {
@@ -82,13 +82,79 @@ function EvidenceDialog({ courseSlug, citation, onClose }) {
   )
 }
 
-function Tutor({ courseSlug }) {
+function Exchange({ item, onCite }) {
+  const { question, answer } = item
+  const citations = answer.citations ?? []
+  return (
+    <div className="exchange">
+      <p className="question">{question}</p>
+      {answer.status === 'insufficient_evidence' && <p>The published lessons don’t give enough evidence to answer that question.</p>}
+      {answer.status === 'answered' && answer.claims?.map((claim, index) => (
+        <p key={index} className="claim">
+          {claim.text}
+          {claim.citationIds?.map(id => {
+            const position = citations.findIndex(source => source.id === id)
+            if (position < 0) return null
+            const source = citations[position]
+            return <button key={id} className="citation-button" type="button" onClick={() => onCite(source)} aria-label={`Open source ${position + 1}, ${source.lessonTitle}`}>{position + 1}</button>
+          })}
+        </p>
+      ))}
+      {citations.length > 0 && (
+        <div className="tutor-sources">
+          <h3 className="small-label">Sources</h3>
+          {citations.map((source, index) => (
+            <button key={source.id} type="button" onClick={() => onCite(source)} className="source-link">
+              <span className="source-number">{index + 1}</span>
+              <span>{source.section || source.lessonTitle}</span>
+              <FiArrowRight aria-hidden="true" />
+            </button>
+          ))}
+        </div>
+      )}
+      {answer.trace && <RetrievalDetails trace={answer.trace} />}
+    </div>
+  )
+}
+
+function Tutor({ courseSlug, topics = [] }) {
+  const base = `/courses/${encodeURIComponent(courseSlug)}`
   const [question, setQuestion] = useState('')
-  const [submitted, setSubmitted] = useState('')
-  const [answer, setAnswer] = useState(null)
+  const [thread, setThread] = useState([])
+  const [conversationId, setConversationId] = useState(null)
+  const [asking, setAsking] = useState('')
   const [error, setError] = useState(null)
   const [pending, setPending] = useState(false)
   const [citation, setCitation] = useState(null)
+  const [version, setVersion] = useState(0)
+  const history = useResource(`${base}/conversations?v=${version}`)
+
+  function newChat() {
+    setThread([])
+    setConversationId(null)
+    setError(null)
+  }
+
+  async function open(id) {
+    setError(null)
+    try {
+      const { conversation } = await request(`${base}/conversations/${id}`)
+      setThread(conversation.messages)
+      setConversationId(conversation.id)
+    } catch (failure) {
+      setError(failure.message)
+    }
+  }
+
+  async function remove(id) {
+    try {
+      await request(`${base}/conversations/${id}`, { method: 'DELETE' })
+      if (id === conversationId) newChat()
+      setVersion(value => value + 1)
+    } catch (failure) {
+      setError(failure.message)
+    }
+  }
 
   async function ask(event) {
     event.preventDefault()
@@ -97,60 +163,61 @@ function Tutor({ courseSlug }) {
 
     setPending(true)
     setError(null)
-    setAnswer(null)
-    setSubmitted(value)
+    setAsking(value)
     try {
-      const data = await request(`/courses/${encodeURIComponent(courseSlug)}/tutor`, {
+      const data = await request(`${base}/tutor`, {
         method: 'POST',
-        body: { question: value },
+        body: conversationId ? { question: value, conversationId } : { question: value },
       })
-      setAnswer(data)
+      setThread(previous => [...previous, { question: value, answer: data }])
+      setConversationId(data.conversationId)
+      setVersion(previous => previous + 1)
       setQuestion('')
     } catch (failure) {
       setError(failure.message)
     } finally {
       setPending(false)
+      setAsking('')
     }
   }
 
-  const citations = answer?.citations ?? []
+  const chats = history.data?.conversations ?? []
 
   return (
     <aside id="course-tutor" className="tutor-panel" aria-labelledby="tutor-title" tabIndex="-1">
       <div className="tutor-heading">
         <span className="tutor-symbol"><FiBookOpen aria-hidden="true" /></span>
         <div><h2 id="tutor-title">Course tutor</h2><p>Answers with links to the lesson.</p></div>
+        {thread.length > 0 && <button type="button" className="text-button new-chat" onClick={newChat}>New chat</button>}
       </div>
-      <div className="tutor-body" aria-live="polite" aria-atomic="false" aria-busy={pending}>
-        {!submitted && <p className="tutor-prompt">Ask a question about this course. Open any citation to read the original passage.</p>}
-        {submitted && <p className="question">{submitted}</p>}
-        {pending && <p role="status" className="muted">Looking through course material…</p>}
-        {error && <p role="alert" className="form-error">{error}</p>}
-        {answer?.status === 'insufficient_evidence' && <p>The published lessons don’t give enough evidence to answer that question.</p>}
-        {answer?.status === 'answered' && answer.claims?.map((claim, index) => (
-          <p key={index} className="claim">
-            {claim.text}
-            {claim.citationIds?.map(id => {
-              const position = citations.findIndex(source => source.id === id)
-              if (position < 0) return null
-              const source = citations[position]
-              return <button key={id} className="citation-button" type="button" onClick={() => setCitation(source)} aria-label={`Open source ${position + 1}, ${source.lessonTitle}`}>{position + 1}</button>
-            })}
-          </p>
-        ))}
-        {citations.length > 0 && (
-          <div className="tutor-sources">
-            <h3 className="small-label">Sources</h3>
-            {citations.map((source, index) => (
-              <button key={source.id} type="button" onClick={() => setCitation(source)} className="source-link">
-                <span className="source-number">{index + 1}</span>
-                <span>{source.section || source.lessonTitle}</span>
-                <FiArrowRight aria-hidden="true" />
-              </button>
+      {chats.length > 0 && (
+        <details className="tutor-history">
+          <summary>Earlier chats ({chats.length})</summary>
+          <ul>
+            {chats.map(chat => (
+              <li key={chat.id} aria-current={chat.id === conversationId ? 'true' : undefined}>
+                <button type="button" className="text-button" onClick={() => open(chat.id)}>{chat.title}</button>
+                <button type="button" className="icon-button" onClick={() => remove(chat.id)} aria-label={`Delete chat: ${chat.title}`}><FiTrash2 aria-hidden="true" /></button>
+              </li>
             ))}
+          </ul>
+        </details>
+      )}
+      <div className="tutor-body" aria-live="polite" aria-atomic="false" aria-busy={pending}>
+        {thread.length === 0 && !asking && <p className="tutor-prompt">Ask a question about this course. Open any citation to read the original passage.</p>}
+        {thread.length === 0 && !asking && topics.length > 0 && (
+          <div className="tutor-starters">
+            <span className="small-label">Try asking</span>
+            {topics.slice(0, 3).map(title => {
+              const text = `What are the main ideas in “${title}”?`
+              return <button key={title} type="button" className="starter" onClick={() => { setQuestion(text); document.getElementById('question')?.focus() }}>{text}</button>
+            })}
           </div>
         )}
-        {answer?.trace && <RetrievalDetails trace={answer.trace} />}
+        {thread.map((item, index) => <Exchange key={index} item={item} onCite={setCitation} />)}
+        {asking && <p className="question">{asking}</p>}
+        {pending && <p role="status" className="muted">Looking through course material…</p>}
+        {error && <p role="alert" className="form-error">{error}</p>}
       </div>
       <form onSubmit={ask} className="tutor-form">
         <label htmlFor="question">Ask a question</label>

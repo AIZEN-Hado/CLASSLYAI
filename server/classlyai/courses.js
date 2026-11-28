@@ -1,6 +1,6 @@
 const { Router } = require('express');
 
-const { quizzes } = require('./practice-quizzes');
+const { loadQuiz } = require('./practice-quizzes');
 const { createQuizResultPdf } = require('./quiz-result-pdf');
 
 const courseColumns = 'course.id, course.slug, course.title, course.summary, membership.role';
@@ -93,14 +93,14 @@ function createCoursesRouter(pool) {
 
         if (!lesson) return res.status(404).json({ message: 'Lesson not found.' });
         const { role, score, ...content } = lesson;
-        const questions = role === 'student' && quizzes.get(lesson.revisionId);
+        const questions = role === 'student' && await loadQuiz(pool, lesson.revisionId);
         const quiz = questions ? { questions: questions.map(({ prompt, options }) => ({ prompt, options })), score } : null;
         res.json({ lesson: { ...content, quiz } });
     });
 
     router.post('/:courseSlug/lessons/:lessonSlug/quiz', async (req, res) => {
         const { revisionId, answers } = req.body || {};
-        const questions = quizzes.get(revisionId);
+        const questions = await loadQuiz(pool, revisionId);
         if (!questions) return res.status(404).json({ message: quizUnavailable });
         if (!Array.isArray(answers) || answers.length !== questions.length ||
             !answers.every((choice, i) => Number.isInteger(choice) && choice >= 0 && choice < questions[i].options.length)) {
@@ -130,7 +130,7 @@ function createCoursesRouter(pool) {
 
     router.get('/:courseSlug/lessons/:lessonSlug/quiz/result.pdf', async (req, res) => {
         const { revisionId } = req.query;
-        const questions = quizzes.get(revisionId);
+        const questions = await loadQuiz(pool, revisionId);
         if (!questions) return res.status(404).json({ message: quizUnavailable });
 
         const { rows: [result] } = await pool.query(`

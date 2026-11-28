@@ -135,10 +135,34 @@ async function rankTestLessons() {
     };
 }
 
+// Yield of the quiz drafter on the held-out lessons. Every kept question is quoted from the lesson and passes the reranker;
+// whether a question is good still needs an instructor's reading, so the questions are printed for review.
+async function draftQuizzes() {
+    const { generateQuiz, modelId } = require('../models/quiz-generator');
+    const corpus = JSON.parse(readFileSync(join(models, 'corpus.json'), 'utf8'));
+    const lessons = [
+        ...corpus.lessons.filter(item => item.split === 'test').map(item => ({ id: item.id, markdown: item.sections.map(section => `## ${section.h}\n\n${section.t}`).join('\n\n') })),
+        ...courses.map(({ lesson }) => ({ id: lesson.slug, markdown: lesson.markdown }))
+    ];
+    const report = { model: modelId, wanted: 3, lessons: [] };
+    for (const lesson of lessons) {
+        const started = Date.now();
+        const questions = await generateQuiz(lesson.markdown, { count: 3 });
+        report.lessons.push({
+            lesson: lesson.id, drafted: questions.length, seconds: Number(((Date.now() - started) / 1000).toFixed(1)),
+            questions: questions.map(({ prompt, options, correct, relevance }) => ({ prompt, answer: options[correct], options, relevance }))
+        });
+    }
+    report.totalDrafted = report.lessons.reduce((total, item) => total + item.drafted, 0);
+    report.lessonsWithFullQuiz = report.lessons.filter(item => item.drafted === 3).length;
+    return report;
+}
+
 async function main() {
     const task = process.argv[2];
-    if (!['grader', 'reranker'].includes(task)) throw new Error('Usage: node classlyai/eval/models.js grader|reranker');
-    console.log(JSON.stringify(task === 'grader' ? await gradeBlindSet() : await rankTestLessons(), null, 2));
+    if (!['grader', 'reranker', 'quiz'].includes(task)) throw new Error('Usage: node classlyai/eval/models.js grader|reranker|quiz');
+    const run = { grader: gradeBlindSet, reranker: rankTestLessons, quiz: draftQuizzes }[task];
+    console.log(JSON.stringify(await run(), null, 2));
 }
 
 main().catch(error => {

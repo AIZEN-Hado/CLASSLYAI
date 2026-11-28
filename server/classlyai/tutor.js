@@ -107,6 +107,53 @@ function createTutor(pool, { embeddings = createEmbeddingProvider(), rerank = re
     return { ...retriever, answerQuestion };
 }
 
+const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const ownConversations = `
+    FROM classlyai.tutor_conversations AS conversation
+    JOIN classlyai.courses AS course ON course.id = conversation.course_id AND course.slug = $2
+    JOIN classlyai.course_memberships AS membership ON membership.course_id = course.id
+        AND membership.user_id = $1 AND membership.revoked_at IS NULL
+    WHERE conversation.student_id = $1
+`;
+
+// Stores one question and answer. Returns the conversation id, or 'missing' / 'full'.
+async function saveExchange(pool, { userId, courseSlug, conversationId, question, answer }) {
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        let id = conversationId?.toLowerCase();
+        if (id) {
+            const { rowCount } = await client.query(`
+                SELECT conversation.id ${ownConversations} AND conversation.id = $3 FOR UPDATE OF conversation
+            `, [userId, courseSlug, id]);
+            if (!rowCount) { await client.query('ROLLBACK'); return 'missing'; }
+        } else {
+            const { rows: [created] } = await client.query(`
+                INSERT INTO classlyai.tutor_conversations (course_id, student_id, title)
+                SELECT course.id, $1, left($3, 120)
+                FROM classlyai.courses AS course
+                JOIN classlyai.course_memberships AS membership ON membership.course_id = course.id
+                    AND membership.user_id = $1 AND membership.revoked_at IS NULL
+                WHERE course.slug = $2
+                RETURNING id
+            `, [userId, courseSlug, question.replace(/\s+/g, ' ').trim()]);
+            if (!created) { await client.query('ROLLBACK'); return 'missing'; }
+            id = created.id;
+        }
+        const { rows: [next] } = await client.query('SELECT COALESCE(max(ordinal), 0) + 1 AS ordinal FROM classlyai.tutor_messages WHERE conversation_id = $1', [id]);
+        if (next.ordinal > 50) { await client.query('ROLLBACK'); return 'full'; }
+        await client.query('INSERT INTO classlyai.tutor_messages (conversation_id, ordinal, question, answer) VALUES ($1, $2, $3, $4)', [id, next.ordinal, question, answer]);
+        await client.query('UPDATE classlyai.tutor_conversations SET updated_at = now() WHERE id = $1', [id]);
+        await client.query('COMMIT');
+        return id;
+    } catch (error) {
+        await client.query('ROLLBACK').catch(() => {});
+        throw error;
+    } finally {
+        client.release();
+    }
+}
+
 function createTutorRouter(pool) {
     const tutor = createTutor(pool);
     const router = Router();
@@ -130,11 +177,52 @@ function createTutorRouter(pool) {
         }
         const controller = new AbortController();
         res.once('close', () => controller.abort());
+        const conversationId = req.body?.conversationId;
+        if (conversationId !== undefined && (typeof conversationId !== 'string' || !uuidPattern.test(conversationId))) {
+            return res.status(400).json({ message: 'Open a saved conversation from the list.' });
+        }
         const answer = await tutor.answerQuestion({ userId: req.user.id, courseSlug: req.params.courseSlug, question, signal: controller.signal });
         if (controller.signal.aborted) return;
         if (!answer) return res.status(404).json({ message: 'Course not found.' });
         console.info('ClasslyAI tutor completed.', { requestId: answer.requestId, status: answer.status, strategy: answer.trace.strategy, timingsMs: answer.trace.timingsMs });
-        res.json(answer);
+
+        const { status, claims, citations } = answer;
+        const saved = await saveExchange(pool, { userId: req.user.id, courseSlug: req.params.courseSlug, conversationId, question, answer: { status, claims, citations } });
+        if (saved === 'missing') return res.status(404).json({ message: 'Conversation not found.' });
+        if (saved === 'full') return res.status(409).json({ message: 'This conversation is full. Start a new chat.' });
+        res.json({ ...answer, conversationId: saved });
+    });
+
+    router.get('/:courseSlug/conversations', async (req, res) => {
+        const { rows } = await pool.query(`
+            SELECT conversation.id, conversation.title, conversation.updated_at AS "updatedAt"
+            ${ownConversations}
+            ORDER BY conversation.updated_at DESC LIMIT 30
+        `, [req.user.id, req.params.courseSlug]);
+        res.json({ conversations: rows });
+    });
+
+    router.get('/:courseSlug/conversations/:conversationId', async (req, res) => {
+        if (!uuidPattern.test(req.params.conversationId)) return res.status(404).json({ message: 'Conversation not found.' });
+        const { rows: [conversation] } = await pool.query(`
+            SELECT conversation.id, conversation.title,
+                COALESCE((SELECT jsonb_agg(jsonb_build_object('question', message.question, 'answer', message.answer) ORDER BY message.ordinal)
+                    FROM classlyai.tutor_messages AS message WHERE message.conversation_id = conversation.id), '[]'::jsonb) AS messages
+            ${ownConversations} AND conversation.id = $3
+        `, [req.user.id, req.params.courseSlug, req.params.conversationId]);
+        if (!conversation) return res.status(404).json({ message: 'Conversation not found.' });
+        res.json({ conversation });
+    });
+
+    router.delete('/:courseSlug/conversations/:conversationId', async (req, res) => {
+        if (!uuidPattern.test(req.params.conversationId)) return res.status(404).json({ message: 'Conversation not found.' });
+        const { rowCount } = await pool.query(`
+            DELETE FROM classlyai.tutor_conversations AS conversation
+            USING classlyai.courses AS course
+            WHERE conversation.course_id = course.id AND course.slug = $2 AND conversation.student_id = $1 AND conversation.id = $3
+        `, [req.user.id, req.params.courseSlug, req.params.conversationId]);
+        if (!rowCount) return res.status(404).json({ message: 'Conversation not found.' });
+        res.json({ deleted: true });
     });
 
     router.get('/:courseSlug/citations/:citationId', async (req, res) => {
