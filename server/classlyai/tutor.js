@@ -4,7 +4,7 @@ const { Router } = require('express');
 const { rateLimit } = require('express-rate-limit');
 const { createEmbeddingProvider } = require('./embedding-provider');
 const { createRetriever, questionTerms } = require('./retrieval');
-const { metadata, score } = require('./models/runtime');
+const { metadata, score } = require('./ml/runtime');
 
 const sentenceSegmenter = new Intl.Segmenter('en', { granularity: 'sentence' });
 const abstain = () => ({ status: 'insufficient_evidence', claims: [], citations: [] });
@@ -28,7 +28,7 @@ function validateAnswer(answer, passages) {
             if (!passage || typeof quote !== 'string' || !quote.trim() || quote.length > 600 || !passage.excerpt.includes(quote)) return null;
             citationIds.add(passage.id);
             const { keywordRank, vectorRank, rerankScore, ...citation } = passage;
-            citations.set(passage.id, citation);
+            citations.set(passage.id, Number.isFinite(rerankScore) ? { ...citation, relevance: rerankScore } : citation);
         }
         claims.push({ text: claim.text.trim(), citationIds: [...citationIds] });
     }

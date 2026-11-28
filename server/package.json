@@ -14,7 +14,7 @@
     "test:classlyai": "node --test 'classlyai/**/*.test.js'",
     "eval:classlyai": "node --env-file-if-exists=.env classlyai/eval/run.js",
     "eval:models": "node classlyai/eval/models.js",
-    "export:labels": "node --env-file-if-exists=.env classlyai/models/export-labels.js"
+    "export:labels": "node --env-file-if-exists=.env classlyai/ml/export-labels.js"
   },
   "keywords": [],
   "author": "",

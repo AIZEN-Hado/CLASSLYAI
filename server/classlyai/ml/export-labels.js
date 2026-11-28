@@ -1,4 +1,4 @@
-// Prints instructor-reviewed marks as JSONL training examples: node classlyai/models/export-labels.js > labels.jsonl
+// Prints instructor-reviewed marks as JSONL training examples: node classlyai/ml/export-labels.js > labels.jsonl
 // Only reviewed submissions are exported. `changed` is true where the instructor overrode the model's decision.
 const { createPostgresPool } = require('../../db/postgres');
 const { criterion } = require('./checker');

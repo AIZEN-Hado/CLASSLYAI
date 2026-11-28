@@ -2,6 +2,19 @@
 
 ClasslyAI is a course workspace with a tutor that shows its evidence. An instructor publishes a Markdown lesson. A student can ask a question, open the exact source passage, and inspect how the tutor retrieved it. Enrollment governs both search and citation access.
 
+## What is in this repository
+
+This is one project: the original Classly learning platform, being rebuilt as an AI-engineering project. The original app is kept; the AI layer is built beside it on PostgreSQL (Neon) and ported feature by feature.
+
+| Part | Where | Status |
+| --- | --- | --- |
+| ClasslyAI app, the active product | `server/classlyai`, `client/src/classlyai`, `client/index.html` | Evidence-backed tutor, saved chats, quiz builder, study notes, assignments, progress, PDF results |
+| Neural models and their data | `server/classlyai/ml` (training, serving, evaluation, labelled-example export) | Fine-tuned grader and tutor reranker, local quiz and notes drafting, local answer checker. See its [README](server/classlyai/ml/README.md) |
+| Database | `server/db` (numbered SQL migrations 001–010, seed) | PostgreSQL on Neon; applied migrations are never edited |
+| Original Classly (MongoDB) | `server/{controllers,models,routes,services,middleware,config,utils}`, `server/index.js`, `client/src/{pages,components,context,api,lib,utils,config}`, `client/legacy.html` | Kept as is and reachable at `/legacy.html` in development. Not yet ported: marketplace, coupons, reviews, payouts, notifications, broadcasts, course analytics |
+
+Two folders are easy to confuse: `server/models` holds the original app's Mongoose schemas, and `server/classlyai/ml` holds the neural-network code. Nothing in ClasslyAI imports the original app, and the original imports nothing from ClasslyAI.
+
 ## Run the demo locally
 
 Use Node.js 24 and an isolated PostgreSQL database, such as a Neon development branch. Install both packages and create the server environment file.
@@ -12,7 +25,7 @@ npm ci --prefix client
 test -e server/.env || cp server/.env.example server/.env
 ```
 
-Fill in the pooled `DATABASE_URL`, direct `DATABASE_URL_DIRECT`, and three distinct seed passwords in `server/.env`. Leave the model key empty for deterministic embeddings and extractive answers. Set `CLASSLYAI_OPENAI_API_KEY` to use live embeddings and generation. Keep the API and indexing worker on the same provider configuration.
+Fill in the pooled `DATABASE_URL`, direct `DATABASE_URL_DIRECT`, and three distinct seed passwords in `server/.env`. No model key is needed. Tutor ranking, quiz and notes drafting, and answer checking all run on this machine. The first quiz or notes draft downloads about 1.5 GB into the git-ignored `server/.cache/models`.
 
 ```bash
 npm run db:migrate --prefix server

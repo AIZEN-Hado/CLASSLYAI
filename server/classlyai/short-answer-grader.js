@@ -1,5 +1,5 @@
 const model = require('./grader/model.json');
-const { metadata, score } = require('./models/runtime');
+const { metadata, score } = require('./ml/runtime');
 
 if (model.version !== 1) throw new Error('Unsupported ClasslyAI short-answer model version.');
 

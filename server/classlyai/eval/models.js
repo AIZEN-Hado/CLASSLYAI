@@ -9,9 +9,9 @@ const { createEmbeddingProvider } = require('../embedding-provider');
 const { predictRubricScores } = require('../short-answer-grader');
 const { questionTerms } = require('../retrieval');
 const { fixtureAnswer } = require('../tutor');
-const { metadata, score } = require('../models/runtime');
+const { metadata, score } = require('../ml/runtime');
 
-const models = join(__dirname, '../models');
+const models = join(__dirname, '../ml');
 const round = number => Number(number.toFixed(3));
 const sum = values => values.reduce((total, value) => total + value, 0);
 
@@ -138,7 +138,7 @@ async function rankTestLessons() {
 // Yield of the quiz drafter on the held-out lessons. Every kept question is quoted from the lesson and passes the reranker;
 // whether a question is good still needs an instructor's reading, so the questions are printed for review.
 async function draftQuizzes() {
-    const { generateQuiz, modelId } = require('../models/quiz-generator');
+    const { generateQuiz, modelId } = require('../ml/quiz-generator');
     const corpus = JSON.parse(readFileSync(join(models, 'corpus.json'), 'utf8'));
     const lessons = [
         ...corpus.lessons.filter(item => item.split === 'test').map(item => ({ id: item.id, markdown: item.sections.map(section => `## ${section.h}\n\n${section.t}`).join('\n\n') })),
@@ -160,7 +160,7 @@ async function draftQuizzes() {
 
 // Can a checker mark rubric points it was never trained on? Four unseen criteria, 12 synthetic answers each.
 async function checkUnseenCriteria() {
-    const { chat } = require('../models/quiz-generator');
+    const { chat } = require('../ml/quiz-generator');
     const rows = readFileSync(join(models, 'checker-eval.jsonl'), 'utf8').trim().split('\n').map(line => JSON.parse(line));
     const stem = text => questionTerms(text).filter(term => term.length >= 4).map(term => term.slice(0, 5));
     const methods = {

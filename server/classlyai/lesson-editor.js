@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { loadQuiz, replaceQuiz, validateQuestions } = require('./practice-quizzes');
-const { generateQuiz } = require('./models/quiz-generator');
-const { generateNotes } = require('./models/notes-generator');
+const { generateQuiz } = require('./ml/quiz-generator');
+const { generateNotes } = require('./ml/notes-generator');
 const { loadNotes, replaceNotes, validateNotes } = require('./lesson-notes');
 
 const maxMarkdownBytes = 12_000;

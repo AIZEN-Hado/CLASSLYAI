@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { rateLimit } = require('express-rate-limit');
-const { checkAnswer } = require('./models/checker');
+const { checkAnswer } = require('./ml/checker');
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const notFound = res => res.status(404).json({ message: 'Assignment not found.' });

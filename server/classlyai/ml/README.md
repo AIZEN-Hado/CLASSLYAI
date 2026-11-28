@@ -6,8 +6,8 @@ Both tasks fine-tune `cross-encoder/ms-marco-MiniLM-L-6-v2` (22M parameters, pre
 
 ```sh
 # On a machine with torch, transformers==4.46.3, onnx, onnxruntime, onnxscript:
-python3 server/classlyai/models/train.py grader   server/classlyai/models/artifacts/grader
-python3 server/classlyai/models/train.py reranker server/classlyai/models/artifacts/reranker
+python3 server/classlyai/ml/train.py grader   server/classlyai/ml/artifacts/grader
+python3 server/classlyai/ml/train.py reranker server/classlyai/ml/artifacts/reranker
 npm run eval:models --prefix server -- grader
 npm run eval:models --prefix server -- reranker
 ```
