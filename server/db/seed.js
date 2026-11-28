@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { courses, instructorId, users } = require('./demo-classroom');
-const { createPostgresPool } = require('./postgres');
+const { createPostgresPool, describePostgresError } = require('./postgres');
 
 async function readDemoPasswordHashes() {
     const passwords = users.map(({ passwordVariable }) => {
@@ -89,6 +89,6 @@ async function main() {
 }
 
 main().catch(error => {
-    console.error(`ClasslyAI seed failed: ${error.message}`);
+    console.error(`ClasslyAI seed failed: ${describePostgresError(error)}`);
     process.exitCode = 1;
 });

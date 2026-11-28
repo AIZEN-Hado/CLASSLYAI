@@ -42,4 +42,10 @@ function createMigrationClient() {
     return new Client(connectionOptions('DATABASE_URL_DIRECT', 'classlyai-migrate'));
 }
 
-module.exports = { createPostgresPool, createMigrationClient };
+function describePostgresError(error) {
+    if (error?.message) return error.message;
+    const codes = new Set(Array.isArray(error?.errors) ? error.errors.map(cause => cause?.code).filter(Boolean) : []);
+    return codes.size ? [...codes].join(', ') : (error?.code || error?.name || 'Unknown PostgreSQL error.');
+}
+
+module.exports = { createPostgresPool, createMigrationClient, describePostgresError };

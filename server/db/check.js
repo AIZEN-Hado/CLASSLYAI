@@ -1,4 +1,4 @@
-const { createPostgresPool } = require('./postgres');
+const { createPostgresPool, describePostgresError } = require('./postgres');
 
 async function main() {
     const pool = createPostgresPool();
@@ -11,6 +11,6 @@ async function main() {
 }
 
 main().catch(error => {
-    console.error(`ClasslyAI PostgreSQL check failed: ${error.message}`);
+    console.error(`ClasslyAI PostgreSQL check failed: ${describePostgresError(error)}`);
     process.exitCode = 1;
 });

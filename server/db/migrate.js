@@ -1,7 +1,7 @@
 const { createHash } = require('node:crypto');
 const { readdir, readFile } = require('node:fs/promises');
 const { join } = require('node:path');
-const { createMigrationClient } = require('./postgres');
+const { createMigrationClient, describePostgresError } = require('./postgres');
 
 const migrationsDirectory = join(__dirname, 'migrations');
 
@@ -77,6 +77,6 @@ async function main() {
 }
 
 main().catch(error => {
-    console.error(`ClasslyAI migration failed: ${error.message}`);
+    console.error(`ClasslyAI migration failed: ${describePostgresError(error)}`);
     process.exitCode = 1;
 });
