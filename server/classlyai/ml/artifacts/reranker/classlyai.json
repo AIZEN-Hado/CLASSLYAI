@@ -1,35 +1,41 @@
 {
   "task": "reranker",
   "base": "cross-encoder/ms-marco-MiniLM-L-6-v2",
-  "threshold": 0.35,
+  "threshold": 0.63,
   "epochs": 1,
   "dev": {
     "1": {
       "top1": 0.9375,
+      "sentenceTop1": 0.9375,
       "devAccuracy": 0.95,
-      "threshold": 0.35
+      "threshold": 0.63
     },
     "2": {
       "top1": 0.9375,
+      "sentenceTop1": 0.9375,
       "devAccuracy": 0.95,
-      "threshold": 0.44
+      "threshold": 0.42
     },
     "3": {
       "top1": 0.9375,
+      "sentenceTop1": 0.9375,
       "devAccuracy": 0.95,
-      "threshold": 0.37
+      "threshold": 0.41
     }
   },
-  "trainPairs": 671,
+  "trainPairs": 1111,
+  "passagePairs": 671,
+  "sentencePairs": 440,
   "corpusSha256": "3acfb89a376428fe022af006dc3563a4290fbe62e0c1642d32a555b4de1c018a",
+  "sentenceLabelsSha256": "3f8615567080499c333ebfdef97c6345eaf14fe5cca56d44fd1344a619de9f9f",
   "dtype": "q8",
   "onnxVariant": "int8-default",
   "variantParity": {
     "int8-default": {
-      "meanAbsDiff": 0.005276580977728429,
-      "decisionAgreement": 0.9921875,
+      "meanAbsDiff": 0.0068306687761605644,
+      "decisionAgreement": 0.9910714285714286,
       "bytes": 23040384
     }
   },
-  "onnxSha256": "5e4df02251065906d3bafb77e3cc97e3d7f067b7ee171b674a0401d5953f6e2a"
+  "onnxSha256": "cedd3a2b297d5519c1985233e0cecb93b49ecfc0ed8e60c0b3495b2f316b9230"
 }

@@ -200,10 +200,58 @@ async function checkUnseenCriteria() {
     return report;
 }
 
+// Does the quoted sentence answer the question, and does the tutor still abstain when it should?
+// Variants: the old word-overlap pick, the reranker pick behind the overlap gate, and the reranker pick with its own threshold.
+async function pickSentences() {
+    const { chooseSentence } = require('../tutor');
+    const corpus = JSON.parse(readFileSync(join(models, 'corpus.json'), 'utf8'));
+    const { items } = JSON.parse(readFileSync(join(models, 'quote-eval.json'), 'utf8'));
+    const unsupported = [...corpus.unsupported.test, ...corpus.seeded.unsupported];
+    const { passages: pool } = testPool();
+    const embeddings = createEmbeddingProvider();
+    const vectors = await embeddings.embed(pool.map(passage => passage.text));
+    const all = [...items.map(item => item.question), ...unsupported];
+    const questionVectors = await embeddings.embed(all);
+    const { threshold } = await metadata('reranker');
+    const normalize = text => text.toLowerCase().replace(/\s+/g, ' ');
+    const correct = (answer, expected) => answer.status === 'answered' && expected.some(fragment => normalize(answer.claims[0].text).includes(normalize(fragment)));
+
+    async function answers(question, index) {
+        const stage = firstStage(pool, vectors, question, questionVectors[index]);
+        const scores = await score('reranker', stage.hybrid.map(position => [question, `${pool[position].section}. ${pool[position].text}`]));
+        const passages = stage.hybrid.map((position, rank) => ({ id: String(position), section: pool[position].section, excerpt: pool[position].text, value: scores[rank] }))
+            .filter(passage => passage.value >= threshold).sort((a, b) => b.value - a.value);
+        return {
+            overlapPick: passages.length ? fixtureAnswer(question, passages) : { status: 'insufficient_evidence' },
+            rerankerBehindOverlapGate: passages.length ? await chooseSentence(question, passages, { overlapGate: true }) : { status: 'insufficient_evidence' },
+            rerankerOwnThreshold: passages.length ? await chooseSentence(question, passages) : { status: 'insufficient_evidence' }
+        };
+    }
+
+    const variants = ['overlapPick', 'rerankerBehindOverlapGate', 'rerankerOwnThreshold'];
+    const report = { answerable: items.length, unsupported: unsupported.length, labelSource: 'synthetic, authored by the assistant', variants: {}, misses: [] };
+    for (const name of variants) report.variants[name] = { answeredWithTheRightSentence: 0, falseAbstentions: 0, wrongSentence: 0, correctAbstentions: 0 };
+    for (const [index, item] of items.entries()) {
+        const result = await answers(item.question, index);
+        for (const name of variants) {
+            const outcome = report.variants[name];
+            if (correct(result[name], item.expected)) outcome.answeredWithTheRightSentence++;
+            else if (result[name].status !== 'answered') outcome.falseAbstentions++;
+            else outcome.wrongSentence++;
+        }
+        if (!correct(result.rerankerOwnThreshold, item.expected)) report.misses.push({ question: item.question, picked: result.rerankerOwnThreshold.claims?.[0]?.text ?? '(abstained)' });
+    }
+    for (const [offset, question] of unsupported.entries()) {
+        const result = await answers(question, items.length + offset);
+        for (const name of variants) report.variants[name].correctAbstentions += Number(result[name].status !== 'answered');
+    }
+    return report;
+}
+
 async function main() {
     const task = process.argv[2];
-    if (!['grader', 'reranker', 'quiz', 'checker'].includes(task)) throw new Error('Usage: node classlyai/eval/models.js grader|reranker|quiz|checker');
-    const run = { grader: gradeBlindSet, reranker: rankTestLessons, quiz: draftQuizzes, checker: checkUnseenCriteria }[task];
+    if (!['grader', 'reranker', 'quiz', 'checker', 'quote'].includes(task)) throw new Error('Usage: node classlyai/eval/models.js grader|reranker|quiz|checker|quote');
+    const run = { grader: gradeBlindSet, reranker: rankTestLessons, quiz: draftQuizzes, checker: checkUnseenCriteria, quote: pickSentences }[task];
     console.log(JSON.stringify(await run(), null, 2));
 }
 

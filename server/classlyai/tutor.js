@@ -62,6 +62,30 @@ function fixtureAnswer(question, passages) {
     }, passages);
 }
 
+// The overlap rule above still decides whether to answer at all; the trained reranker then picks which sentence answers.
+async function chooseSentence(question, passages, { overlapGate = false } = {}) {
+    const eligible = overlapGate ? fixtureAnswer(question, passages) : null;
+    if (eligible && eligible.status !== 'answered') return eligible;
+
+    const candidates = [];
+    for (const passage of passages.slice(0, 2)) {
+        for (const { segment } of sentenceSegmenter.segment(passage.excerpt)) {
+            const quote = segment.trim().slice(0, 420).trimEnd();
+            if (quote.split(/\s+/).length >= 4) candidates.push({ passage, quote });
+        }
+    }
+    if (!candidates.length) return eligible ?? abstain();
+
+    const [{ threshold }, scores] = await Promise.all([
+        metadata('reranker'),
+        score('reranker', candidates.map(({ passage, quote }) => [question, `${passage.section}. ${quote}`]))
+    ]);
+    const best = Math.max(...scores);
+    if (!eligible && best < threshold) return abstain();
+    const { passage, quote } = candidates[scores.indexOf(best)];
+    return validateAnswer({ status: 'answered', claims: [{ text: quote, evidence: [{ id: passage.id, quote }] }] }, passages) ?? eligible ?? abstain();
+}
+
 // Cross-encoder scores decide the passage order and whether the course supports an answer at all.
 async function rerankPassages(question, passages) {
     const [{ threshold }, scores] = await Promise.all([
@@ -73,7 +97,7 @@ async function rerankPassages(question, passages) {
         .sort((left, right) => right.rerankScore - left.rerankScore);
 }
 
-function createTutor(pool, { embeddings = createEmbeddingProvider(), rerank = rerankPassages } = {}) {
+function createTutor(pool, { embeddings = createEmbeddingProvider(), rerank = rerankPassages, choose = chooseSentence } = {}) {
     const retriever = createRetriever(pool, embeddings);
 
     async function answerQuestion({ userId, courseSlug, question, signal }) {
@@ -85,7 +109,7 @@ function createTutor(pool, { embeddings = createEmbeddingProvider(), rerank = re
         const rerankStarted = performance.now();
         const passages = retrieved.passages.length ? await rerank(question, retrieved.passages) : [];
         const answerStarted = performance.now();
-        const answer = passages.length ? fixtureAnswer(question, passages) : abstain();
+        const answer = passages.length ? await choose(question, passages) : abstain();
 
         const timingsMs = Object.fromEntries(Object.entries({
             ...retrieved.timingsMs,
@@ -238,4 +262,4 @@ function createTutorRouter(pool) {
     return router;
 }
 
-module.exports = { createTutor, createTutorRouter, fixtureAnswer, validateAnswer };
+module.exports = { chooseSentence, createTutor, createTutorRouter, fixtureAnswer, validateAnswer };

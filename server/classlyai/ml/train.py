@@ -11,6 +11,8 @@ import torch
 from onnxruntime.quantization import QuantType, quantize_dynamic
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
+from sentence_data import eval_items, sentence_pairs
+
 BASE = 'cross-encoder/ms-marco-MiniLM-L-6-v2'
 HERE = Path(__file__).parent
 GRADER = HERE.parent / 'grader'
@@ -140,6 +142,11 @@ def reranker(out):
             pairs.append((question, text(sec))); labels.append(1)
             for _, neg in {id(s): (l, s) for l, s in hard + easy + [o for o in others if o[0] == lid]}.values():
                 pairs.append((question, text(neg))); labels.append(0)
+    passage_pairs = len(pairs)
+    extra_pairs, extra_labels = sentence_pairs('train')  # sentence-level pairs, so the model can also choose the answering sentence
+    pairs += extra_pairs
+    labels += extra_labels
+    sentence_dev = eval_items('dev')
     dev = flat('dev')
     dev_q = [(s['q'], s) for _, s in dev] + [(s['p'], s) for _, s in dev]
     dev_u = corpus['unsupported']['dev']
@@ -151,17 +158,19 @@ def reranker(out):
         s_pos = [max(t) for t in top]
         s_neg = [max(score(model, [(q, text(c)) for c in sections])) for q in dev_u]
         best = max((sum(h and x >= t for h, x in zip(hit, s_pos)) + sum(x < t for x in s_neg), t) for t in np.arange(.05, .96, .01))
-        return {'top1': float(np.mean(hit)), 'devAccuracy': best[0] / (len(dev_q) + len(dev_u)), 'threshold': float(round(best[1], 2))}
+        picks = [int(int(np.argmax(score(model, [(q, t) for t in texts]))) in accepted) for q, texts, accepted in sentence_dev]
+        return {'top1': float(np.mean(hit)), 'sentenceTop1': float(np.mean(picks)), 'devAccuracy': best[0] / (len(dev_q) + len(dev_u)), 'threshold': float(round(best[1], 2))}
     results = {}
     for epochs in (1, 2, 3):
         model = fit(pairs, labels, epochs, lr=2e-5)
         results[epochs] = (dev_metrics(model), model)
         print('dev', epochs, results[epochs][0], flush=True)
-    best = max(results, key=lambda e: (results[e][0]['devAccuracy'], results[e][0]['top1']))
+    best = max(results, key=lambda e: (results[e][0]['devAccuracy'], results[e][0]['sentenceTop1'], results[e][0]['top1']))
     metrics, model = results[best]
     export(model, out, {'task': 'reranker', 'base': BASE, 'threshold': metrics['threshold'], 'epochs': best, 'dev': {str(e): r[0] for e, r in results.items()},
-                        'trainPairs': len(pairs), 'corpusSha256': sha(HERE / 'corpus.json')},
-           [(q, text(c)) for q, _ in dev_q for _, c in dev])
+                        'trainPairs': len(pairs), 'passagePairs': passage_pairs, 'sentencePairs': len(extra_pairs), 'corpusSha256': sha(HERE / 'corpus.json'),
+                        'sentenceLabelsSha256': sha(HERE / 'sentence-labels.json')},
+           [(q, text(c)) for q, _ in dev_q for _, c in dev] + [(q, t) for q, texts, _ in sentence_dev for t in texts[:6]])
 
 
 if __name__ == '__main__':

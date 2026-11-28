@@ -69,3 +69,28 @@ When judge and encoder agreed (42 of 48), all 42 marks were correct. The six dis
 ### Learning from instructor decisions
 
 Each time an instructor reviews a submission, the confirmed or overridden marks are kept. `npm run export:labels --prefix server > labels.jsonl` writes them as `{criterion, answer, label, changed}` lines. Retrain on a GPU or CPU pod with `python3 train.py grader OUT_DIR labels.jsonl`, which adds the reviewed marks to the final fit only. Ship the new model only if it does at least as well as the current one on the blind set (35 of 40 exact) and on `eval:models checker`. Nothing retrains or changes by itself, and no retraining run has happened yet because there are no real instructor labels.
+
+## Choosing the quoted sentence in tutor answers
+
+The tutor used to quote the sentence with the most word overlap with the question, behind a word-overlap rule that also decided whether to answer. It now scores each sentence of the top two retrieved passages with the trained reranker, quotes the best one (still an exact substring of the passage, checked by `validateAnswer`), and abstains when the best sentence scores below the reranker's threshold. `node classlyai/eval/models.js quote` compares the variants on 25 answerable and 7 unsupported questions from [quote-eval.json](quote-eval.json) (labels written by the assistant, so synthetic):
+
+| Variant | Right sentence | False abstentions | Wrong sentence | Unsupported abstained |
+| --- | ---: | ---: | ---: | ---: |
+| Old word-overlap pick | 15 | 6 | 4 | 7 of 7 |
+| Reranker behind the overlap rule | 16 | 6 | 3 | 7 of 7 |
+| Reranker with its own threshold (shipped) | 18 | 1 | 6 | 7 of 7 |
+
+Removing the overlap rule cut false abstentions on paraphrased questions from six to one without losing any correct abstention. The cost is more answered questions where the picked sentence is wrong or only partly answers, for example "How can the client recover the result after losing the server response?" still quotes "A client can lose the response after the server commits." because the reranker was trained on question-to-section pairs, not question-to-sentence pairs. Sentence-level training pairs would be the next improvement. The seeded Neon benchmark is unchanged: nine of nine sections cited, three of three abstentions, both isolation checks passed.
+
+### Sentence-level retraining of the reranker
+
+The shipped reranker was retrained from the same base with 440 extra sentence-level pairs (74 positives) on top of the 671 passage-level ones. [sentence-labels.json](sentence-labels.json) marks which sentence answers each train and dev question, and [sentence_data.py](sentence_data.py) builds the pairs (answering sentence as positive; the other sentence of the section, lexically close sentences from other sections, and random ones as negatives). The test lessons were not labelled for training. Epochs and the abstention threshold were chosen on the dev lessons only: passage top-1 and sentence top-1 were both 0.94 at every epoch count, so the tie went to one epoch, and the dev-chosen threshold moved from 0.35 to 0.63. The run took about two minutes of training on a rented community-cloud pod.
+
+On the held-out lessons, passage-level results are unchanged (top-1 0.96, paraphrase top-1 0.92, 6 of 7 unsupported questions abstained, 23 of 25 answered correctly). Sentence picking, from `node classlyai/eval/models.js quote` over 25 answerable and 7 unsupported questions:
+
+| Reranker | Right sentence | False abstentions | Wrong sentence | Unsupported abstained |
+| --- | ---: | ---: | ---: | ---: |
+| Question-to-section training only | 18 | 1 | 6 | 7 of 7 |
+| Plus sentence-level pairs (shipped) | 19 | 2 | 4 | 7 of 7 |
+
+Wrong quotes fell from six to four and correct quotes rose by one, but a false abstention also rose by one because the threshold moved. With 25 questions this is within noise. "How can the client recover the result after losing the server response?" still quotes the wrong sentence. The labels are synthetic and written by the assistant, and the dev set is only 16 questions, so more and independent sentence labels are the next improvement.

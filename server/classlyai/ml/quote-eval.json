@@ -1,0 +1,30 @@
+{
+  "note": "Which sentence answers each question. A pick counts as correct if it contains any expected fragment. Written by the assistant; synthetic.",
+  "items": [
+    { "question": "How does the authorization code flow deliver tokens to the app?", "expected": ["exchanges that code for tokens"] },
+    { "question": "What does the provider send to the callback, and what happens to it afterward?", "expected": ["short-lived code", "exchanges that code for tokens"] },
+    { "question": "What is the state parameter for in OAuth login?", "expected": ["random state value", "A mismatch means"] },
+    { "question": "How does the app detect a forged callback request?", "expected": ["random state value", "A mismatch means"] },
+    { "question": "What does an OAuth scope describe?", "expected": ["A scope names a permission"] },
+    { "question": "Why should an app request the narrowest set of permissions?", "expected": ["scopes the feature needs"] },
+    { "question": "What is a refresh token used for?", "expected": ["refresh token obtains new ones"] },
+    { "question": "How does an app keep a user signed in after the access token expires?", "expected": ["refresh token obtains new ones"] },
+    { "question": "How does a queue decouple producers from consumers?", "expected": ["puts a message on the queue", "slow consumer does not block"] },
+    { "question": "Why does a slow consumer not hold up the service that sent the message?", "expected": ["slow consumer does not block"] },
+    { "question": "When should a consumer acknowledge a message?", "expected": ["only after finishing the work"] },
+    { "question": "What makes the broker redeliver a message after a consumer crash?", "expected": ["crashes first"] },
+    { "question": "What is a dead-letter queue for?", "expected": ["Engineers inspect it", "fails repeatedly moves to a dead-letter queue"] },
+    { "question": "Where do messages go after exhausting their retries?", "expected": ["fails repeatedly moves to a dead-letter queue"] },
+    { "question": "Why must queue handlers tolerate duplicate messages?", "expected": ["at-least-once delivery"] },
+    { "question": "How can a handler safely process a message that arrives twice?", "expected": ["idempotent by recording processed message ids"] },
+    { "question": "What does rolling back a transaction discard?", "expected": ["Rolling back a transaction discards its writes"] },
+    { "question": "Why keep an enrollment and a receipt together when a course purchase fails?", "expected": ["failure rolls back both records"] },
+    { "question": "What does an idempotency key do?", "expected": ["recognize a retried request"] },
+    { "question": "How can the client recover the result after losing the server response?", "expected": ["recognize a retried request"] },
+    { "question": "How do two database sessions verify concurrency behavior?", "expected": ["Verify concurrency behavior with two database sessions", "Start both operations before either finishes"] },
+    { "question": "What is recall at five?", "expected": ["fraction of relevant passages"] },
+    { "question": "How do we keep a benchmark comparison of ranking methods fair?", "expected": ["same questions and document corpus"] },
+    { "question": "Why filter candidate passages by course membership before ranking?", "expected": ["Filter candidate passages by course membership", "stay out of retrieval results"] },
+    { "question": "How should we measure whether the tutor detects insufficient evidence?", "expected": ["Record whether the tutor says evidence is insufficient"] }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "note": "Per train and dev lesson, per section in corpus order: [accepted sentence indexes for the question, for the paraphrase]. Every section has two sentences. Written by the assistant; synthetic. The test lessons are deliberately not labelled here.",
+  "lessons": {
+    "http-caching":       [[[1], [1]], [[1], [1]], [[1], [0, 1]], [[1], [0, 1]]],
+    "database-indexing":  [[[0, 1], [0]], [[1], [0, 1]], [[0], [0, 1]], [[1], [1]]],
+    "git-branching":      [[[0], [0]], [[1], [1]], [[0], [0]], [[0], [1]]],
+    "rate-limiting":      [[[1], [1]], [[1], [1]], [[0], [1]], [[0, 1], [1]]],
+    "unit-testing":       [[[0], [0]], [[0], [0]], [[1], [0, 1]], [[0, 1], [0]]],
+    "docker-images":      [[[1], [1]], [[0, 1], [0]], [[1], [1]], [[0], [1]]],
+    "password-storage":   [[[0, 1], [1]], [[1], [1]], [[1], [1]], [[1], [1]]],
+    "pagination":         [[[1], [1]], [[0], [0]], [[1], [0]], [[1], [0]]],
+    "logging-levels":     [[[0], [0]], [[0, 1], [1]], [[0], [1]], [[0, 1], [0, 1]]],
+    "cron-scheduling":    [[[0], [1]], [[1], [0]], [[1], [1]], [[1], [1]]]
+  }
+}
