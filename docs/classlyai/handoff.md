@@ -21,8 +21,16 @@ Use this file as the current checkpoint. It contains the context a fresh session
 
 1. Run `git status --short --branch` and `git log -8 --oneline` in the checkout. On another machine, clone the dedicated ClasslyAI repo once it is available and check out the branch with the checkpoint commits.
 2. Read the [delivery plan](roadmap.md) and [architecture](architecture.md). Follow the active phase and update this checkpoint once its next action changes.
-3. **Next action.** Collect independently instructor-marked answers for the two-point idempotency rubric, including contradictions and paraphrases. Reserve a new blind test set before tuning. The first model matched the correct total on 10/20 synthetic held-out answers versus 11/20 for the keyword baseline. The UI exposes advisory marks only. The Neon check used a locally served build. See the [training recipe and evaluation](../../server/classlyai/grader/README.md).
+3. **Next action.** Start with the [grader training recipe](../../server/classlyai/grader/README.md). Collect independently instructor-marked answers for the two-point idempotency rubric, including contradictions and paraphrases. Reserve a blind test set before fine-tuning a small pretrained encoder. Compare it with the current neural network and keyword baseline. The current grader matched the exact total on 10/20 synthetic held-out answers versus 11/20 for the keyword baseline. Keep its UI marks advisory.
 4. Use the roadmap for Phase 5 expansion. Keep applied migration files intact and put schema changes in a new numbered SQL file.
+
+## Decisions to carry to the next account
+
+- Train or fine-tune task-specific neural networks and run inference locally. Pretrained weights are allowed. The target product runs without hosted LLM APIs. Use fixture mode for the current tutor while replacing its optional OpenAI path.
+- After the grader experiment, evaluate a separate neural reranker on held-out lessons against keyword and existing hybrid retrieval. Preserve enrollment checks, exact citations, and abstention. Keep the existing fixture benchmark as a regression check.
+- The user authorized a total of $1 for Runpod training and related resources. The completed run was estimated at $0.0006 in compute, and the pod was deleted. Treat the cap as cumulative across accounts and verify spend before another rental. Use low or medium reasoning effort for delegated agents, including Astra.
+- Commit `e1f9c41` records the Neon verification. Migration 006 is applied to the seeded Neon demo. The PDF download and local grader were verified through a locally served build. Public hosting is pending.
+- On a new machine or account, open this checkout or clone the dedicated `classlyai` remote. Restore access to Neon and Runpod through their account controls, and load the ignored `server/.env` from the approved secret store if needed.
 
 ## Connect the GitHub repository
 
@@ -67,6 +75,6 @@ Use `GET /api/courses` to list the signed-in user’s courses, `GET /api/courses
 
 ## Resume prompt
 
-> Continue ClasslyAI from `docs/classlyai/handoff.md`. Read `AGENTS.md`, the roadmap, and the architecture. Inspect the working tree and start with the recorded next action. After each small, verified step, give me the exact staging, commit, and push commands to run. Update the checkpoint before handing back. Use the seeded Neon demo scope.
+> Continue ClasslyAI from `docs/classlyai/handoff.md`. Read `AGENTS.md`, the roadmap, and the architecture. Inspect the working tree and start with the recorded next action. After each small, verified step, give me the exact staging, commit, and push commands to run. Update the checkpoint before handing back. Use the seeded Neon demo scope and follow the decisions above.
 
 When updating the checkpoint, record the active phase, completed slice, checks that passed or failed, any blocker, and the next concrete command or file to work on. Link to a commit or pull request when it helps locate the work.
