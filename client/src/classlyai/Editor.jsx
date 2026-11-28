@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FiArrowLeft, FiCheck, FiFileText, FiPlus, FiTrash2 } from 'react-icons/fi'
+import { PiArrowLeft, PiCheck, PiFileText, PiPlus, PiTrash } from 'react-icons/pi'
 import { Link, useParams } from 'react-router-dom'
 import { request, useResource } from './api.js'
 import { ResourceFeedback } from './components.jsx'
@@ -100,7 +100,7 @@ function EditorForm({ path, lesson }) {
               {action === 'publish' ? 'Requesting…' : record.status === 'failed' ? 'Retry publishing' : 'Publish lesson'}
             </button>
           )}
-          {record.status === 'ready' && <span className="published-label"><FiCheck aria-hidden="true" /> Available to students</span>}
+          {record.status === 'ready' && <span className="published-label"><PiCheck aria-hidden="true" /> Available to students</span>}
         </div>
       </div>
     </form>
@@ -163,25 +163,25 @@ function QuizForm({ path, quiz }) {
         <fieldset key={index} className="quiz-question" disabled={locked || state.pending}>
           <legend>Question {index + 1}{question.source === 'generated' && <span className="quiz-source"> · drafted by the local model, review before publishing</span>}</legend>
           <label htmlFor={`prompt-${index}`}>Prompt</label>
-          <input id={`prompt-${index}`} value={question.prompt} maxLength={300} required onChange={event => edit(index, { prompt: event.target.value })} />
+          <textarea id={`prompt-${index}`} rows="2" value={question.prompt} maxLength={300} required onChange={event => edit(index, { prompt: event.target.value })} />
           <ul className="quiz-options">
             {question.options.map((option, optionIndex) => (
               <li key={optionIndex}>
                 <input type="radio" name={`correct-${index}`} checked={question.correct === optionIndex} onChange={() => edit(index, { correct: optionIndex })} aria-label={`Option ${optionIndex + 1} is correct`} />
-                <input value={option} maxLength={200} required aria-label={`Option ${optionIndex + 1}`} onChange={event => edit(index, { options: question.options.map((value, i) => (i === optionIndex ? event.target.value : value)) })} />
-                {question.options.length > 2 && <button type="button" className="icon-button" aria-label={`Remove option ${optionIndex + 1}`} onClick={() => removeOption(index, optionIndex)}><FiTrash2 aria-hidden="true" /></button>}
+                <textarea rows="1" value={option} maxLength={200} required aria-label={`Option ${optionIndex + 1}`} onChange={event => edit(index, { options: question.options.map((value, i) => (i === optionIndex ? event.target.value : value)) })} />
+                {question.options.length > 2 && <button type="button" className="icon-button" aria-label={`Remove option ${optionIndex + 1}`} onClick={() => removeOption(index, optionIndex)}><PiTrash aria-hidden="true" /></button>}
               </li>
             ))}
           </ul>
           <div className="quiz-question-actions">
-            {question.options.length < 6 && <button type="button" className="text-button" onClick={() => edit(index, { options: [...question.options, ''] })}><FiPlus aria-hidden="true" /> Add option</button>}
+            {question.options.length < 6 && <button type="button" className="text-button" onClick={() => edit(index, { options: [...question.options, ''] })}><PiPlus aria-hidden="true" /> Add option</button>}
             {questions.length > 1 && <button type="button" className="text-button" onClick={() => { setQuestions(previous => previous.filter((_, i) => i !== index)); setState({ pending: false, error: null, saved: false }) }}>Remove question</button>}
           </div>
         </fieldset>
       ))}
       {!locked && (
         <div className="editor-actions">
-          {questions.length < 10 && <button type="button" className="secondary-button" disabled={state.pending} onClick={() => setQuestions(previous => [...previous, blankQuestion()])}><FiPlus aria-hidden="true" /> Add question</button>}
+          {questions.length < 10 && <button type="button" className="secondary-button" disabled={state.pending} onClick={() => setQuestions(previous => [...previous, blankQuestion()])}><PiPlus aria-hidden="true" /> Add question</button>}
           {questions.length < 10 && <button type="button" className="secondary-button" disabled={state.pending} onClick={draft}>Draft with the local model</button>}
           <button className="primary-button" type="submit" disabled={state.pending}>{state.pending ? 'Saving…' : 'Save quiz'}</button>
           <p role="status" className="muted">{state.saved && 'Quiz saved.'}</p>
@@ -236,7 +236,7 @@ function NotesForm({ path, notes }) {
   }
 
   return (
-    <form className="quiz-editor" onSubmit={save}>
+    <form className="quiz-editor notes-editor" onSubmit={save}>
       <h2>Study notes</h2>
       <p className="muted">
         {locked
@@ -255,7 +255,7 @@ function NotesForm({ path, notes }) {
       ))}
       {!locked && (
         <div className="editor-actions">
-          {items.length < 12 && <button type="button" className="secondary-button" disabled={state.pending} onClick={() => setItems(previous => [...previous, { heading: '', body: '', source: 'manual' }])}><FiPlus aria-hidden="true" /> Add note</button>}
+          {items.length < 12 && <button type="button" className="secondary-button" disabled={state.pending} onClick={() => setItems(previous => [...previous, { heading: '', body: '', source: 'manual' }])}><PiPlus aria-hidden="true" /> Add note</button>}
           <button type="button" className="secondary-button" disabled={state.pending} onClick={draft}>Draft with the local model</button>
           <button className="primary-button" type="submit" disabled={state.pending}>{state.pending ? 'Saving…' : 'Save notes'}</button>
           <p role="status" className="muted">{state.saved && 'Notes saved.'}</p>
@@ -287,7 +287,7 @@ function Editor() {
 
   return (
     <section className="editor-page content-page">
-      <Link className="back-link" to={coursePath}><FiArrowLeft aria-hidden="true" /> Course reader</Link>
+      <Link className="back-link" to={coursePath}><PiArrowLeft aria-hidden="true" /> Course reader</Link>
       <h1>Lesson editor</h1>
       {course && <p className="page-description">{course.title}</p>}
       <ResourceFeedback resource={overview} label="Loading course…" />
@@ -295,7 +295,7 @@ function Editor() {
         <nav className="editor-nav" aria-label="Lessons to edit">
           {course.lessons.map(lesson => (
             <Link key={lesson.id} to={`${coursePath}/lessons/${encodeURIComponent(lesson.slug)}/editor`} aria-current={lesson.slug === lessonSlug ? 'page' : undefined}>
-              <FiFileText aria-hidden="true" /> {lesson.title || lesson.slug}
+              <PiFileText aria-hidden="true" /> {lesson.title || lesson.slug}
             </Link>
           ))}
         </nav>

@@ -73,7 +73,7 @@ svg { flex: none; }
 .sign-in-form .primary-button { justify-content: space-between; margin-top: .55rem; }
 .session-state { max-width: 80rem; padding: clamp(1.2rem, 4vw, 3rem); margin-inline: auto; }
 .session-state .loading-state, .session-state .inline-feedback { margin-top: 2.5rem; }
-.skip-link { position: fixed; z-index: 9; inset: .75rem auto auto .75rem; translate: 0 -150%; border-radius: .3rem; padding: .7rem .9rem; background: var(--surface); color: var(--ink); }
+.skip-link { position: fixed; z-index: var(--layer-skip, 9); inset: .75rem auto auto .75rem; translate: 0 -150%; border-radius: .3rem; padding: .7rem .9rem; background: var(--surface); color: var(--ink); }
 .skip-link:focus { translate: 0; }
 .workspace { min-height: 100dvh; }
 .workspace-header { display: flex; min-height: 4.3rem; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--line); padding: .55rem clamp(1.1rem, 3vw, 2.65rem); background: var(--surface); }

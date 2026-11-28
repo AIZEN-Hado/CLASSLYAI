@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FiArrowLeft, FiArrowRight, FiBookOpen, FiCheck, FiEdit3, FiFileText, FiGrid, FiLogOut } from 'react-icons/fi'
+import { PiArrowLeft, PiArrowRight, PiBookOpen, PiCheck, PiPencilSimple, PiFileText, PiSquaresFour, PiSignOut } from 'react-icons/pi'
 import { Link, NavLink, Route, Routes, useParams } from 'react-router-dom'
 import { request, useResource } from './api.js'
 import { Brand, ResourceFeedback } from './components.jsx'
@@ -45,7 +45,7 @@ function SignIn({ onSignIn }) {
             <label htmlFor="password">Password</label>
             <input id="password" type="password" name="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required />
             {error && <p className="form-error" role="alert">{error}</p>}
-            <button className="primary-button" type="submit" disabled={pending}>{pending ? 'Signing in…' : 'Sign in'}<FiArrowRight aria-hidden="true" /></button>
+            <button className="primary-button" type="submit" disabled={pending}>{pending ? 'Signing in…' : 'Sign in'}<PiArrowRight aria-hidden="true" /></button>
           </form>
         </div>
       </div>
@@ -53,6 +53,9 @@ function SignIn({ onSignIn }) {
     </main>
   )
 }
+
+// Each course keeps one of four tones, so the list reads as distinct places and not one repeated card.
+const tone = slug => [...slug].reduce((total, character) => total + character.charCodeAt(0), 0) % 4
 
 function CourseList({ resource, name }) {
   const resume = resource.data?.courses.filter(course => course.resume)
@@ -66,22 +69,22 @@ function CourseList({ resource, name }) {
       <ResourceFeedback resource={resource} label="Loading your courses…" />
       {resource.data?.courses.length === 0 && <p className="muted">Your course list is empty. Ask an instructor for access.</p>}
       {resume && (
-        <Link className="course-card resume-lesson" to={`/courses/${encodeURIComponent(resume.slug)}/lessons/${encodeURIComponent(resume.resume.lessonSlug)}`}>
-          <span className="course-icon"><FiBookOpen aria-hidden="true" /></span>
+        <Link viewTransition className="course-card resume-lesson" to={`/courses/${encodeURIComponent(resume.slug)}/lessons/${encodeURIComponent(resume.resume.lessonSlug)}`}>
+          <span className="course-icon"><PiBookOpen aria-hidden="true" /></span>
           <span className="course-card-body"><span className="small-label">Continue learning</span><h2>{resume.resume.title}</h2><p>{resume.title}</p></span>
-          <FiArrowRight className="course-arrow" aria-hidden="true" />
+          <PiArrowRight className="course-arrow" aria-hidden="true" />
         </Link>
       )}
       <div className="course-list">
         {resource.data?.courses.map(course => (
-          <Link className="course-card" key={course.id} to={`/courses/${encodeURIComponent(course.slug)}`}>
-            <span className="course-icon"><FiBookOpen aria-hidden="true" /></span>
+          <Link viewTransition className="course-card" data-tone={tone(course.slug)} key={course.id} to={`/courses/${encodeURIComponent(course.slug)}`}>
+            <span className="course-icon"><PiBookOpen aria-hidden="true" /></span>
             <div className="course-card-body">
               {course.role === 'instructor' && <span className="small-label">Instructor</span>}
               <h2>{course.title}</h2>
               {course.summary && <p>{course.summary}</p>}
             </div>
-            <FiArrowRight aria-hidden="true" className="course-arrow" />
+            <PiArrowRight aria-hidden="true" className="course-arrow" />
           </Link>
         ))}
       </div>
@@ -122,10 +125,10 @@ function LessonProgress({ path, completed, onVisit, onCompletion }) {
     <div className="lesson-progress">
       <div className="lesson-progress-actions">
         <button className={completed ? 'secondary-button' : 'primary-button'} type="button" disabled={saving} onClick={toggleCompletion}>
-          {!completed && <FiCheck aria-hidden="true" />}
+          {!completed && <PiCheck aria-hidden="true" />}
           {saving ? 'Saving…' : completed ? 'Mark incomplete' : 'Mark complete'}
         </button>
-        <span className="published-label" role="status">{completed && <><FiCheck aria-hidden="true" /> Lesson complete</>}</span>
+        <span className="published-label" role="status">{completed && <><PiCheck aria-hidden="true" /> Lesson complete</>}</span>
       </div>
       {viewError && <p className="form-error" role="alert">{viewError} <button type="button" className="text-button" onClick={() => { setViewError(null); setAttempt(value => value + 1) }}>Retry saving progress</button></p>}
       {actionError && <p className="form-error" role="alert">{actionError}</p>}
@@ -167,8 +170,8 @@ function CoursePage({ onProgressChange }) {
               })()}
             </div>
             <div className="course-actions">
-              {course.role === 'instructor' && <Link className="secondary-button" to={`${lessonPath || coursePath}/editor`}><FiEdit3 aria-hidden="true" /> Edit lesson</Link>}
-              <a className="secondary-button tutor-jump" href="#course-tutor"><FiBookOpen aria-hidden="true" /> Ask the tutor</a>
+              {course.role === 'instructor' && <Link className="secondary-button" to={`${lessonPath || coursePath}/editor`}><PiPencilSimple aria-hidden="true" /> Edit lesson</Link>}
+              <a className="secondary-button tutor-jump" href="#course-tutor"><PiBookOpen aria-hidden="true" /> Ask the tutor</a>
             </div>
           </div>
           <div className="course-grid">
@@ -203,7 +206,7 @@ function CoursePage({ onProgressChange }) {
                     path={`${lessonPath}/short-answer`}
                     revisionId={lesson.revisionId}
                   />}
-                  <Link to={coursePath} className="back-link reader-back"><FiArrowLeft aria-hidden="true" /> All lessons</Link>
+                  <Link to={coursePath} className="back-link reader-back"><PiArrowLeft aria-hidden="true" /> All lessons</Link>
                 </>
               ) : (
                 <>
@@ -211,12 +214,12 @@ function CoursePage({ onProgressChange }) {
                   <h2>Lessons</h2>
                   {course.lessons.length === 0 && <p className="muted">Lessons will appear here once they’re published.</p>}
                   {course.lessons.map(item => (
-                    <Link key={item.id} className="lesson-row" to={`${coursePath}/lessons/${encodeURIComponent(item.slug)}`}>
-                      <span className="lesson-icon"><FiFileText aria-hidden="true" /></span>
+                    <Link viewTransition key={item.id} className="lesson-row" to={`${coursePath}/lessons/${encodeURIComponent(item.slug)}`}>
+                      <span className="lesson-icon"><PiFileText aria-hidden="true" /></span>
                       <span>{item.title}</span>
                       {(completionOverrides[item.id] ?? item.completed)
-                        ? <span className="published-label"><FiCheck aria-hidden="true" /> Complete</span>
-                        : <span className="lesson-status">Not started <FiArrowRight aria-hidden="true" /></span>}
+                        ? <span className="published-label"><PiCheck aria-hidden="true" /> Complete</span>
+                        : <span className="lesson-status">Not started <PiArrowRight aria-hidden="true" /></span>}
                     </Link>
                   ))}
                 </div>
@@ -257,16 +260,16 @@ function Workspace({ user, onSignOut }) {
         <div className="account-menu">
           <span className="account-avatar" aria-hidden="true">{user.displayName.trim().slice(0, 1).toUpperCase()}</span>
           <span className="account-name">{user.displayName}</span>
-          <button className="icon-button sign-out" onClick={signOut} disabled={signingOut} aria-label="Sign out" title="Sign out" type="button"><FiLogOut aria-hidden="true" /></button>
+          <button className="icon-button sign-out" onClick={signOut} disabled={signingOut} aria-label="Sign out" title="Sign out" type="button"><PiSignOut aria-hidden="true" /></button>
         </div>
       </header>
       {signOutError && <p className="account-feedback form-error" role="alert">{signOutError}</p>}
       <div className="workspace-body">
         <nav className="workspace-nav" aria-label="Classroom">
-          <NavLink className="workspace-nav-home" to="/" end><FiGrid aria-hidden="true" /> My courses</NavLink>
+          <NavLink className="workspace-nav-home" to="/" end><PiSquaresFour aria-hidden="true" /> My courses</NavLink>
           {courses.data?.courses.map(course => (
             <NavLink key={course.id} to={`/courses/${encodeURIComponent(course.slug)}`}>
-              <FiBookOpen aria-hidden="true" /><span>{course.title}</span>
+              <PiBookOpen aria-hidden="true" /><span>{course.title}</span>
             </NavLink>
           ))}
         </nav>
@@ -279,7 +282,7 @@ function Workspace({ user, onSignOut }) {
             <Route path="/courses/:courseSlug/assignments/:assignmentId" element={<AssignmentPage />} />
             <Route path="/courses/:courseSlug/editor" element={<Editor />} />
             <Route path="/courses/:courseSlug/lessons/:lessonSlug/editor" element={<Editor />} />
-            <Route path="*" element={<section className="content-page"><h1>Page not found</h1><Link className="back-link" to="/"><FiArrowLeft aria-hidden="true" /> Back to your courses</Link></section>} />
+            <Route path="*" element={<section className="content-page"><h1>Page not found</h1><Link className="back-link" to="/"><PiArrowLeft aria-hidden="true" /> Back to your courses</Link></section>} />
           </Routes>
         </main>
       </div>

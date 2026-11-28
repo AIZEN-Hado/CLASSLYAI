@@ -7,11 +7,14 @@
   --serif: "Fraunces Variable", "Iowan Old Style", Georgia, serif;
   --mono: "Geist Mono Variable", ui-monospace, Menlo, Consolas, monospace;
   --ease: cubic-bezier(.2, .8, .2, 1);
+  --layer-header: 5;
+  --layer-skip: 9;
+  --layer-grain: 40;
   font-family: var(--sans);
   background: var(--paper);
 }
 body { background: var(--paper); font-size: 15px; -webkit-font-smoothing: antialiased; }
-body::after { position: fixed; inset: 0; z-index: 40; pointer-events: none; opacity: .07; mix-blend-mode: multiply; content: ""; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .09 0 0 0 0 .07 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+body::after { position: fixed; inset: 0; z-index: var(--layer-grain); pointer-events: none; opacity: .07; mix-blend-mode: multiply; content: ""; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .09 0 0 0 0 .07 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 ::selection { background: #f0c9bb; color: var(--ink); }
 :focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; border-radius: 2px; }
 h1, h2, h3 { font-family: var(--serif); font-weight: 400; letter-spacing: -.025em; }
@@ -68,7 +71,7 @@ a:hover { color: var(--signal); text-decoration-color: currentColor; }
 .form-error { color: var(--signal); }
 
 /* Workspace chrome */
-.workspace-header { position: sticky; top: 0; z-index: 5; min-height: 4rem; border-bottom: 1px solid var(--rule); background: var(--paper); }
+.workspace-header { position: sticky; top: 0; z-index: var(--layer-header); min-height: 4rem; border-bottom: 1px solid var(--rule); background: var(--paper); }
 .account-avatar { border-radius: 2px; background: var(--ink); color: var(--paper); font: 500 .74rem var(--mono); }
 .account-name { font-weight: 520; }
 .workspace-nav { gap: .1rem; border-right: 1px solid var(--line); background: transparent; padding: 1.6rem 1rem; }
@@ -171,7 +174,7 @@ a:hover { color: var(--signal); text-decoration-color: currentColor; }
 }
 
 /* Orientation: date eyebrow, course progress, lesson index, tutor starters */
-.eyebrow { margin-bottom: .9rem; color: var(--muted); font: 450 .74rem var(--mono); letter-spacing: .02em; text-transform: uppercase; }
+.eyebrow { margin-bottom: .9rem; color: var(--muted); font: 450 .74rem var(--mono); letter-spacing: .02em; }
 .send-button { color: var(--paper); }
 .send-button svg { color: var(--paper); }
 .send-button:disabled { background: var(--muted); opacity: .45; }
@@ -245,7 +248,7 @@ a:hover { color: var(--signal); text-decoration-color: currentColor; }
 .assignment-result { max-width: 62ch; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--rule); }
 .assignment-marks, .review-marks { display: grid; gap: .1rem; margin: .8rem 0 0; padding: 0; list-style: none; }
 .assignment-marks li { display: grid; grid-template-columns: 5.2rem minmax(0, 1fr); gap: .8rem; padding: .6rem 0; border-top: 1px solid var(--line); }
-.mark-state { font: 600 .72rem var(--mono); text-transform: uppercase; letter-spacing: .04em; }
+.mark-state { font: 600 .72rem var(--mono); letter-spacing: .02em; }
 .assignment-marks li[data-met="true"] .mark-state { color: #3f6b4f; }
 .assignment-marks li[data-met="false"] .mark-state { color: var(--signal); }
 .assignment-score { margin-top: .8rem; font: 500 .8rem var(--mono); }
@@ -261,3 +264,122 @@ a:hover { color: var(--signal); text-decoration-color: currentColor; }
 .review-note { padding-left: 1.6rem; color: var(--muted); font: 450 .72rem var(--mono); }
 .review-marks li[data-flagged="true"] .review-note { color: var(--signal); }
 .rubric-inputs li { grid-template-columns: 1.4rem minmax(0, 1fr) auto; }
+
+/* Type polish */
+p, li, dd { text-wrap: pretty; }
+.small-label, .eyebrow, .lesson-status, .assignment-score, .review-note, .mark-state, .tutor-trace, .scene-note span,
+.course-card::before, .lesson-row::before, .study-notes li::before { font-variant-numeric: tabular-nums; }
+.quiz-question textarea { field-sizing: content; min-height: 2.6rem; }
+.quiz-options textarea { min-height: 2.4rem; resize: none; }
+
+/* Premium pass: optical type, motion, spotlight, evidence meter */
+:root { --spring: linear(0, .22 4%, .62 10%, .94 17%, 1.06 24%, 1.08 30%, 1.02 42%, .99 54%, 1); }
+h1, h2 { font-optical-sizing: auto; font-variation-settings: "SOFT" 40, "WONK" 0; }
+.sign-in-main h1, .content-page h1 { font-variation-settings: "SOFT" 60, "WONK" 1; }
+.brand, .assignment-subhead { font-variation-settings: "SOFT" 30; }
+
+.primary-button, .secondary-button, .starter, .citation-button, .send-button { transition-property: background-color, color, border-color, transform, box-shadow; transition-duration: 260ms; transition-timing-function: var(--spring); }
+.primary-button:hover:not(:disabled), .secondary-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 18px -8px #1b1a1760; }
+.primary-button:active:not(:disabled), .secondary-button:active:not(:disabled), .send-button:active:not(:disabled) { transform: translateY(1px) scale(.985); box-shadow: none; transition-duration: 90ms; }
+
+@media (hover: hover) {
+  .course-card, .lesson-row, .review-card, .starter { position: relative; isolation: isolate; }
+  .course-card::after, .lesson-row::after, .starter::after { position: absolute; inset: 0; z-index: -1; opacity: 0; pointer-events: none; content: ""; background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), #c8452a1c, transparent 70%); transition: opacity 240ms var(--ease); }
+  .course-card:hover::after, .lesson-row:hover::after, .starter:hover::after { opacity: 1; }
+}
+
+.course-list > *, .lesson-list > .lesson-row, .assignment-list > .lesson-row, .tutor-history li, .study-notes li, .review-card { animation: rise 560ms var(--ease) both; animation-delay: calc(var(--i, 0) * 55ms); }
+.course-list > :nth-child(1), .lesson-list > .lesson-row:nth-of-type(1), .assignment-list > .lesson-row:nth-of-type(1), .study-notes li:nth-child(1) { --i: 0; }
+.course-list > :nth-child(2), .lesson-list > .lesson-row:nth-of-type(2), .assignment-list > .lesson-row:nth-of-type(2), .study-notes li:nth-child(2) { --i: 1; }
+.course-list > :nth-child(3), .lesson-list > .lesson-row:nth-of-type(3), .assignment-list > .lesson-row:nth-of-type(3), .study-notes li:nth-child(3) { --i: 2; }
+.course-list > :nth-child(4), .lesson-list > .lesson-row:nth-of-type(4), .assignment-list > .lesson-row:nth-of-type(4), .study-notes li:nth-child(4) { --i: 3; }
+.course-list > :nth-child(5), .lesson-list > .lesson-row:nth-of-type(5), .assignment-list > .lesson-row:nth-of-type(5), .study-notes li:nth-child(5) { --i: 4; }
+.course-list > :nth-child(6), .lesson-list > .lesson-row:nth-of-type(6), .assignment-list > .lesson-row:nth-of-type(6), .study-notes li:nth-child(6) { --i: 5; }
+.course-list > :nth-child(7), .lesson-list > .lesson-row:nth-of-type(7), .assignment-list > .lesson-row:nth-of-type(7), .study-notes li:nth-child(7) { --i: 6; }
+.course-list > :nth-child(8), .lesson-list > .lesson-row:nth-of-type(8), .assignment-list > .lesson-row:nth-of-type(8), .study-notes li:nth-child(8) { --i: 7; }
+
+.source-link { align-items: start; }
+.source-name { display: grid; gap: .35rem; min-width: 0; }
+.source-meter { display: flex; align-items: center; gap: .55rem; color: var(--muted); font: 450 .66rem var(--mono); font-variant-numeric: tabular-nums; }
+.source-meter i { position: relative; flex: 1; height: 2px; background: var(--line); overflow: hidden; }
+.source-meter i::after { position: absolute; inset: 0; content: ""; background: var(--signal); transform-origin: left center; transform: scaleX(var(--v)); animation: meter 900ms var(--ease) both; }
+.source-meter b { font-weight: 500; white-space: nowrap; }
+@keyframes meter { from { transform: scaleX(0); } }
+
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 280ms; animation-timing-function: var(--ease); }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+  .source-meter i::after { animation: none; }
+}
+
+/* Tonal system. Surfaces step from paper to raised to sunken; moss, ochre and slate carry meaning; vermilion stays the signal. */
+:root {
+  --paper-50: #faf6ec; --paper-200: #e9e2d2; --paper-300: #d9cfba;
+  --moss: #3f6b4f; --moss-ink: #25402f; --moss-tint: #dde8d8; --moss-wash: #eef3ea;
+  --ochre: #a8761f; --ochre-ink: #5d4010; --ochre-tint: #f1e2bd; --ochre-wash: #f8f0d9;
+  --slate: #3b5870; --slate-ink: #223646; --slate-tint: #d9e3ea; --slate-wash: #ecf1f5;
+  --signal-tint: #f5dcd3; --signal-ink: #7e2a16;
+}
+
+/* Surfaces */
+.workspace-nav { background: var(--paper-200); border-right-color: var(--paper-300); }
+.workspace-nav a:hover { background: #ffffff4d; }
+
+/* Status chips: one shape, tone by meaning */
+.lesson-status, .published-label { padding: .22rem .55rem; border-radius: 2px; background: var(--paper-200); color: var(--ink); font: 500 .7rem var(--mono); }
+.lesson-row:hover .lesson-status { color: var(--ink); }
+.lesson-row .lesson-status[data-state="review"] { background: var(--ochre-tint); color: var(--ochre-ink); }
+.lesson-row .lesson-status[data-state="checked"] { background: var(--slate-tint); color: var(--slate-ink); }
+.lesson-row .lesson-status[data-state="done"], .published-label { background: var(--moss-tint); color: var(--moss-ink); }
+.progress-segments i[data-done="true"] { background: var(--moss); }
+
+/* Each course keeps its own tone */
+.course-card { --tone: var(--signal); padding-left: 1.3rem; box-shadow: inset 4px 0 0 var(--tone); }
+.course-card[data-tone="1"] { --tone: var(--moss); }
+.course-card[data-tone="2"] { --tone: var(--ochre); }
+.course-card[data-tone="3"] { --tone: var(--slate); }
+.course-card::before { color: var(--tone); }
+.course-card:hover { padding-left: 1.7rem; background: color-mix(in srgb, var(--tone) 9%, transparent); }
+.course-card:hover .course-arrow { color: var(--tone); }
+@media (hover: hover) {
+  .course-card::after { background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--tone) 16%, transparent), transparent 70%); }
+}
+
+/* The primary action is the one ink panel */
+.resume-lesson { padding-left: 1.4rem; background: var(--ink); color: var(--paper); border-left: 4px solid var(--signal); box-shadow: 0 22px 34px -26px #1b1a17aa; }
+.resume-lesson:hover { padding-left: 1.4rem; background: #2a2823; }
+.resume-lesson h2, .resume-lesson .course-arrow { color: var(--paper); }
+.resume-lesson p { color: #cfc6b3; }
+.resume-lesson .small-label { color: #f0a994; }
+
+/* Tutor: a raised sheet with a slate edge */
+.tutor-panel { padding: 1.1rem 1.25rem 1.25rem; background: var(--paper-50); border: 1px solid var(--paper-300); border-left: 3px solid var(--slate); box-shadow: 0 22px 34px -28px #223646aa; }
+.tutor-symbol { background: var(--slate); }
+.tutor-heading { border-bottom-color: var(--paper-300); }
+.question { border-left-color: var(--slate); }
+.ask-field { padding: .35rem .6rem; background: var(--paper); border: 1px solid var(--paper-300); border-bottom-color: var(--ink); }
+.tutor-form, .tutor-history { border-color: var(--paper-300); }
+.source-link:hover { background: var(--slate-wash); }
+
+/* Learning content takes a tone by kind: notes moss, quiz ochre, short answer and assignment results slate */
+.study-notes { background: var(--moss-wash); border-left-color: var(--moss); }
+.study-notes li::before { color: var(--moss); }
+.practice-quiz { max-width: 65ch; padding: 1.3rem 1.4rem 1.5rem; background: var(--ochre-wash); border: 0; border-left: 3px solid var(--ochre); }
+.practice-quiz.short-answer, .assignment-result { background: var(--slate-wash); border-left-color: var(--slate); }
+.practice-quiz label:hover { background: #ffffff66; }
+.short-answer textarea, .assignment-form textarea { background: var(--paper-50); }
+.assignment-result { padding: 1.1rem 1.3rem 1.3rem; border-top: 0; border-left: 3px solid var(--slate); }
+.mark-state { justify-self: start; align-self: start; padding: .15rem .45rem; border-radius: 2px; }
+.assignment-marks li[data-met="true"] .mark-state { background: var(--moss-tint); color: var(--moss-ink); }
+.assignment-marks li[data-met="false"] .mark-state { background: var(--signal-tint); color: var(--signal-ink); }
+.review-card { background: var(--ochre-wash); border-color: var(--ochre-tint); border-left: 3px solid var(--ochre); }
+.review-card[data-reviewed="true"] { background: var(--moss-wash); border-color: var(--moss-tint); border-left-color: var(--moss); }
+.review-answer { background: var(--paper-50); }
+.quiz-question { background: var(--paper-50); border-left-color: var(--ochre); }
+.notes-editor .quiz-question { border-left-color: var(--moss); }
+
+@media (max-width: 760px) {
+  .tutor-panel { border-left: 3px solid var(--slate); border-top: 1px solid var(--paper-300); padding: 1rem; }
+  .course-card { padding-left: 1.1rem; }
+}
+.published-label:empty { padding: 0; background: none; }

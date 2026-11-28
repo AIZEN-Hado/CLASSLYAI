@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { FiArrowRight, FiBookOpen, FiSend, FiTrash2, FiX } from 'react-icons/fi'
+import { PiArrowRight, PiBookOpen, PiPaperPlaneTilt, PiTrash, PiX } from 'react-icons/pi'
 import { request, useResource } from './api.js'
 
 function RetrievalDetails({ trace }) {
@@ -57,8 +57,8 @@ function EvidenceDialog({ courseSlug, citation, onClose }) {
       onCancel={event => { event.preventDefault(); onClose() }}
     >
       <div className="dialog-header">
-        <span className="small-label"><FiBookOpen aria-hidden="true" /> Source passage</span>
-        <button ref={closeButton} type="button" className="icon-button" onClick={onClose} aria-label="Close source"><FiX aria-hidden="true" /></button>
+        <span className="small-label"><PiBookOpen aria-hidden="true" /> Source passage</span>
+        <button ref={closeButton} type="button" className="icon-button" onClick={onClose} aria-label="Close source"><PiX aria-hidden="true" /></button>
       </div>
       <h2 id="evidence-title">{passage?.lessonTitle || citation.lessonTitle}</h2>
       {source.loading && <p role="status" className="muted">Loading the published source…</p>}
@@ -106,8 +106,15 @@ function Exchange({ item, onCite }) {
           {citations.map((source, index) => (
             <button key={source.id} type="button" onClick={() => onCite(source)} className="source-link">
               <span className="source-number">{index + 1}</span>
-              <span>{source.section || source.lessonTitle}</span>
-              <FiArrowRight aria-hidden="true" />
+              <span className="source-name">
+                {source.section || source.lessonTitle}
+                {Number.isFinite(source.relevance) && (
+                  <span className="source-meter" style={{ '--v': Math.min(1, Math.max(0, source.relevance)) }} title={`Trained reranker score ${source.relevance.toFixed(3)} for this passage and question`}>
+                    <i /><b>{source.relevance >= 0.9 ? 'Strong match' : source.relevance >= 0.6 ? 'Likely match' : 'Weak match'}</b>
+                  </span>
+                )}
+              </span>
+              <PiArrowRight aria-hidden="true" />
             </button>
           ))}
         </div>
@@ -186,7 +193,7 @@ function Tutor({ courseSlug, topics = [] }) {
   return (
     <aside id="course-tutor" className="tutor-panel" aria-labelledby="tutor-title" tabIndex="-1">
       <div className="tutor-heading">
-        <span className="tutor-symbol"><FiBookOpen aria-hidden="true" /></span>
+        <span className="tutor-symbol"><PiBookOpen aria-hidden="true" /></span>
         <div><h2 id="tutor-title">Course tutor</h2><p>Answers with links to the lesson.</p></div>
         {thread.length > 0 && <button type="button" className="text-button new-chat" onClick={newChat}>New chat</button>}
       </div>
@@ -197,7 +204,7 @@ function Tutor({ courseSlug, topics = [] }) {
             {chats.map(chat => (
               <li key={chat.id} aria-current={chat.id === conversationId ? 'true' : undefined}>
                 <button type="button" className="text-button" onClick={() => open(chat.id)}>{chat.title}</button>
-                <button type="button" className="icon-button" onClick={() => remove(chat.id)} aria-label={`Delete chat: ${chat.title}`}><FiTrash2 aria-hidden="true" /></button>
+                <button type="button" className="icon-button" onClick={() => remove(chat.id)} aria-label={`Delete chat: ${chat.title}`}><PiTrash aria-hidden="true" /></button>
               </li>
             ))}
           </ul>
@@ -223,7 +230,7 @@ function Tutor({ courseSlug, topics = [] }) {
         <label htmlFor="question">Ask a question</label>
         <div className="ask-field">
           <textarea id="question" rows="2" value={question} maxLength={1000} onChange={event => setQuestion(event.target.value)} placeholder="How does this concept work?" required />
-          <button className="icon-button send-button" type="submit" disabled={pending || !question.trim()} aria-label="Ask course tutor"><FiSend aria-hidden="true" /></button>
+          <button className="icon-button send-button" type="submit" disabled={pending || !question.trim()} aria-label="Ask course tutor"><PiPaperPlaneTilt aria-hidden="true" /></button>
         </div>
       </form>
       {citation && <EvidenceDialog courseSlug={courseSlug} citation={citation} onClose={() => setCitation(null)} />}

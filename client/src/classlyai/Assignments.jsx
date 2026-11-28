@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FiArrowLeft, FiArrowRight, FiPlus, FiTrash2 } from 'react-icons/fi'
+import { PiArrowLeft, PiArrowRight, PiPlus, PiTrash } from 'react-icons/pi'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { request, useResource } from './api.js'
 import { ResourceFeedback } from './components.jsx'
@@ -17,19 +17,19 @@ export function AssignmentList({ courseSlug }) {
     <section className="assignment-list" aria-labelledby="assignments-heading">
       <div className="assignment-list-header">
         <h2 id="assignments-heading">Assignments</h2>
-        {instructor && <Link className="text-button" to={`${base(courseSlug)}/assignments/new`}><FiPlus aria-hidden="true" /> New assignment</Link>}
+        {instructor && <Link className="text-button" to={`${base(courseSlug)}/assignments/new`}><PiPlus aria-hidden="true" /> New assignment</Link>}
       </div>
       <ResourceFeedback resource={resource} label="Loading assignments…" orbSize={40} />
       {data?.assignments.length === 0 && <p className="muted">{instructor ? 'No assignments yet. Create one with a rubric.' : 'No assignments have been set.'}</p>}
       {data?.assignments.map(item => (
-        <Link key={item.id} className="lesson-row assignment-row" to={`${base(courseSlug)}/assignments/${item.id}`}>
+        <Link viewTransition key={item.id} className="lesson-row assignment-row" to={`${base(courseSlug)}/assignments/${item.id}`}>
           <span className="lesson-icon" />
           <span>{item.title}</span>
-          <span className="lesson-status">
+          <span className="lesson-status" data-state={instructor ? (item.needsReview ? 'review' : 'idle') : item.submitted ? (item.reviewed ? 'done' : 'checked') : 'idle'}>
             {instructor
               ? `${item.submissionCount} submitted${item.needsReview ? ` · ${item.needsReview} to review` : ''}`
               : item.submitted ? `${item.reviewed ? 'Reviewed' : 'Checked'} · ${item.score} of ${item.pointCount}` : 'Not submitted'}
-            <FiArrowRight aria-hidden="true" />
+            <PiArrowRight aria-hidden="true" />
           </span>
         </Link>
       ))}
@@ -150,7 +150,7 @@ export function AssignmentPage() {
 
   return (
     <section className="content-page assignment-page">
-      <Link className="back-link" to={base(courseSlug)}><FiArrowLeft aria-hidden="true" /> Course</Link>
+      <Link className="back-link" to={base(courseSlug)}><PiArrowLeft aria-hidden="true" /> Course</Link>
       <h1>{data?.assignment.title ?? 'Assignment'}</h1>
       <ResourceFeedback resource={resource} label="Loading assignment…" />
       {data && data.submissions === undefined && <StudentView key={assignmentId} courseSlug={courseSlug} assignment={data.assignment} initial={data.submission} />}
@@ -188,7 +188,7 @@ export function NewAssignment() {
 
   return (
     <section className="content-page editor-page">
-      <Link className="back-link" to={base(courseSlug)}><FiArrowLeft aria-hidden="true" /> Course</Link>
+      <Link className="back-link" to={base(courseSlug)}><PiArrowLeft aria-hidden="true" /> Course</Link>
       <h1>New assignment</h1>
       <form className="editor-form" onSubmit={create}>
         <div className="editor-fields">
@@ -205,11 +205,11 @@ export function NewAssignment() {
               <li key={index}>
                 <span className="small-label">{index + 1}</span>
                 <input value={point} maxLength={300} required aria-label={`Rubric point ${index + 1}`} onChange={event => setPoints(previous => previous.map((value, i) => (i === index ? event.target.value : value)))} />
-                {points.length > 1 && <button type="button" className="icon-button" aria-label={`Remove point ${index + 1}`} onClick={() => setPoints(previous => previous.filter((_, i) => i !== index))}><FiTrash2 aria-hidden="true" /></button>}
+                {points.length > 1 && <button type="button" className="icon-button" aria-label={`Remove point ${index + 1}`} onClick={() => setPoints(previous => previous.filter((_, i) => i !== index))}><PiTrash aria-hidden="true" /></button>}
               </li>
             ))}
           </ul>
-          {points.length < 6 && <div className="quiz-question-actions"><button type="button" className="text-button" onClick={() => setPoints(previous => [...previous, ''])}><FiPlus aria-hidden="true" /> Add point</button></div>}
+          {points.length < 6 && <div className="quiz-question-actions"><button type="button" className="text-button" onClick={() => setPoints(previous => [...previous, ''])}><PiPlus aria-hidden="true" /> Add point</button></div>}
         </fieldset>
         <div className="editor-actions">
           <button className="primary-button" type="submit" disabled={state.pending}>{state.pending ? 'Creating…' : 'Create assignment'}</button>
