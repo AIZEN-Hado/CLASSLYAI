@@ -1,6 +1,7 @@
 const { Router } = require('express');
 
 const { quizzes } = require('./practice-quizzes');
+const { createQuizResultPdf } = require('./quiz-result-pdf');
 
 const courseColumns = 'course.id, course.slug, course.title, course.summary, membership.role';
 const activeMembership = `
@@ -16,6 +17,11 @@ const ownProgress = `
     LEFT JOIN classlyai.lesson_progress AS progress ON progress.course_id = lesson.course_id
         AND progress.lesson_id = lesson.id AND progress.student_id = $1 AND membership.role = 'student'
 `;
+const ownQuizResult = `
+    JOIN classlyai.quiz_results AS result ON result.revision_id = revision.id
+        AND result.student_id = $1 AND membership.role = 'student'
+`;
+const quizUnavailable = 'Quiz unavailable. Reload the lesson.';
 
 function createCoursesRouter(pool) {
     const router = Router();
@@ -81,7 +87,7 @@ function createCoursesRouter(pool) {
             JOIN classlyai.lessons AS lesson ON lesson.course_id = course.id
             ${publishedRevision}
             ${ownProgress}
-            LEFT JOIN classlyai.quiz_results AS result ON result.revision_id = revision.id AND result.student_id = $1
+            LEFT ${ownQuizResult}
             WHERE course.slug = $2 AND lesson.slug = $3
         `, [req.user.id, req.params.courseSlug, req.params.lessonSlug]);
 
@@ -95,7 +101,7 @@ function createCoursesRouter(pool) {
     router.post('/:courseSlug/lessons/:lessonSlug/quiz', async (req, res) => {
         const { revisionId, answers } = req.body || {};
         const questions = quizzes.get(revisionId);
-        if (!questions) return res.status(404).json({ message: 'Quiz unavailable. Reload the lesson.' });
+        if (!questions) return res.status(404).json({ message: quizUnavailable });
         if (!Array.isArray(answers) || answers.length !== questions.length ||
             !answers.every((choice, i) => Number.isInteger(choice) && choice >= 0 && choice < questions[i].options.length)) {
             return res.status(400).json({ message: 'Choose one listed answer for each question.' });
@@ -113,12 +119,34 @@ function createCoursesRouter(pool) {
                 WHERE course.slug = $2 AND lesson.slug = $3 AND revision.id = $4 AND membership.role = 'student'
                 FOR SHARE OF membership, lesson, revision
             )
-            INSERT INTO classlyai.quiz_results (course_id, student_id, lesson_id, revision_id, score)
-            SELECT course_id, $1, lesson_id, revision_id, $5 FROM authorized
-            ON CONFLICT (student_id, revision_id) DO UPDATE SET score = EXCLUDED.score
-        `, [req.user.id, req.params.courseSlug, req.params.lessonSlug, revisionId, score]);
-        if (!result.rowCount) return res.status(404).json({ message: 'Quiz unavailable. Reload the lesson.' });
+            INSERT INTO classlyai.quiz_results (course_id, student_id, lesson_id, revision_id, score, answers, submitted_at)
+            SELECT course_id, $1, lesson_id, revision_id, $5, $6, clock_timestamp() FROM authorized
+            ON CONFLICT (student_id, revision_id) DO UPDATE
+            SET score = EXCLUDED.score, answers = EXCLUDED.answers, submitted_at = clock_timestamp()
+        `, [req.user.id, req.params.courseSlug, req.params.lessonSlug, revisionId, score, answers]);
+        if (!result.rowCount) return res.status(404).json({ message: quizUnavailable });
         res.json({ score, feedback });
+    });
+
+    router.get('/:courseSlug/lessons/:lessonSlug/quiz/result.pdf', async (req, res) => {
+        const { revisionId } = req.query;
+        const questions = quizzes.get(revisionId);
+        if (!questions) return res.status(404).json({ message: quizUnavailable });
+
+        const { rows: [result] } = await pool.query(`
+            SELECT course.title AS "courseTitle", revision.title AS "lessonTitle",
+                result.score, result.answers, result.submitted_at AS "submittedAt"
+            FROM classlyai.courses AS course
+            ${activeMembership}
+            JOIN classlyai.lessons AS lesson ON lesson.course_id = course.id
+            ${publishedRevision}
+            ${ownQuizResult}
+            WHERE course.slug = $2 AND lesson.slug = $3 AND revision.id = $4
+        `, [req.user.id, req.params.courseSlug, req.params.lessonSlug, revisionId]);
+        if (!result) return res.status(404).json({ message: 'Quiz result unavailable.' });
+
+        const pdf = await createQuizResultPdf({ ...result, questions, studentName: req.user.displayName });
+        res.attachment(`${req.params.lessonSlug}-quiz-result.pdf`).send(pdf);
     });
 
     router.patch('/:courseSlug/lessons/:lessonSlug/progress', async (req, res) => {

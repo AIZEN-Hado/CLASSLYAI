@@ -27,8 +27,9 @@ Start the API in a second terminal with `npm run classlyai:start --prefix server
 
 1. Sign in as `student-a@classlyai.example` with the password you set. Open **Reliable Backend Systems** and **Transactions and retries**. Ask “What does an idempotency key do?” Open its citation and inspect the retrieval details.
 2. Ask “What is the orbital velocity of Mercury?” The fixture tutor reports insufficient evidence. This student’s course list contains only the course they are enrolled in.
-3. Sign in as `instructor@classlyai.example`. Open the editor, save a correction, and publish. The worker indexes the new revision in the background. Return to the student view once the editor shows **Available to students**.
-4. As a student, open a lesson and return to **My courses** to resume it from **Continue learning**. Mark the lesson complete to clear that resume point, or reopen it later with **Mark incomplete**.
+3. On the original **Transactions and retries** revision, submit the multiple-choice quiz and download its PDF. Try the short-answer practice question to see the trained network’s provisional marks for each rubric point. The grader runs on the API server without a model-service credential.
+4. Sign in as `instructor@classlyai.example`. Open the editor, save a correction, and publish. The worker indexes the new revision in the background. Return to the student view once the editor shows **Available to students**.
+5. As a student, open a lesson and return to **My courses** to resume it from **Continue learning**. Mark the lesson complete to clear that resume point, or reopen it later with **Mark incomplete**.
 
 ### Verification
 

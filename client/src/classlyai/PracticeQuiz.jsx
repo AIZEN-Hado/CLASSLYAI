@@ -47,6 +47,9 @@ export default function PracticeQuiz({ path, revisionId, quiz }) {
           <button className="secondary-button" type="submit" disabled={pending}>
             {score === null ? 'Submit answers' : 'Submit another attempt'}
           </button>
+          {score !== null && <a className="secondary-button" href={`/api${path}/result.pdf?revisionId=${encodeURIComponent(revisionId)}`} download>
+            Download result PDF
+          </a>}
           <p role="status">
             {pending ? 'Submitting answers…' : score !== null && `Latest score: ${score} of ${quiz.questions.length}`}
           </p>

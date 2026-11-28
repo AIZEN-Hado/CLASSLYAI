@@ -1,0 +1,54 @@
+{"answer":"Reuse the original idempotency key. The server returns the stored result instead of charging again.","points":[1,1]}
+{"answer":"Send the same idempotency key, and have the server replay the saved response without running the purchase twice.","points":[1,1]}
+{"answer":"Keep the original key. The server recognizes the duplicate and serves the previous receipt without another debit.","points":[1,1]}
+{"answer":"Retry under the same request key. Fetch the saved outcome so the purchase is only applied once.","points":[1,1]}
+{"answer":"Use the same key as the first request. The service returns its cached response rather than subtracting the money again.","points":[1,1]}
+{"answer":"Resend with an unchanged key. The handler responds with the stored result and skips the transaction.","points":[1,1]}
+{"answer":"Keep the first request's key. The server looks up the prior response and doesn't execute the purchase again.","points":[1,1]}
+{"answer":"Never make a new key for the retry. Replay the existing receipt with no second payment.","points":[1,1]}
+{"answer":"Reuse the request identifier and echo the previous result without recording a second order.","points":[1,1]}
+{"answer":"Use the original idempotency token to retrieve the first receipt without creating another order.","points":[1,1]}
+{"answer":"Retry the call with the same token, returning the earlier outcome from storage instead of executing it anew.","points":[1,1]}
+{"answer":"The client sends that original identifier and the service answers from the completed record, avoiding another purchase.","points":[1,1]}
+{"answer":"Do not generate a fresh key. Return the already saved result and skip reprocessing.","points":[1,1]}
+{"answer":"Reuse the original key; return the recorded response without changing the account twice.","points":[1,1]}
+{"answer":"Keep the idempotency key from the first attempt and reply with the cached receipt without a duplicate charge.","points":[1,1]}
+{"answer":"Same idempotency key. Return the original result with no duplicate write.","points":[1,1]}
+{"answer":"Retry with the original idempotency key.","points":[1,0]}
+{"answer":"Send the same key and run the charge again.","points":[1,0]}
+{"answer":"Keep the original token, but make a new purchase.","points":[1,0]}
+{"answer":"Reuse the first request's identifier, then regenerate the receipt by debiting the card a second time.","points":[1,0]}
+{"answer":"Resend the identical key. The server should reject the request without sending the initial result.","points":[1,0]}
+{"answer":"Don't generate a new idempotency key. The service should run its normal purchase flow.","points":[1,0]}
+{"answer":"The request key must stay unchanged, and the server returns a fresh receipt from the new transaction.","points":[1,0]}
+{"answer":"Use the same idempotency key, but do not return the saved result.","points":[1,0]}
+{"answer":"Use the original token, but return a generic successful status even when the original operation failed.","points":[1,0]}
+{"answer":"Retry under the previous key. No second purchase is allowed.","points":[1,0]}
+{"answer":"I would attach the first call's key again.","points":[1,0]}
+{"answer":"Keep the same identifier and do not replay the response from the earlier attempt.","points":[1,0]}
+{"answer":"The server replays the stored result and skips a second debit.","points":[0,1]}
+{"answer":"Return the original result without applying the purchase again.","points":[0,1]}
+{"answer":"Respond using the saved receipt instead of running the transaction twice.","points":[0,1]}
+{"answer":"Generate a new idempotency key. The service should replay the previous response without buying another item.","points":[0,1]}
+{"answer":"Do not send the same key. The server returns the cached response without another charge.","points":[0,1]}
+{"answer":"The client identifier can be different. Recover the initial outcome from storage, without executing a new purchase.","points":[0,1]}
+{"answer":"Give the client the first receipt and skip reprocessing the payment.","points":[0,1]}
+{"answer":"Pull the old purchase result from the record and send it back without modifying the balance.","points":[0,1]}
+{"answer":"Return the saved response with no duplicate write. There is no need for an idempotency token.","points":[0,1]}
+{"answer":"Do not reuse the original idempotency key, but return the recorded outcome and avoid a second debit.","points":[0,1]}
+{"answer":"Repeat the old response without charging a second time.","points":[0,1]}
+{"answer":"Send back the cached success and leave the purchase state alone.","points":[0,1]}
+{"answer":"Generate a new idempotency key on each attempt and send a new transaction.","points":[0,0]}
+{"answer":"The server should run the purchase again and return the new receipt.","points":[0,0]}
+{"answer":"Do not reuse the original key or replay the saved response.","points":[0,0]}
+{"answer":"Never send the same key. It should charge the buyer again.","points":[0,0]}
+{"answer":"The server must not return the original result. Charge as usual.","points":[0,0]}
+{"answer":"Refresh the page and increase the timeout.","points":[0,0]}
+{"answer":"Retry with exponential backoff.","points":[0,0]}
+{"answer":"The purchase should be reversed to undo the lost response.","points":[0,0]}
+{"answer":"Return an error and tell the client to stop trying.","points":[0,0]}
+{"answer":"Compare product IDs and restart the server.","points":[0,0]}
+{"answer":"A duplicate request is bad, so the server ignores it.","points":[0,0]}
+{"answer":"Make a fresh request token and do not use the cached receipt.","points":[0,0]}
+{"answer":"Send the purchase again over a different connection.","points":[0,0]}
+{"answer":"I am not sure.","points":[0,0]}

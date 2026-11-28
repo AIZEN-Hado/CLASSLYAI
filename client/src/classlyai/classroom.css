@@ -143,6 +143,12 @@ svg { flex: none; }
 .practice-quiz-feedback { margin-top: .25rem; color: var(--accent-dark); font-size: .88rem; font-weight: 640; }
 .practice-quiz-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
 .practice-quiz-actions p { font-size: .88rem; color: var(--accent-dark); }
+.short-answer h2 + p { margin-top: .4rem; }
+.short-answer-field label { min-height: auto; padding: 0; font-weight: 640; }
+.short-answer textarea { display: block; width: 100%; margin-top: .5rem; padding: .69rem .8rem; resize: vertical; border: 1px solid #cdd1c4; border-radius: .4rem; background: var(--surface); color: var(--ink); }
+.short-answer-marks { margin: 0; padding: 0; list-style: none; }
+.short-answer-marks li { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; padding: .5rem 0; border-top: 1px solid var(--line); }
+.short-answer-marks span { flex: none; margin: 0; }
 .lesson-prose { max-width: 65ch; overflow-wrap: anywhere; color: #2f3c33; font-size: clamp(.99rem, 1.15vw, 1.075rem); line-height: 1.75; }
 .lesson-prose > * + * { margin-top: 1rem; }
 .lesson-prose h2, .lesson-prose h3 { color: var(--ink); font: 560 1.55rem/1.2 var(--serif); letter-spacing: -.035em; }

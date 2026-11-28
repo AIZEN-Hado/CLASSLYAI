@@ -6,6 +6,7 @@ const { createServer } = require('node:http');
 const { join } = require('node:path');
 const { after, before, describe, it } = require('node:test');
 const { Client, Pool } = require('pg');
+const { PDFParse } = require('pdf-parse');
 const { courses, users } = require('../../db/demo-classroom');
 const { createApp } = require('../app');
 const { createEmbeddingProvider } = require('../embedding-provider');
@@ -81,6 +82,21 @@ describe('ClasslyAI API on PostgreSQL', { skip: !adminUrl }, () => {
         return cookie.split(';')[0];
     }
 
+    async function readQuizPdf(path, cookie, filename) {
+        const response = await fetch(base + path, { headers: { cookie } });
+        assert.equal(response.status, 200);
+        assert.equal(response.headers.get('content-type'), 'application/pdf');
+        assert.equal(response.headers.get('content-disposition'), `attachment; filename="${filename}"`);
+        assert.equal(response.headers.get('cache-control'), 'no-store');
+        const data = await response.arrayBuffer();
+        const parser = new PDFParse({ data: new Uint8Array(data) });
+        try {
+            return (await parser.getText()).text;
+        } finally {
+            await parser.destroy();
+        }
+    }
+
     it('checks origin, hashes tokens, rotates sessions, and revokes on logout', async () => {
         const user = users[1];
         await request('/api/auth/me', 401);
@@ -126,13 +142,17 @@ describe('ClasslyAI API on PostgreSQL', { skip: !adminUrl }, () => {
         assert.equal((await readCourses())[0].resume.lessonSlug, backend.lesson.slug);
     });
 
-    it('grades practice quizzes for enrolled students and saves their latest score', async () => {
+    it('grades revision-scoped student practice and exports the latest multiple-choice result as a private PDF', async () => {
         const [teacherCookie, studentCookie, otherCookie] = await Promise.all(users.map(user => login(user)));
-        const [backend] = courses;
+        const [backend, search] = courses;
         const lessonPath = `/api/courses/${backend.slug}/lessons/${backend.lesson.slug}`;
         const quizPath = `${lessonPath}/quiz`;
+        const shortAnswerPath = `${lessonPath}/short-answer`;
         const revisionId = backend.lesson.revisionId;
+        const resultPath = `${quizPath}/result.pdf?revisionId=${revisionId}`;
+        const filename = `${backend.lesson.slug}-quiz-result.pdf`;
         const correctAnswers = { revisionId, answers: [0, 1] };
+        const shortAnswer = { revisionId, answer: 'Reuse the original idempotency key and return the saved response without performing another purchase.' };
         const readQuiz = async cookie => (await request(lessonPath, 200, { cookie })).data.lesson.quiz;
 
         assert.equal(await readQuiz(teacherCookie), null);
@@ -149,32 +169,96 @@ describe('ClasslyAI API on PostgreSQL', { skip: !adminUrl }, () => {
         await request(quizPath, 401, { body: correctAnswers });
         await request(quizPath, 404, { cookie: teacherCookie, body: correctAnswers });
         await request(quizPath, 404, { cookie: otherCookie, body: correctAnswers });
+        await request(resultPath, 404, { cookie: studentCookie });
         for (const answers of [[0], [0, 1, 0], [0, '1'], [0, quiz.questions[1].options.length]]) {
             await request(quizPath, 400, { cookie: studentCookie, body: { revisionId, answers } });
         }
         assert.equal((await readQuiz(studentCookie)).score, null);
 
+        const studentId = users[1].id;
+        await pool.query(`
+            INSERT INTO classlyai.quiz_results (course_id, student_id, lesson_id, revision_id, score)
+            VALUES ($1, $2, $3, $4, 0)
+        `, [backend.id, studentId, backend.lesson.id, revisionId]);
+        assert.equal((await readQuiz(studentCookie)).score, 0);
+        const legacy = await readQuizPdf(resultPath, studentCookie, filename);
+        assert.match(legacy, /Score: 0 of 2/);
+        assert.match(legacy, /Answer details and submission date are unavailable/);
+        assert.doesNotMatch(legacy, /Correct answer:|Submitted:/);
+
         const partial = await request(quizPath, 200, { cookie: studentCookie, body: { revisionId, answers: [0, 0] } });
         assert.deepEqual(partial.data, { score: 1, feedback: [true, false] });
         assert.equal((await readQuiz(studentCookie)).score, 1);
+        const partialPdf = await readQuizPdf(resultPath, studentCookie, filename);
+        assert.ok(partialPdf.includes(backend.title) && partialPdf.includes(backend.lesson.title));
+        assert.ok(partialPdf.includes(`Student: ${users[1].name}`));
+        assert.match(partialPdf, /Submitted: \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} UTC/);
+        assert.match(partialPdf, /Score: 1 of 2/);
+        assert.match(partialPdf, /Your answer: Create a new purchase ID\. \(Incorrect\)/);
+        assert.match(partialPdf, /Correct answer: Reuse the original idempotency key\./);
+
+        await request(shortAnswerPath, 401);
+        await request(shortAnswerPath, 401, { body: shortAnswer });
+        for (const cookie of [teacherCookie, otherCookie]) {
+            await request(shortAnswerPath, 404, { cookie });
+            await request(shortAnswerPath, 404, { cookie, body: shortAnswer });
+        }
+        await request(`/api/courses/${search.slug}/lessons/${search.lesson.slug}/short-answer`, 404, { cookie: otherCookie });
+        const { data: { practice } } = await request(shortAnswerPath, 200, { cookie: studentCookie });
+        assert.deepEqual(Object.keys(practice).sort(), ['maxLength', 'prompt', 'revisionId']);
+        assert.equal(practice.revisionId, revisionId);
+        for (const answer of ['   ', 'x'.repeat(practice.maxLength + 1), [shortAnswer.answer]]) {
+            await request(shortAnswerPath, 400, { cookie: studentCookie, body: { revisionId, answer } });
+        }
+        await request(shortAnswerPath, 404, { cookie: studentCookie, body: { ...shortAnswer, revisionId: search.lesson.revisionId } });
+        const { data: rubric } = await request(shortAnswerPath, 200, { cookie: studentCookie, body: shortAnswer });
+        assert.equal(rubric.score, 2);
+        assert.equal(rubric.maxScore, 2);
+        assert.deepEqual(rubric.points.map(({ id, awarded }) => ({ id, awarded })), [
+            { id: 'reuse-key', awarded: true }, { id: 'replay-result', awarded: true }
+        ]);
+        assert.ok(rubric.points.every(point => Object.keys(point).sort().join(',') === 'awarded,description,id'));
+        assert.equal((await readQuiz(studentCookie)).score, 1);
+
+        await request(resultPath, 401);
+        await request(resultPath, 404, { cookie: teacherCookie });
+        await request(resultPath, 404, { cookie: otherCookie });
+        await request(`${quizPath}/result.pdf?revisionId=invalid`, 404, { cookie: studentCookie });
+
+        const otherMembership = [backend.id, users[2].id];
+        await pool.query("INSERT INTO classlyai.course_memberships (course_id, user_id, role) VALUES ($1, $2, 'student')", otherMembership);
+        try {
+            await request(resultPath, 404, { cookie: otherCookie });
+        } finally {
+            await pool.query('DELETE FROM classlyai.course_memberships WHERE course_id = $1 AND user_id = $2', otherMembership);
+        }
 
         const retake = await request(quizPath, 200, { cookie: studentCookie, body: correctAnswers });
         assert.deepEqual(retake.data, { score: 2, feedback: [true, true] });
         const newSession = await login(users[1]);
         assert.equal((await readQuiz(newSession)).score, 2);
+        const retakePdf = await readQuizPdf(resultPath, newSession, filename);
+        assert.match(retakePdf, /Score: 2 of 2/);
+        assert.match(retakePdf, /Your answer: Reuse the original idempotency key\. \(Correct\)/);
+        assert.doesNotMatch(retakePdf, /\(Incorrect\)|Create a new purchase ID/);
 
         await pool.query('UPDATE classlyai.lesson_revisions SET withdrawn_at = now() WHERE id = $1', [revisionId]);
         try {
             await request(quizPath, 404, { cookie: newSession, body: correctAnswers });
+            await request(resultPath, 404, { cookie: newSession });
+            await request(shortAnswerPath, 404, { cookie: newSession });
+            await request(shortAnswerPath, 404, { cookie: newSession, body: shortAnswer });
         } finally {
             await pool.query('UPDATE classlyai.lesson_revisions SET withdrawn_at = NULL WHERE id = $1', [revisionId]);
         }
-        const studentId = users[1].id;
         const membership = [backend.id, studentId];
         const membershipFilter = 'WHERE course_id = $1 AND user_id = $2';
         await pool.query(`UPDATE classlyai.course_memberships SET revoked_at = now() ${membershipFilter}`, membership);
         try {
             await request(quizPath, 404, { cookie: newSession, body: correctAnswers });
+            await request(resultPath, 404, { cookie: newSession });
+            await request(shortAnswerPath, 404, { cookie: newSession });
+            await request(shortAnswerPath, 404, { cookie: newSession, body: shortAnswer });
         } finally {
             await pool.query(`UPDATE classlyai.course_memberships SET revoked_at = NULL ${membershipFilter}`, membership);
         }
@@ -212,6 +296,12 @@ describe('ClasslyAI API on PostgreSQL', { skip: !adminUrl }, () => {
         const quizPath = `${lessonPath}/quiz`;
         const staleQuizBody = { revisionId: backend.lesson.revisionId, answers: [0, 1] };
         await request(quizPath, 404, { cookie: studentCookie, body: staleQuizBody });
+        await request(`${lessonPath}/short-answer`, 404, { cookie: studentCookie });
+        await request(`${lessonPath}/short-answer`, 404, {
+            cookie: studentCookie,
+            body: { revisionId: backend.lesson.revisionId, answer: 'Reuse the original key.' }
+        });
+        await request(`${quizPath}/result.pdf?revisionId=${staleQuizBody.revisionId}`, 404, { cookie: studentCookie });
 
         const question = { question: 'What recognizes duplicate requests?' };
         const answer = (await request(`${coursePath}/tutor`, 200, { cookie: studentCookie, body: question })).data;

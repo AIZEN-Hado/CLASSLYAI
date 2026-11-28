@@ -6,6 +6,7 @@ import { Brand, ResourceFeedback } from './components.jsx'
 import Editor from './Editor.jsx'
 import Markdown from './Markdown.jsx'
 import PracticeQuiz from './PracticeQuiz.jsx'
+import ShortAnswerPractice from './ShortAnswerPractice.jsx'
 import Tutor from './Tutor.jsx'
 
 function SignIn({ onSignIn }) {
@@ -182,6 +183,11 @@ function CoursePage({ onProgressChange }) {
                     path={`${lessonPath}/quiz`}
                     revisionId={lesson.revisionId}
                     quiz={lesson.quiz}
+                  />}
+                  {lesson && course.role === 'student' && <ShortAnswerPractice
+                    key={lesson.revisionId}
+                    path={`${lessonPath}/short-answer`}
+                    revisionId={lesson.revisionId}
                   />}
                   <Link to={coursePath} className="back-link reader-back"><FiArrowLeft aria-hidden="true" /> All lessons</Link>
                 </>

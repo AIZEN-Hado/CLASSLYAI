@@ -1,0 +1,20 @@
+{"answer":"Attach the very same key on resubmission. Give back the prior receipt without creating a second order.","points":[1,1]}
+{"answer":"The request identifier should remain stable across attempts. Look up the completed transaction and send its result, with no new charge.","points":[1,1]}
+{"answer":"Carry over the initial idempotency token so the server can read out the purchase confirmation it already recorded and leave the order alone.","points":[1,1]}
+{"answer":"Reuse the original idempotency key and return the saved response without performing another purchase.","points":[1,1]}
+{"answer":"Don't rotate the key. Answer with the outcome of the completed attempt without another write.","points":[1,1]}
+{"answer":"Send the existing idempotency key with the retry.","points":[1,0]}
+{"answer":"The first call's token should be copied verbatim.","points":[1,0]}
+{"answer":"Keep the original key, but the handler must neither replay the prior response nor bill anyone.","points":[1,0]}
+{"answer":"Use the same idempotency key and return the result of a second purchase.","points":[1,0]}
+{"answer":"Don't change the identifier. If the payment is already recorded, reply with a conflict error.","points":[1,0]}
+{"answer":"Send the confirmation from the completed payment record, leaving its balance and order untouched.","points":[0,1]}
+{"answer":"The server should return the stored outcome and skip the second execution.","points":[0,1]}
+{"answer":"Replay the first attempt's response and prevent another charge, but don't reuse the original idempotency key.","points":[0,1]}
+{"answer":"A different identifier is fine. Respond with the prior receipt without a second transaction.","points":[0,1]}
+{"answer":"Read the recorded answer out of the database without repeating the purchase.","points":[0,1]}
+{"answer":"Do not send the original idempotency key. Do not return the saved result.","points":[0,0]}
+{"answer":"Make a new key and perform the purchase again.","points":[0,0]}
+{"answer":"Put the purchase into a queue for the next available worker.","points":[0,0]}
+{"answer":"Turn off client retries so the transaction won't get repeated.","points":[0,0]}
+{"answer":"Inspect the old receipt, then run the purchase again using a fresh token and send a new response.","points":[0,0]}
