@@ -98,6 +98,34 @@ describe('ClasslyAI API on PostgreSQL', { skip: !adminUrl }, () => {
         await request('/api/auth/me', 401, { cookie: rotated });
     });
 
+    it('resumes an unfinished lesson and preserves completion across concurrent views', async () => {
+        const [teacherCookie, studentCookie, otherCookie] = await Promise.all(users.map(user => login(user)));
+        const [backend] = courses;
+        const coursePath = `/api/courses/${backend.slug}`;
+        const lessonPath = `${coursePath}/lessons/${backend.lesson.slug}`;
+        const progressPath = `${lessonPath}/progress`;
+        const patch = (cookie, body) => ({ cookie, body, method: 'PATCH' });
+        const readCourses = async () => (await request('/api/courses', 200, { cookie: studentCookie })).data.courses;
+
+        assert.equal((await readCourses())[0].resume, null);
+        await request(progressPath, 404, patch(otherCookie, {}));
+        await request(progressPath, 404, patch(teacherCookie, {}));
+        await request(progressPath, 400, patch(studentCookie, { completed: 'true' }));
+        await request(progressPath, 200, patch(studentCookie, {}));
+        assert.equal((await readCourses())[0].resume.lessonSlug, backend.lesson.slug);
+
+        await Promise.all([
+            request(progressPath, 200, patch(studentCookie, { completed: true })),
+            request(progressPath, 200, patch(studentCookie, {}))
+        ]);
+        assert.equal((await readCourses())[0].resume, null);
+        assert.equal((await request(lessonPath, 200, { cookie: studentCookie })).data.lesson.completed, true);
+        assert.equal((await request(coursePath, 200, { cookie: studentCookie })).data.course.lessons[0].completed, true);
+
+        await request(progressPath, 200, patch(studentCookie, { completed: false }));
+        assert.equal((await readCourses())[0].resume.lessonSlug, backend.lesson.slug);
+    });
+
     it('publishes revisions atomically and scopes tutor evidence to active course members', async () => {
         const studentA = users[1];
         const [backend, search] = courses;
@@ -130,6 +158,9 @@ describe('ClasslyAI API on PostgreSQL', { skip: !adminUrl }, () => {
         const answer = (await request(`${coursePath}/tutor`, 200, { cookie: studentCookie, body: question })).data;
         assert.equal(answer.status, 'answered');
         assert.ok(answer.citations.length > 0);
+        if (process.env.CLASSLYAI_EXPECT_VECTOR_ENGINE) {
+            assert.equal(answer.trace.vectorEngine, process.env.CLASSLYAI_EXPECT_VECTOR_ENGINE);
+        }
         const citationPath = `${coursePath}/citations/${answer.citations[0].id}`;
         await request(citationPath, 404, { cookie: otherCookie });
         const citation = (await request(citationPath, 200, { cookie: studentCookie })).data.citation;
@@ -139,6 +170,7 @@ describe('ClasslyAI API on PostgreSQL', { skip: !adminUrl }, () => {
 
         await pool.query('UPDATE classlyai.lesson_revisions SET withdrawn_at = now() WHERE id = $1', [revisionId]);
         await request(lessonPath, 404, { cookie: studentCookie });
+        await request(`${lessonPath}/progress`, 404, { cookie: studentCookie, method: 'PATCH', body: {} });
         await request(citationPath, 404, { cookie: studentCookie });
         await pool.query('UPDATE classlyai.course_memberships SET revoked_at = now() WHERE course_id = $1 AND user_id = $2', [backend.id, studentA.id]);
         await request(coursePath, 404, { cookie: studentCookie });

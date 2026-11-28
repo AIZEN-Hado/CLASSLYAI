@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export async function request(path, { method = 'GET', body, signal } = {}) {
   const response = await fetch('/api' + path, {
@@ -25,6 +25,7 @@ export async function request(path, { method = 'GET', body, signal } = {}) {
 export function useResource(path) {
   const [result, setResult] = useState(null)
   const [attempt, setAttempt] = useState(0)
+  const retry = useCallback(() => setAttempt(value => value + 1), [])
 
   useEffect(() => {
     if (!path) return
@@ -42,6 +43,6 @@ export function useResource(path) {
     data: current?.data,
     error: current?.error,
     loading: Boolean(path) && !current,
-    retry: () => setAttempt(value => value + 1),
+    retry,
   }
 }

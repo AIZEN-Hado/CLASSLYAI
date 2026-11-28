@@ -130,6 +130,9 @@ svg { flex: none; }
 .lesson-icon { width: 2.2rem; height: 2.2rem; }
 .lesson-row > svg { color: var(--accent); }
 .reader-back { margin-top: 1.5rem; }
+.resume-lesson { margin-bottom: 1rem; border-color: #b4ccbb; background: var(--wash); }
+.lesson-progress { margin-top: 1.55rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.lesson-progress-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
 .lesson-prose { max-width: 65ch; overflow-wrap: anywhere; color: #2f3c33; font-size: clamp(.99rem, 1.15vw, 1.075rem); line-height: 1.75; }
 .lesson-prose > * + * { margin-top: 1rem; }
 .lesson-prose h2, .lesson-prose h3 { color: var(--ink); font: 560 1.55rem/1.2 var(--serif); letter-spacing: -.035em; }

@@ -28,6 +28,7 @@ Start the API in a second terminal with `npm run classlyai:start --prefix server
 1. Sign in as `student-a@classlyai.example` with the password you set. Open **Reliable Backend Systems** and **Transactions and retries**. Ask “What does an idempotency key do?” Open its citation and inspect the retrieval details.
 2. Ask “What is the orbital velocity of Mercury?” The fixture tutor reports insufficient evidence. This student’s course list contains only the course they are enrolled in.
 3. Sign in as `instructor@classlyai.example`. Open the editor, save a correction, and publish. The worker indexes the new revision in the background. Return to the student view once the editor shows **Available to students**.
+4. As a student, open a lesson and return to **My courses** to resume it from **Continue learning**. Mark the lesson complete to clear that resume point, or reopen it later with **Mark incomplete**.
 
 ### Verification
 
@@ -35,7 +36,7 @@ Run `npm run eval:classlyai --prefix server` after indexing the original seed in
 
 On the local fixture with 12 passages across two courses, all three strategies reached 100% Recall@5 across nine labeled questions. Top-1 accuracy was 100% for keyword and hybrid and 89% for vector. The tutor cited all nine expected sections, abstained on all three unsupported questions, and passed both cross-course checks. This small fixture establishes a regression baseline. It measures deterministic embeddings and extractive answers.
 
-Set `CLASSLYAI_TEST_DATABASE_URL` to an isolated PostgreSQL server where the role can create databases, then run `npm run test:classlyai --prefix server`. The suite creates and cleans up its own test database. GitHub Actions runs the checks against an isolated PostgreSQL service.
+Set `CLASSLYAI_TEST_DATABASE_URL` to an isolated PostgreSQL server where the role can create databases, then run `npm run test:classlyai --prefix server`. The suite creates and cleans up its own test database. GitHub Actions is configured to test both standard PostgreSQL and PostgreSQL with pgvector. The native pgvector fixture passed all six tests locally. On Neon PostgreSQL 18.7 with pgvector 0.8.7, the fixture benchmark found all nine expected citations, abstained on all three unsupported questions, and passed both isolation checks. Student login, course access, and logout also passed on Neon.
 
 [Architecture](docs/classlyai/architecture.md) · [Delivery roadmap](docs/classlyai/roadmap.md) · [Session handoff](docs/classlyai/handoff.md)
 

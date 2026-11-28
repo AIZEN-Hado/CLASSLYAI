@@ -10,6 +10,10 @@ const publishedRevision = `
         AND revision.lesson_id = lesson.id
         AND revision.published_at IS NOT NULL AND revision.withdrawn_at IS NULL
 `;
+const ownProgress = `
+    LEFT JOIN classlyai.lesson_progress AS progress ON progress.course_id = lesson.course_id
+        AND progress.lesson_id = lesson.id AND progress.student_id = $1 AND membership.role = 'student'
+`;
 
 function createCoursesRouter(pool) {
     const router = Router();
@@ -25,9 +29,20 @@ function createCoursesRouter(pool) {
 
     router.get('/', async (req, res) => {
         const { rows: courses } = await pool.query(`
-            SELECT ${courseColumns}
+            SELECT ${courseColumns}, reading.resume
             FROM classlyai.courses AS course
             ${activeMembership}
+            LEFT JOIN LATERAL (
+                SELECT jsonb_build_object('lessonSlug', lesson.slug, 'title', revision.title,
+                    'lastViewedAt', progress.last_viewed_at) AS resume
+                FROM classlyai.lesson_progress AS progress
+                JOIN classlyai.lessons AS lesson ON lesson.id = progress.lesson_id
+                ${publishedRevision}
+                WHERE progress.course_id = course.id AND progress.student_id = $1
+                    AND progress.completed_at IS NULL AND membership.role = 'student'
+                ORDER BY progress.last_viewed_at DESC, progress.lesson_id
+                LIMIT 1
+            ) AS reading ON true
             ORDER BY course.title, course.slug
         `, [req.user.id]);
 
@@ -38,10 +53,12 @@ function createCoursesRouter(pool) {
         const { rows: [course] } = await pool.query(`
             SELECT ${courseColumns}, COALESCE((
                 SELECT jsonb_agg(jsonb_build_object(
-                    'id', lesson.id, 'slug', lesson.slug, 'title', revision.title
+                    'id', lesson.id, 'slug', lesson.slug, 'title', revision.title,
+                    'completed', progress.completed_at IS NOT NULL
                 ) ORDER BY lesson.position)
                 FROM classlyai.lessons AS lesson
                 ${publishedRevision}
+                ${ownProgress}
                 WHERE lesson.course_id = course.id
             ), '[]'::jsonb) AS lessons
             FROM classlyai.courses AS course
@@ -55,16 +72,49 @@ function createCoursesRouter(pool) {
 
     router.get('/:courseSlug/lessons/:lessonSlug', async (req, res) => {
         const { rows: [lesson] } = await pool.query(`
-            SELECT lesson.id, lesson.slug, revision.title, revision.markdown, revision.id AS "revisionId"
+            SELECT lesson.id, lesson.slug, revision.title, revision.markdown, revision.id AS "revisionId",
+                progress.completed_at IS NOT NULL AS completed
             FROM classlyai.courses AS course
             ${activeMembership}
             JOIN classlyai.lessons AS lesson ON lesson.course_id = course.id
             ${publishedRevision}
+            ${ownProgress}
             WHERE course.slug = $2 AND lesson.slug = $3
         `, [req.user.id, req.params.courseSlug, req.params.lessonSlug]);
 
         if (!lesson) return res.status(404).json({ message: 'Lesson not found.' });
         res.json({ lesson });
+    });
+
+    router.patch('/:courseSlug/lessons/:lessonSlug/progress', async (req, res) => {
+        const completed = req.body?.completed;
+        if (completed !== undefined && typeof completed !== 'boolean') {
+            return res.status(400).json({ message: 'Completion must be true or false.' });
+        }
+
+        const { rows: [progress] } = await pool.query(`
+            WITH authorized AS (
+                SELECT course.id AS course_id, lesson.id AS lesson_id
+                FROM classlyai.courses AS course
+                ${activeMembership}
+                JOIN classlyai.lessons AS lesson ON lesson.course_id = course.id
+                ${publishedRevision}
+                WHERE course.slug = $2 AND lesson.slug = $3 AND membership.role = 'student'
+                FOR SHARE OF membership
+            )
+            INSERT INTO classlyai.lesson_progress AS stored (course_id, student_id, lesson_id, completed_at)
+            SELECT course_id, $1, lesson_id, CASE WHEN $4::boolean THEN now() END FROM authorized
+            ON CONFLICT (course_id, student_id, lesson_id) DO UPDATE
+            SET last_viewed_at = GREATEST(stored.last_viewed_at, now()),
+                completed_at = CASE $4::boolean
+                    WHEN true THEN COALESCE(stored.completed_at, now())
+                    WHEN false THEN NULL
+                    ELSE stored.completed_at
+                END
+            RETURNING last_viewed_at AS "lastViewedAt", completed_at IS NOT NULL AS completed
+        `, [req.user.id, req.params.courseSlug, req.params.lessonSlug, completed ?? null]);
+        if (!progress) return res.status(404).json({ message: 'Lesson not found.' });
+        res.json({ progress });
     });
 
     router.get('/:courseSlug/instructor', async (req, res) => {

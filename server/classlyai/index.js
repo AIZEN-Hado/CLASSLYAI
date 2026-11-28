@@ -38,7 +38,7 @@ async function main() {
     const server = createServer(createApp({ pool, origin, clientDirectory }));
 
     try {
-        await pool.query('SELECT 1 FROM classlyai.ingestion_jobs LIMIT 1');
+        await pool.query('SELECT 1 FROM classlyai.lesson_progress LIMIT 1');
         server.listen(port, host);
         await once(server, 'listening');
     } catch (error) {
