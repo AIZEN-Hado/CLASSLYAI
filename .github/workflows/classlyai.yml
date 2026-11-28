@@ -10,10 +10,19 @@ permissions:
 
 jobs:
   verify:
+    name: Verify (${{ matrix.engine }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - engine: postgres-array
+            image: postgres:16
+          - engine: pgvector
+            image: pgvector/pgvector:0.8.7-pg16
     services:
       postgres:
-        image: postgres:16
+        image: ${{ matrix.image }}
         env:
           POSTGRES_PASSWORD: fixture
         ports:
@@ -26,6 +35,7 @@ jobs:
     env:
       CLASSLYAI_TEST_DATABASE_URL: postgresql://postgres:fixture@localhost:5432/postgres
       CLASSLYAI_AI_MODE: fixture
+      CLASSLYAI_EXPECT_VECTOR_ENGINE: ${{ matrix.engine }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -38,10 +48,11 @@ jobs:
             server/package-lock.json
             client/package-lock.json
       - run: npm ci --prefix server
-      - run: npm ci --prefix client
       - name: Check ClasslyAI client
+        if: matrix.engine == 'postgres-array'
         working-directory: client
         run: |
+          npm ci
           npm exec --offline -- eslint src/classlyai
           npm run build
       - run: npm run test:classlyai --prefix server
