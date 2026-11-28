@@ -133,6 +133,16 @@ svg { flex: none; }
 .resume-lesson { margin-bottom: 1rem; border-color: #b4ccbb; background: var(--wash); }
 .lesson-progress { margin-top: 1.55rem; padding-top: 1rem; border-top: 1px solid var(--line); }
 .lesson-progress-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+.practice-quiz { max-width: 65ch; margin-top: 1.55rem; padding-top: 1rem; border-top: 1px solid var(--line); overflow-wrap: anywhere; }
+.practice-quiz h2 { font: 560 1.55rem/1.2 var(--serif); letter-spacing: -.035em; }
+.practice-quiz form { display: grid; gap: 1rem; margin-top: 1rem; }
+.practice-quiz fieldset { min-inline-size: 0; margin: 0; border: 0; padding: 0; }
+.practice-quiz legend { padding: 0; font-weight: 640; }
+.practice-quiz label { display: flex; min-height: 2.75rem; align-items: center; gap: .6rem; padding: .25rem .2rem; cursor: pointer; }
+.practice-quiz input { flex: none; margin: 0; accent-color: var(--accent); }
+.practice-quiz-feedback { margin-top: .25rem; color: var(--accent-dark); font-size: .88rem; font-weight: 640; }
+.practice-quiz-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+.practice-quiz-actions p { font-size: .88rem; color: var(--accent-dark); }
 .lesson-prose { max-width: 65ch; overflow-wrap: anywhere; color: #2f3c33; font-size: clamp(.99rem, 1.15vw, 1.075rem); line-height: 1.75; }
 .lesson-prose > * + * { margin-top: 1rem; }
 .lesson-prose h2, .lesson-prose h3 { color: var(--ink); font: 560 1.55rem/1.2 var(--serif); letter-spacing: -.035em; }

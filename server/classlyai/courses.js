@@ -1,5 +1,7 @@
 const { Router } = require('express');
 
+const { quizzes } = require('./practice-quizzes');
+
 const courseColumns = 'course.id, course.slug, course.title, course.summary, membership.role';
 const activeMembership = `
     JOIN classlyai.course_memberships AS membership ON membership.course_id = course.id
@@ -73,17 +75,50 @@ function createCoursesRouter(pool) {
     router.get('/:courseSlug/lessons/:lessonSlug', async (req, res) => {
         const { rows: [lesson] } = await pool.query(`
             SELECT lesson.id, lesson.slug, revision.title, revision.markdown, revision.id AS "revisionId",
-                progress.completed_at IS NOT NULL AS completed
+                progress.completed_at IS NOT NULL AS completed, membership.role, result.score
             FROM classlyai.courses AS course
             ${activeMembership}
             JOIN classlyai.lessons AS lesson ON lesson.course_id = course.id
             ${publishedRevision}
             ${ownProgress}
+            LEFT JOIN classlyai.quiz_results AS result ON result.revision_id = revision.id AND result.student_id = $1
             WHERE course.slug = $2 AND lesson.slug = $3
         `, [req.user.id, req.params.courseSlug, req.params.lessonSlug]);
 
         if (!lesson) return res.status(404).json({ message: 'Lesson not found.' });
-        res.json({ lesson });
+        const { role, score, ...content } = lesson;
+        const questions = role === 'student' && quizzes.get(lesson.revisionId);
+        const quiz = questions ? { questions: questions.map(({ prompt, options }) => ({ prompt, options })), score } : null;
+        res.json({ lesson: { ...content, quiz } });
+    });
+
+    router.post('/:courseSlug/lessons/:lessonSlug/quiz', async (req, res) => {
+        const { revisionId, answers } = req.body || {};
+        const questions = quizzes.get(revisionId);
+        if (!questions) return res.status(404).json({ message: 'Quiz unavailable. Reload the lesson.' });
+        if (!Array.isArray(answers) || answers.length !== questions.length ||
+            !answers.every((choice, i) => Number.isInteger(choice) && choice >= 0 && choice < questions[i].options.length)) {
+            return res.status(400).json({ message: 'Choose one listed answer for each question.' });
+        }
+
+        const feedback = questions.map((question, i) => question.correct === answers[i]);
+        const score = feedback.filter(Boolean).length;
+        const result = await pool.query(`
+            WITH authorized AS (
+                SELECT course.id AS course_id, lesson.id AS lesson_id, revision.id AS revision_id
+                FROM classlyai.courses AS course
+                ${activeMembership}
+                JOIN classlyai.lessons AS lesson ON lesson.course_id = course.id
+                ${publishedRevision}
+                WHERE course.slug = $2 AND lesson.slug = $3 AND revision.id = $4 AND membership.role = 'student'
+                FOR SHARE OF membership, lesson, revision
+            )
+            INSERT INTO classlyai.quiz_results (course_id, student_id, lesson_id, revision_id, score)
+            SELECT course_id, $1, lesson_id, revision_id, $5 FROM authorized
+            ON CONFLICT (student_id, revision_id) DO UPDATE SET score = EXCLUDED.score
+        `, [req.user.id, req.params.courseSlug, req.params.lessonSlug, revisionId, score]);
+        if (!result.rowCount) return res.status(404).json({ message: 'Quiz unavailable. Reload the lesson.' });
+        res.json({ score, feedback });
     });
 
     router.patch('/:courseSlug/lessons/:lessonSlug/progress', async (req, res) => {

@@ -126,6 +126,60 @@ describe('ClasslyAI API on PostgreSQL', { skip: !adminUrl }, () => {
         assert.equal((await readCourses())[0].resume.lessonSlug, backend.lesson.slug);
     });
 
+    it('grades practice quizzes for enrolled students and saves their latest score', async () => {
+        const [teacherCookie, studentCookie, otherCookie] = await Promise.all(users.map(user => login(user)));
+        const [backend] = courses;
+        const lessonPath = `/api/courses/${backend.slug}/lessons/${backend.lesson.slug}`;
+        const quizPath = `${lessonPath}/quiz`;
+        const revisionId = backend.lesson.revisionId;
+        const correctAnswers = { revisionId, answers: [0, 1] };
+        const readQuiz = async cookie => (await request(lessonPath, 200, { cookie })).data.lesson.quiz;
+
+        assert.equal(await readQuiz(teacherCookie), null);
+        const quiz = await readQuiz(studentCookie);
+        assert.equal(quiz.score, null);
+        assert.equal(quiz.questions.length, 2);
+        for (const question of quiz.questions) {
+            assert.deepEqual(Object.keys(question).sort(), ['options', 'prompt']);
+            assert.equal(typeof question.prompt, 'string');
+            assert.ok(question.options.length >= 2);
+            assert.ok(question.options.every(option => typeof option === 'string'));
+        }
+
+        await request(quizPath, 401, { body: correctAnswers });
+        await request(quizPath, 404, { cookie: teacherCookie, body: correctAnswers });
+        await request(quizPath, 404, { cookie: otherCookie, body: correctAnswers });
+        for (const answers of [[0], [0, 1, 0], [0, '1'], [0, quiz.questions[1].options.length]]) {
+            await request(quizPath, 400, { cookie: studentCookie, body: { revisionId, answers } });
+        }
+        assert.equal((await readQuiz(studentCookie)).score, null);
+
+        const partial = await request(quizPath, 200, { cookie: studentCookie, body: { revisionId, answers: [0, 0] } });
+        assert.deepEqual(partial.data, { score: 1, feedback: [true, false] });
+        assert.equal((await readQuiz(studentCookie)).score, 1);
+
+        const retake = await request(quizPath, 200, { cookie: studentCookie, body: correctAnswers });
+        assert.deepEqual(retake.data, { score: 2, feedback: [true, true] });
+        const newSession = await login(users[1]);
+        assert.equal((await readQuiz(newSession)).score, 2);
+
+        await pool.query('UPDATE classlyai.lesson_revisions SET withdrawn_at = now() WHERE id = $1', [revisionId]);
+        try {
+            await request(quizPath, 404, { cookie: newSession, body: correctAnswers });
+        } finally {
+            await pool.query('UPDATE classlyai.lesson_revisions SET withdrawn_at = NULL WHERE id = $1', [revisionId]);
+        }
+        const studentId = users[1].id;
+        const membership = [backend.id, studentId];
+        const membershipFilter = 'WHERE course_id = $1 AND user_id = $2';
+        await pool.query(`UPDATE classlyai.course_memberships SET revoked_at = now() ${membershipFilter}`, membership);
+        try {
+            await request(quizPath, 404, { cookie: newSession, body: correctAnswers });
+        } finally {
+            await pool.query(`UPDATE classlyai.course_memberships SET revoked_at = NULL ${membershipFilter}`, membership);
+        }
+    });
+
     it('publishes revisions atomically and scopes tutor evidence to active course members', async () => {
         const studentA = users[1];
         const [backend, search] = courses;
@@ -152,7 +206,12 @@ describe('ClasslyAI API on PostgreSQL', { skip: !adminUrl }, () => {
         await request(`${lessonPath}/publish`, 200, publication);
         await request(`${lessonPath}/publish`, 200, publication);
         assert.equal((await processNextJob(pool, provider)).state, 'ready');
-        assert.equal((await request(lessonPath, 200, { cookie: studentCookie })).data.lesson.revisionId, revisionId);
+        const publishedLesson = (await request(lessonPath, 200, { cookie: studentCookie })).data.lesson;
+        assert.equal(publishedLesson.revisionId, revisionId);
+        assert.equal(publishedLesson.quiz, null);
+        const quizPath = `${lessonPath}/quiz`;
+        const staleQuizBody = { revisionId: backend.lesson.revisionId, answers: [0, 1] };
+        await request(quizPath, 404, { cookie: studentCookie, body: staleQuizBody });
 
         const question = { question: 'What recognizes duplicate requests?' };
         const answer = (await request(`${coursePath}/tutor`, 200, { cookie: studentCookie, body: question })).data;

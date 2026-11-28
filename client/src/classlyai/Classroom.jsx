@@ -5,6 +5,7 @@ import { request, useResource } from './api.js'
 import { Brand, ResourceFeedback } from './components.jsx'
 import Editor from './Editor.jsx'
 import Markdown from './Markdown.jsx'
+import PracticeQuiz from './PracticeQuiz.jsx'
 import Tutor from './Tutor.jsx'
 
 function SignIn({ onSignIn }) {
@@ -175,6 +176,12 @@ function CoursePage({ onProgressChange }) {
                     completed={completionOverrides[lesson.id] ?? lesson.completed}
                     onVisit={onProgressChange}
                     onCompletion={completed => setCompletionOverrides(previous => ({ ...previous, [lesson.id]: completed }))}
+                  />}
+                  {course.role === 'student' && lesson?.quiz && <PracticeQuiz
+                    key={lesson.revisionId}
+                    path={`${lessonPath}/quiz`}
+                    revisionId={lesson.revisionId}
+                    quiz={lesson.quiz}
                   />}
                   <Link to={coursePath} className="back-link reader-back"><FiArrowLeft aria-hidden="true" /> All lessons</Link>
                 </>
